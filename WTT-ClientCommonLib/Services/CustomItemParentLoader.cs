@@ -63,9 +63,7 @@ public class CustomItemParentLoader
         {
             foreach (var type in GetLoadableTypes(assembly))
             {
-                var attributes = type.GetCustomAttributes(typeof(CustomParent), true);
-
-                foreach (CustomParent attribute in attributes)
+                foreach (CustomParent attribute in GetCustomParents(type))
                 {
                     customParents.Add(attribute);
                 }
@@ -145,9 +143,34 @@ public class CustomItemParentLoader
 
             return recovered;
         }
-        catch (Exception e)
+    }
+
+    /// <summary>
+    ///     Returns the <see cref="CustomParent" /> attributes declared on <paramref name="type" />.
+    /// </summary>
+    /// <remarks>
+    ///     Reading attributes instantiates them, so a type that survived
+    ///     <see cref="GetLoadableTypes" /> can still fail here for the same underlying reason — an
+    ///     unloadable type behind one of the attribute's own members, or behind a base type walked
+    ///     by the <c>inherit</c> flag. Only <see cref="TypeLoadException" /> (the family
+    ///     <see cref="ReflectionTypeLoadException" /> belongs to) is caught, and it is logged and
+    ///     scoped to the single offending type; any other exception propagates so a genuinely
+    ///     different problem is not masked. There is no partial result to recover from here the way
+    ///     there is in <see cref="GetLoadableTypes" />: the exception carries the types of the
+    ///     attribute's own assembly, not the attributes declared on <paramref name="type" />.
+    /// </remarks>
+    private static IEnumerable<CustomParent> GetCustomParents(Type type)
+    {
+        try
         {
-            LogHelper.LogError($"Skipping assembly {assembly.GetName().Name}: {e}");
+            return type.GetCustomAttributes(typeof(CustomParent), true).Cast<CustomParent>();
+        }
+        catch (TypeLoadException e)
+        {
+            LogHelper.LogError(
+                $"Failed to read [CustomParent] attributes from {type.FullName}: {e.Message} "
+                + "Skipping this type."
+            );
 
             return [];
         }
