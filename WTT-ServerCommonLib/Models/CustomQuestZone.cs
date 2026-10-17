@@ -17,7 +17,7 @@ public class CustomQuestZone
     public List<ZoneTransforms>? GroupPosition { get; set; }
 
     public SalvageConfig? Salvage { get; set; }
-    
+
     public DaytimeCounter? TimeRestriction { get; set; }
 }
 

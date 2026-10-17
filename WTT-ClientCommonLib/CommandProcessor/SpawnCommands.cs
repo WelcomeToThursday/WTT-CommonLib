@@ -27,8 +27,7 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
     private bool _shiftPressed;
     private readonly List<SpawnedObjectInfo> _spawnedObjects = new();
 
-    public GameObject LastSpawnedObject =>
-        _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null;
+    public GameObject LastSpawnedObject => _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null;
 
     public bool IsEditing { get; private set; }
 
@@ -49,16 +48,12 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         // Parse coordinates if provided
         if (args is { Length: >= 3 })
         {
-            if (float.TryParse(args[0], out var x) &&
-                float.TryParse(args[1], out var y) &&
-                float.TryParse(args[2], out var z))
+            if (float.TryParse(args[0], out var x) && float.TryParse(args[1], out var y) && float.TryParse(args[2], out var z))
                 spawnPosition = new Vector3(x, y, z);
 
             // Parse rotation if provided
             if (args.Length >= 6)
-                if (float.TryParse(args[3], out var rx) &&
-                    float.TryParse(args[4], out var ry) &&
-                    float.TryParse(args[5], out var rz))
+                if (float.TryParse(args[3], out var rx) && float.TryParse(args[4], out var ry) && float.TryParse(args[5], out var rz))
                     spawnRotation = Quaternion.Euler(rx, ry, rz);
         }
 
@@ -74,16 +69,17 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         _lastSpawnedObject = newObject;
 
         // Store metadata with the object
-        _spawnedObjects.Add(new SpawnedObjectInfo
-        {
-            Object = newObject,
-            BundleName = bundleName,
-            PrefabName = prefabName
-        });
+        _spawnedObjects.Add(
+            new SpawnedObjectInfo
+            {
+                Object = newObject,
+                BundleName = bundleName,
+                PrefabName = prefabName,
+            }
+        );
         _currentSpawnedIndex = _spawnedObjects.Count - 1;
         LogHelper.LogDebug($"Spawned {prefabName} at {spawnPosition}");
     }
-
 
     public void StartEditMode()
     {
@@ -141,7 +137,8 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         }
 
         var cameraTransform = Camera.main?.transform;
-        if (cameraTransform == null) return;
+        if (cameraTransform == null)
+            return;
 
         // Handle object cycling and deletion
         if (StaticSpawnSystemConfigManager.CycleSpawnedObjects.Value.BetterIsDown())
@@ -156,19 +153,20 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         {
             DeleteSelectedObject();
             // Skip movement if we just deleted the object
-            if (_lastSpawnedObject == null) return;
+            if (_lastSpawnedObject == null)
+                return;
         }
 
         _shiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         _altPressed = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
-
 
         // Modifier key-based speed multiplier
         var speedMultiplier = 1f;
         if (_shiftPressed)
         {
             speedMultiplier = 2f;
-            if (_altPressed) speedMultiplier = 4f;
+            if (_altPressed)
+                speedMultiplier = 4f;
         }
 
         // Get input states
@@ -190,12 +188,18 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         forward.Normalize();
         right.Normalize();
 
-        if (forwardPressed) moveDirection += forward;
-        if (backwardPressed) moveDirection -= forward;
-        if (leftPressed) moveDirection -= right;
-        if (rightPressed) moveDirection += right;
-        if (upPressed) moveDirection += up;
-        if (downPressed) moveDirection -= up;
+        if (forwardPressed)
+            moveDirection += forward;
+        if (backwardPressed)
+            moveDirection -= forward;
+        if (leftPressed)
+            moveDirection -= right;
+        if (rightPressed)
+            moveDirection += right;
+        if (upPressed)
+            moveDirection += up;
+        if (downPressed)
+            moveDirection -= up;
 
         if (moveDirection.sqrMagnitude > 1f)
             moveDirection.Normalize();
@@ -206,14 +210,12 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         var rotationInput = Vector3.zero;
 
         // Primary directions
-        var pitchUpPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchUpKey.Value.MainKey) &&
-                             !_shiftPressed && !_altPressed;
-        var pitchDownPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchDownKey.Value.MainKey) &&
-                               !_shiftPressed && !_altPressed;
-        var yawLeftPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotateYawLeftKey.Value.MainKey) &&
-                             !_shiftPressed && !_altPressed;
-        var yawRightPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotateYawRightKey.Value.MainKey) &&
-                              !_shiftPressed && !_altPressed;
+        var pitchUpPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchUpKey.Value.MainKey) && !_shiftPressed && !_altPressed;
+        var pitchDownPressed =
+            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchDownKey.Value.MainKey) && !_shiftPressed && !_altPressed;
+        var yawLeftPressed = Input.GetKey(StaticSpawnSystemConfigManager.RotateYawLeftKey.Value.MainKey) && !_shiftPressed && !_altPressed;
+        var yawRightPressed =
+            Input.GetKey(StaticSpawnSystemConfigManager.RotateYawRightKey.Value.MainKey) && !_shiftPressed && !_altPressed;
 
         if (pitchUpPressed) // 8 - Pitch up (forward)
             rotationInput.x += 1;
@@ -225,17 +227,14 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
             rotationInput.y += 1;
 
         // Diagonal directions
-        var pitchRollLeftKey = Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollLeftKey.Value.MainKey) &&
-                               !_shiftPressed && !_altPressed;
-        var pitchRollRightKey = Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollRightKey.Value.MainKey) &&
-                                !_shiftPressed && !_altPressed;
+        var pitchRollLeftKey =
+            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollLeftKey.Value.MainKey) && !_shiftPressed && !_altPressed;
+        var pitchRollRightKey =
+            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollRightKey.Value.MainKey) && !_shiftPressed && !_altPressed;
         var pitchRollLeftInvertKey =
-            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollLeftInvertKey.Value.MainKey) && !_shiftPressed &&
-            !_altPressed;
+            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollLeftInvertKey.Value.MainKey) && !_shiftPressed && !_altPressed;
         var pitchRollRightInvertKey =
-            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollRightInvertKey.Value.MainKey) &&
-            !_shiftPressed && !_altPressed;
-
+            Input.GetKey(StaticSpawnSystemConfigManager.RotatePitchRollRightInvertKey.Value.MainKey) && !_shiftPressed && !_altPressed;
 
         if (pitchRollLeftKey) // 7 - Forward left
         {
@@ -269,7 +268,6 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
                 rotationInput.z * RotateSpeed * speedMultiplier * Time.deltaTime,
                 Space.World
             );
-
 
         if (StaticSpawnSystemConfigManager.ConfirmPositionKey.Value.BetterIsDown())
         {
@@ -312,7 +310,8 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
             _lastSpawnedObject = null;
 
             // Exit edit mode if no objects left
-            if (IsEditing) ExitEditMode();
+            if (IsEditing)
+                ExitEditMode();
         }
     }
 
@@ -328,8 +327,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         var currentInfo = _spawnedObjects[_currentSpawnedIndex];
         _lastSpawnedObject = currentInfo.Object;
 
-        LogHelper.LogDebug($"Switched to object #{_currentSpawnedIndex}: " +
-                        $"{currentInfo.PrefabName} [Bundle: {currentInfo.BundleName}]");
+        LogHelper.LogDebug(
+            $"Switched to object #{_currentSpawnedIndex}: " + $"{currentInfo.PrefabName} [Bundle: {currentInfo.BundleName}]"
+        );
 
         if (IsEditing && _editIndicator != null)
             _editIndicator.transform.position = _lastSpawnedObject.transform.position;
@@ -347,13 +347,13 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         var currentInfo = _spawnedObjects[_currentSpawnedIndex];
         _lastSpawnedObject = currentInfo.Object;
 
-        LogHelper.LogDebug($"Switched to object #{_currentSpawnedIndex}: " +
-                        $"{currentInfo.PrefabName} [Bundle: {currentInfo.BundleName}]");
+        LogHelper.LogDebug(
+            $"Switched to object #{_currentSpawnedIndex}: " + $"{currentInfo.PrefabName} [Bundle: {currentInfo.BundleName}]"
+        );
 
         if (IsEditing && _editIndicator != null)
             _editIndicator.transform.position = _lastSpawnedObject.transform.position;
     }
-
 
     public void ExportSpawnedObjectsLocations()
     {
@@ -385,15 +385,14 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
                 RequiredItemInInventory = null,
                 RequiredLevel = null,
                 RequiredFaction = null,
-                RequiredBossSpawned = null
+                RequiredBossSpawned = null,
             };
 
             exportList.Add(config);
         }
 
         var outputDir = Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, @"..\..\..\..\"));
-        var path = Path.Combine(outputDir,
-            $"WTT-ClientCommonLib-CustomStaticSpawnConfig-Output-{DateTime.Now:yyyyMMddHHmmssffff}.json");
+        var path = Path.Combine(outputDir, $"WTT-ClientCommonLib-CustomStaticSpawnConfig-Output-{DateTime.Now:yyyyMMddHHmmssffff}.json");
         File.WriteAllText(path, JsonConvert.SerializeObject(exportList, Formatting.Indented));
 
         LogHelper.LogDebug($"Exported {_spawnedObjects.Count} spawned objects to {path}");

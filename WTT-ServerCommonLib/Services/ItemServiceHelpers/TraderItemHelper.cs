@@ -64,9 +64,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                     if (scheme.ConfigBarterSettings.BuyRestrictionMax != null)
                     {
                         newItem.Upd.BuyRestrictionCurrent = 0;
-                        newItem.Upd.BuyRestrictionMax = scheme
-                            .ConfigBarterSettings
-                            .BuyRestrictionMax;
+                        newItem.Upd.BuyRestrictionMax = scheme.ConfigBarterSettings.BuyRestrictionMax;
                     }
 
                     trader.Assort.Items.Add(newItem);
@@ -85,11 +83,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                         if (string.IsNullOrWhiteSpace(b.Template))
                             continue;
 
-                        var barter = new BarterScheme
-                        {
-                            Count = b.Count,
-                            Template = ItemTplResolver.ResolveId(b.Template),
-                        };
+                        var barter = new BarterScheme { Count = b.Count, Template = ItemTplResolver.ResolveId(b.Template) };
 
                         if (b.Level != null)
                             barter.Level = b.Level;
@@ -106,9 +100,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                     if (barterSchemeItems.Count > 0)
                         barterOptions.Add(barterSchemeItems);
 
-                    trader.Assort.LoyalLevelItems[schemeKey] = scheme
-                        .ConfigBarterSettings
-                        .LoyalLevel;
+                    trader.Assort.LoyalLevelItems[schemeKey] = scheme.ConfigBarterSettings.LoyalLevel;
                 }
             }
         }

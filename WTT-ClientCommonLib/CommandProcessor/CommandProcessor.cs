@@ -9,20 +9,21 @@ public class CommandProcessor(PlayerWorldStats playerWorldStats, SpawnCommands s
 {
     public void RegisterCommandProcessor()
     {
-        ConsoleScreen.Processor.RegisterCommand("clear",
-            delegate { MonoBehaviourSingleton<PreloaderUI>.Instance.Console.Clear(); });
+        ConsoleScreen.Processor.RegisterCommand(
+            "clear",
+            delegate
+            {
+                MonoBehaviourSingleton<PreloaderUI>.Instance.Console.Clear();
+            }
+        );
         if (UniversalConfigManager.DeveloperMode.Value)
         {
-            ConsoleScreen.Processor.RegisterCommand("GetPlayerWorldStats",
-                playerWorldStats.GetPlayerWorldStats);
-            ConsoleScreen.Processor.RegisterCommand("EnterEditMode",
-                spawnCommands.StartEditMode);
-            ConsoleScreen.Processor.RegisterCommand("ExitEditMode",
-                spawnCommands.ExitEditMode);
-            ConsoleScreen.Processor.RegisterCommand("ExportSpawnedObjectInfo",
-                spawnCommands.ExportSpawnedObjectsLocations);
+            ConsoleScreen.Processor.RegisterCommand("GetPlayerWorldStats", playerWorldStats.GetPlayerWorldStats);
+            ConsoleScreen.Processor.RegisterCommand("EnterEditMode", spawnCommands.StartEditMode);
+            ConsoleScreen.Processor.RegisterCommand("ExitEditMode", spawnCommands.ExitEditMode);
+            ConsoleScreen.Processor.RegisterCommand("ExportSpawnedObjectInfo", spawnCommands.ExportSpawnedObjectsLocations);
 
-                SpawnObjectCommands.SetSpawnCommands(spawnCommands);
+            SpawnObjectCommands.SetSpawnCommands(spawnCommands);
             ConsoleScreen.Processor.RegisterCommandGroup<SpawnObjectCommands>();
         }
     }
@@ -37,9 +38,7 @@ public class SpawnObjectCommands
         _spawnCommands = spawnCommands;
     }
 
-    [ConsoleCommand("SpawnObject",
-        "Spawn Static Object using bundle name, prefab name",
-        "<String>, <String>")]
+    [ConsoleCommand("SpawnObject", "Spawn Static Object using bundle name, prefab name", "<String>, <String>")]
     public static void SpawnObject(string bundleName, string prefabName)
     {
         _spawnCommands?.SpawnObject(bundleName, prefabName);

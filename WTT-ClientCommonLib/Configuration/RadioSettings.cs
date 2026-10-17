@@ -37,11 +37,7 @@ internal static class RadioSettings
             "Gym Radio",
             "Enabled",
             true,
-            new ConfigDescription(
-                "Enable/disable custom audio for the Gym radio",
-                null,
-                new ConfigurationManagerAttributes { Order = 8 }
-            )
+            new ConfigDescription("Enable/disable custom audio for the Gym radio", null, new ConfigurationManagerAttributes { Order = 8 })
         );
 
         GymRadioVolume = config.Bind(
@@ -70,11 +66,7 @@ internal static class RadioSettings
             "Gym Radio",
             "Play On First Entrance",
             true,
-            new ConfigDescription(
-                "Play custom audio when first entering hideout",
-                null,
-                new ConfigurationManagerAttributes { Order = 5 }
-            )
+            new ConfigDescription("Play custom audio when first entering hideout", null, new ConfigurationManagerAttributes { Order = 5 })
         );
 
         RestSpaceEnabled = config.Bind(
@@ -114,11 +106,7 @@ internal static class RadioSettings
             "Rest Space Radio",
             "Play On First Entrance",
             true,
-            new ConfigDescription(
-                "Play custom audio when first entering hideout",
-                null,
-                new ConfigurationManagerAttributes { Order = 1 }
-            )
+            new ConfigDescription("Play custom audio when first entering hideout", null, new ConfigurationManagerAttributes { Order = 1 })
         );
 
         FaceCardVolume.SettingChanged += ConfigSettingChanged;

@@ -29,11 +29,7 @@ public static class ZoneService
                 float.Parse(questZone.Position.Y),
                 float.Parse(questZone.Position.Z)
             );
-            var scale = new Vector3(
-                float.Parse(questZone.Scale.X),
-                float.Parse(questZone.Scale.Y),
-                float.Parse(questZone.Scale.Z)
-            );
+            var scale = new Vector3(float.Parse(questZone.Scale.X), float.Parse(questZone.Scale.Y), float.Parse(questZone.Scale.Z));
             var rotation = new Quaternion(
                 float.Parse(questZone.Rotation.X),
                 float.Parse(questZone.Rotation.Y),
@@ -45,11 +41,7 @@ public static class ZoneService
             cube.transform.rotation = rotation;
             cube.transform.localScale = scale;
 
-            var customZoneContainer = new CustomZoneContainer(
-                cube,
-                questZone.ZoneType,
-                questZone.FlareType
-            );
+            var customZoneContainer = new CustomZoneContainer(cube, questZone.ZoneType, questZone.FlareType);
             Zones.Add(customZoneContainer);
         });
         ZoneConfigManager.ExistingQuestZones.Clear();
@@ -62,9 +54,7 @@ public static class ZoneService
             return;
 
         var type = ZoneConfigManager.NewZoneType.Value;
-        var flare = string.IsNullOrEmpty(ZoneConfigManager.FlareZoneType.Value)
-            ? ""
-            : ZoneConfigManager.FlareZoneType.Value;
+        var flare = string.IsNullOrEmpty(ZoneConfigManager.FlareZoneType.Value) ? "" : ZoneConfigManager.FlareZoneType.Value;
         var obj = Helpers.Utils.CreateNewZoneCube(name);
         if (obj == null)
             return;
@@ -79,16 +69,14 @@ public static class ZoneService
             return;
 
         if (_currentSelectIndex >= 0)
-            Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color =
-                ZoneConfigManager.ColorZoneRed;
+            Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color = ZoneConfigManager.ColorZoneRed;
 
         if (_currentSelectIndex + 1 < Zones.Count)
             _currentSelectIndex++;
         else
             _currentSelectIndex = 0;
 
-        Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color =
-            ZoneConfigManager.ColorZoneGreen;
+        Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color = ZoneConfigManager.ColorZoneGreen;
         _selectedZoneName = Zones[_currentSelectIndex].GameObject.name;
         AdjustConfigValues();
     }
@@ -99,16 +87,14 @@ public static class ZoneService
             return;
 
         if (_currentSelectIndex >= 0)
-            Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color =
-                ZoneConfigManager.ColorZoneRed;
+            Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color = ZoneConfigManager.ColorZoneRed;
 
         if (_currentSelectIndex - 1 < 0)
             _currentSelectIndex = Zones.Count - 1;
         else
             _currentSelectIndex--;
 
-        Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color =
-            ZoneConfigManager.ColorZoneGreen;
+        Zones[_currentSelectIndex].GameObject.GetComponent<Renderer>().material.color = ZoneConfigManager.ColorZoneGreen;
         _selectedZoneName = Zones[_currentSelectIndex].GameObject.name;
         AdjustConfigValues();
     }
@@ -165,20 +151,12 @@ public static class ZoneService
         if (Zones.Count < 1)
             return;
 
-        var outputDir = Path.GetFullPath(
-            Path.Combine(Assembly.GetExecutingAssembly().Location, @"..\..\..\..\")
-        );
-        var path = Path.Combine(
-            outputDir,
-            $"WTT-ClientCommonLib-CustomQuestZone-Output-{DateTime.Now:yyyyMMddHHmmssffff}.json"
-        );
+        var outputDir = Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, @"..\..\..\..\"));
+        var path = Path.Combine(outputDir, $"WTT-ClientCommonLib-CustomQuestZone-Output-{DateTime.Now:yyyyMMddHHmmssffff}.json");
 
         using (var streamWriter = File.CreateText(path))
         {
-            var convertedZones = Helpers.Utils.ConvertZoneFormat(
-                Zones,
-                Helpers.Utils.GetLocationId()
-            );
+            var convertedZones = Helpers.Utils.ConvertZoneFormat(Zones, Helpers.Utils.GetLocationId());
             var serializer = new JsonSerializer { Formatting = Formatting.Indented };
             serializer.Serialize(streamWriter, convertedZones);
         }

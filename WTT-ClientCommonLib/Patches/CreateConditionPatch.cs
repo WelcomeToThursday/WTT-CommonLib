@@ -10,10 +10,7 @@ namespace WTTClientCommonLib.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(
-                typeof(ConditionProgressCheckersFactory),
-                nameof(ConditionProgressCheckersFactory.Create)
-            );
+            return AccessTools.Method(typeof(ConditionProgressCheckersFactory), nameof(ConditionProgressCheckersFactory.Create));
         }
 
         [PatchPrefix]

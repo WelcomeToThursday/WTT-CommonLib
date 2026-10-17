@@ -41,9 +41,7 @@ public class WTTCustomHeadService(
                 return;
             }
 
-            var headConfigDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, CustomHeadConfig>
-            >(finalDir);
+            var headConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomHeadConfig>>(finalDir);
 
             if (headConfigDicts.Count == 0)
             {
@@ -63,10 +61,7 @@ public class WTTCustomHeadService(
                         totalHeadsCreated++;
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Created {totalHeadsCreated} custom heads from {headConfigDicts.Count} files"
-            );
+            LogHelper.Debug(logger, $"Created {totalHeadsCreated} custom heads from {headConfigDicts.Count} files");
         }
         catch (Exception ex)
         {
@@ -94,10 +89,7 @@ public class WTTCustomHeadService(
         }
     }
 
-    private CustomizationItem GenerateHeadCustomizationItem(
-        string headId,
-        CustomHeadConfig customHeadConfig
-    )
+    private CustomizationItem GenerateHeadCustomizationItem(string headId, CustomHeadConfig customHeadConfig)
     {
         return new CustomizationItem
         {
@@ -155,11 +147,7 @@ public class WTTCustomHeadService(
         customizationStorage.Add(headStorage);
     }
 
-    private void AddHeadToTemplates(
-        string headId,
-        CustomizationItem customizationItem,
-        bool addHeadToPlayer
-    )
+    private void AddHeadToTemplates(string headId, CustomizationItem customizationItem, bool addHeadToPlayer)
     {
         templateTable.Customization[headId] = customizationItem;
 

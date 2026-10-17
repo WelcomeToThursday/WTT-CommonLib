@@ -18,11 +18,9 @@ public record ModMetadata : IModMetadata
     public string Author { get; init; } = ModConstants.Author;
     public List<string>? Contributors { get; init; }
 
-    public Version Version { get; init; } =
-        new(ModConstants.Version);
+    public Version Version { get; init; } = new(ModConstants.Version);
 
-    public Range SptVersion { get; init; } =
-        new(ModConstants.SptVersion);
+    public Range SptVersion { get; init; } = new(ModConstants.SptVersion);
 
     public List<string>? Incompatibilities { get; init; }
     public Dictionary<string, Range>? ModDependencies { get; init; }
@@ -61,10 +59,8 @@ public class WTTServerCommonLib(
     IEnumerable<IRuntimePatch> patches
 ) : IOnLoad
 {
-    public WTTCustomItemServiceExtended CustomItemServiceExtended { get; } =
-        customItemServiceExtended;
-    public WTTCustomAssortSchemeService CustomAssortSchemeService { get; } =
-        customAssortSchemeService;
+    public WTTCustomItemServiceExtended CustomItemServiceExtended { get; } = customItemServiceExtended;
+    public WTTCustomAssortSchemeService CustomAssortSchemeService { get; } = customAssortSchemeService;
     public WTTCustomLootspawnService CustomLootspawnService { get; } = customLootspawnService;
     public WTTCustomQuestService CustomQuestService { get; } = customQuestService;
     public WTTCustomLocaleService CustomLocaleService { get; } = customLocaleService;
@@ -77,18 +73,15 @@ public class WTTServerCommonLib(
     public WTTCustomRigLayoutService CustomRigLayoutService { get; } = customRigLayoutService;
     public WTTCustomSlotImageService CustomSlotImageService { get; } = customSlotImageService;
     public WTTCustomStaticSpawnService CustomStaticSpawnService { get; } = customStaticSpawnService;
-    public WTTCustomWeaponPresetService CustomWeaponPresetService { get; } =
-        customWeaponPresetService;
+    public WTTCustomWeaponPresetService CustomWeaponPresetService { get; } = customWeaponPresetService;
     public WTTCustomBuffService CustomBuffService { get; } = customBuffService;
     public WTTCustomProfileService CustomProfileService { get; } = customProfileService;
     public WTTCustomAudioService CustomAudioService { get; } = customAudioService;
     public WTTCustomAchievementService CustomAchievementService { get; } = customAchievementService;
-    public WTTCustomCustomizationService CustomCustomizationService { get; } =
-        customCustomizationService;
+    public WTTCustomCustomizationService CustomCustomizationService { get; } = customCustomizationService;
     public WTTCustomDialogueService CustomDialogueService { get; } = customDialogueService;
     public WTTCustomItemParentService CustomItemParentService { get; } = customItemParentService;
-    public WTTHideoutControllerExtended HideoutControllerExtended { get; } =
-        hideoutControllerExtended;
+    public WTTHideoutControllerExtended HideoutControllerExtended { get; } = hideoutControllerExtended;
 
     public WTTCustomQuestItemService CustomQuestItemService { get; } = customQuestItemService;
 
@@ -105,8 +98,7 @@ public class WTTServerCommonLib(
 }
 
 [Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PostLoad)]
-public class WTTServerCommonLibPostSptLoad(WTTCustomItemServiceExtended customItemServiceExtended)
-    : IOnLoad
+public class WTTServerCommonLibPostSptLoad(WTTCustomItemServiceExtended customItemServiceExtended) : IOnLoad
 {
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {

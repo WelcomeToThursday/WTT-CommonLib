@@ -14,6 +14,7 @@ public class SlotHelper
 
         filter.Filter = ids;
     }
+
     public void ModifySlotFilters(TemplateItem item, int slotIndex, int filterIndex, List<MongoId> ids, bool isCartridge = false)
     {
         var slot = GetSlotAtIndex(item, slotIndex, isCartridge);
@@ -21,6 +22,7 @@ public class SlotHelper
 
         filter.Filter!.UnionWith(ids);
     }
+
     private Slot GetSlotAtIndex(TemplateItem item, int index, bool isCartridge = false)
     {
         var slots = isCartridge ? item.Properties?.Cartridges?.ToArray() : item.Properties?.Slots?.ToArray();
@@ -32,7 +34,7 @@ public class SlotHelper
 
         throw new IndexOutOfRangeException($"Index on item slot property `{item.Name}` is out of range");
     }
-    
+
     /// <summary>
     /// Ensures a slot with the given name exists on the item.
     /// If the slot doesn't exist, it is created with the provided (optional) parameters
@@ -50,7 +52,8 @@ public class SlotHelper
         string prototype,
         bool required = false,
         bool mergeSlotWithChildren = false,
-        int shift = 0)
+        int shift = 0
+    )
     {
         item.Properties ??= new TemplateItemProperties();
 
@@ -72,20 +75,16 @@ public class SlotHelper
             {
                 Filters = new List<SlotFilter>
                 {
-                    new()
-                    {
-                        Filter = new HashSet<MongoId>(),
-                        Shift = shift
-                    }
-                }
-            }
+                    new() { Filter = new HashSet<MongoId>(), Shift = shift },
+                },
+            },
         };
 
         slots.Add(slot);
         item.Properties.Slots = slots;
         return slot;
     }
-    
+
     /// <summary>
     /// Adds a list of strings to a specified slot
     /// </summary>
@@ -100,11 +99,7 @@ public class SlotHelper
 
         if (filterContainer == null)
         {
-            filterContainer = new SlotFilter
-            {
-                Filter = new HashSet<MongoId>(),
-                Shift = 0
-            };
+            filterContainer = new SlotFilter { Filter = new HashSet<MongoId>(), Shift = 0 };
             filters.Add(filterContainer);
             slot.Properties.Filters = filters;
         }
@@ -112,7 +107,7 @@ public class SlotHelper
         filterContainer.Filter ??= new HashSet<MongoId>();
         filterContainer.Filter.UnionWith(ids.Select(id => (MongoId)id));
     }
-    
+
     /// <summary>
     /// Adds item template ids to a slot's filter.
     /// The slot must already exist (for example created via <see cref="EnsureSlot"/>)
@@ -121,17 +116,15 @@ public class SlotHelper
     /// <param name="slotName">Name of the slot</param>
     /// <param name="ids">List of ids to add to the slot filter</param>
     /// <exception cref="InvalidOperationException">Thrown if a slot with the specified name does not exist (use <see cref="EnsureSlot"/> to create a slot if needed)</exception>
-    public void AddIdsToNamedSlot(
-        TemplateItem item,
-        string slotName,
-        params string[] ids)
+    public void AddIdsToNamedSlot(TemplateItem item, string slotName, params string[] ids)
     {
-        var slot = item.Properties?.Slots?.FirstOrDefault(s => s.Name == slotName)
-                   ?? throw new InvalidOperationException($"Slot '{slotName}' not found on '{item.Name}'");
+        var slot =
+            item.Properties?.Slots?.FirstOrDefault(s => s.Name == slotName)
+            ?? throw new InvalidOperationException($"Slot '{slotName}' not found on '{item.Name}'");
 
         AddIdsToSlot(slot, ids);
     }
-    
+
     private SlotFilter GetSlotFilterAtIndex(Slot slot, int index)
     {
         var slotFilter = slot.Properties?.Filters?.ToArray() ?? [];

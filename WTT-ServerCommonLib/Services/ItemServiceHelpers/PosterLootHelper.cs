@@ -31,10 +31,7 @@ public class PosterLootHelper(ISptLogger<PosterLootHelper> logger, LocationTable
                         continue;
 
                     var templateId = template.Id;
-                    if (
-                        string.IsNullOrEmpty(templateId)
-                        || !templateId.StartsWith("flyer", StringComparison.OrdinalIgnoreCase)
-                    )
+                    if (string.IsNullOrEmpty(templateId) || !templateId.StartsWith("flyer", StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     var spawnPointItems = new List<SptLootItem>(template.Items ?? []);
@@ -42,9 +39,7 @@ public class PosterLootHelper(ISptLogger<PosterLootHelper> logger, LocationTable
                     if (spawnPointItems.Any(it => it.Template == itemId))
                         continue;
 
-                    var itemDistList = new List<LooseLootItemDistribution>(
-                        spawnpoint.ItemDistribution ?? []
-                    );
+                    var itemDistList = new List<LooseLootItemDistribution>(spawnpoint.ItemDistribution ?? []);
                     var newId = new MongoId();
 
                     spawnPointItems.Add(
@@ -66,10 +61,7 @@ public class PosterLootHelper(ISptLogger<PosterLootHelper> logger, LocationTable
                     );
 
                     if (logger.IsLogEnabled(LogLevel.Debug))
-                        LogHelper.Debug(
-                            logger,
-                            $"[PosterLoot] {locationId} + {spawnpoint.LocationId ?? "?"} id={templateId} key={newId}"
-                        );
+                        LogHelper.Debug(logger, $"[PosterLoot] {locationId} + {spawnpoint.LocationId ?? "?"} id={templateId} key={newId}");
 
                     template.Items = spawnPointItems;
                     spawnpoint.ItemDistribution = itemDistList;

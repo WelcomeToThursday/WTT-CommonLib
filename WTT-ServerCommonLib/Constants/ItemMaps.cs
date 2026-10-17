@@ -82,7 +82,7 @@ public static class ItemMaps
         { "THERMALVISION", "5d21f59b6dbe99052b54ef83" },
         { "TOOL", "57864bb7245977548b3b66c2" },
         { "UBGL", "55818b014bdc2ddc698b456b" },
-        { "VIS_OBSERV_DEVICE", "5448e5724bdc2ddf718b4568" }
+        { "VIS_OBSERV_DEVICE", "5448e5724bdc2ddf718b4568" },
     };
 
     public static readonly Dictionary<string, MongoId> ItemHandbookCategoryMap = new()
@@ -165,7 +165,7 @@ public static class ItemMaps
         { "WEAPONS_SHOTGUNS", "5b5f794b86f77409407a7f92" },
         { "WEAPONS_SMG", "5b5f796a86f774093f2ed3c0" },
         { "WEAPONS_SPECIAL", "5b5f79eb86f77447ed5636b7" },
-        { "WEAPONS_THROW", "5b5f7a2386f774093f2ed3c4" }
+        { "WEAPONS_THROW", "5b5f7a2386f774093f2ed3c4" },
     };
 
     public static readonly Dictionary<string, MongoId> DefaultCaliberAmmo = new()
@@ -193,7 +193,7 @@ public static class ItemMaps
         { "Caliber12g", "5c0d591486f7744c505b416f" },
         { "Caliber20g", "5d6e6a5fa4b93614ec501745" },
         { "Caliber23x75", "5f647f31b6238e5dd066e196" },
-        { "Caliber40x46", "5ede474b0c226a66f5402622" }
+        { "Caliber40x46", "5ede474b0c226a66f5402622" },
     };
 
     public static readonly Dictionary<string, string> AllBotTypes = new()
@@ -257,7 +257,7 @@ public static class ItemMaps
         { "PEACEFULZRYACHIYEVENT", "peacefulzryachiyevent" },
         { "RAVANGEZRYACHIYEVENT", "ravengezryachiyevent" },
         { "PEACEMAKER", "peacemaker" },
-        { "SKIER", "skier" }
+        { "SKIER", "skier" },
     };
 
     public static readonly Dictionary<string, MongoId> InventorySlots = new()
@@ -276,7 +276,7 @@ public static class ItemMaps
         { "Earpiece", "5665b7164bdc2d144c8b4570" },
         { "Dogtag", "59f0be1e86f77453be490939" },
         { "Eyewear", "5a0ad9313f1241000e072755" },
-        { "ArmBand", "5b3f583786f77411d552fb2b" }
+        { "ArmBand", "5b3f583786f77411d552fb2b" },
     };
 
     public static readonly Dictionary<string, MongoId> Stashes = new()
@@ -284,6 +284,6 @@ public static class ItemMaps
         { "LEVEL1", "566abbc34bdc2d92178b4576" },
         { "LEVEL2", "5811ce572459770cba1a34ea" },
         { "LEVEL3", "5811ce662459770f6f490f32" },
-        { "LEVEL4", "5811ce772459770e9e5f9532" }
+        { "LEVEL4", "5811ce772459770e9e5f9532" },
     };
 }

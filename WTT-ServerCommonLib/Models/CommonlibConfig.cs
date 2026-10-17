@@ -6,6 +6,5 @@ namespace WTTServerCommonLib.Models
     {
         [JsonPropertyName("itemValidationLoggingEnabled")]
         public bool ItemValidationLoggingEnabled { get; set; }
-
     }
 }

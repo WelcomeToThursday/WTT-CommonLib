@@ -8,10 +8,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services.ItemServiceHelpers;
 
 [Injectable]
-public class HideoutStatuetteHelper(
-    ISptLogger<HideoutStatuetteHelper> logger,
-    TemplateTable templateTable
-)
+public class HideoutStatuetteHelper(ISptLogger<HideoutStatuetteHelper> logger, TemplateTable templateTable)
 {
     private const string CustomizationItem = "673c7b00cbf4b984b5099181";
 
@@ -42,21 +39,14 @@ public class HideoutStatuetteHelper(
         var items = templateTable.Items;
         foreach (var statuetteSlotId in StatuetteSlotIds)
         {
-            if (
-                !items.TryGetValue(CustomizationItem, out var statuetteParent)
-                || statuetteParent.Properties?.Slots == null
-            )
+            if (!items.TryGetValue(CustomizationItem, out var statuetteParent) || statuetteParent.Properties?.Slots == null)
                 continue;
 
             AddItemToStatuetteSlots(itemId, statuetteParent, statuetteSlotId);
         }
     }
 
-    private void AddItemToStatuetteSlots(
-        string itemId,
-        TemplateItem statuetteItem,
-        string? statuetteSlotId
-    )
+    private void AddItemToStatuetteSlots(string itemId, TemplateItem statuetteItem, string? statuetteSlotId)
     {
         foreach (var slot in statuetteItem.Properties?.Slots!)
         {

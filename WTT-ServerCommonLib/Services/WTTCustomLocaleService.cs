@@ -43,9 +43,7 @@ public class WTTCustomLocaleService(
             return;
         }
 
-        var fallback = customLocales.TryGetValue("en", out var locale)
-            ? locale
-            : customLocales.Values.FirstOrDefault();
+        var fallback = customLocales.TryGetValue("en", out var locale) ? locale : customLocales.Values.FirstOrDefault();
 
         if (fallback == null)
         {
@@ -67,9 +65,6 @@ public class WTTCustomLocaleService(
                 return localeData;
             });
 
-        LogHelper.Debug(
-            logger,
-            $"WTTCustomLocaleService: Registered transformers for {customLocales.Count} locale files"
-        );
+        LogHelper.Debug(logger, $"WTTCustomLocaleService: Registered transformers for {customLocales.Count} locale files");
     }
 }

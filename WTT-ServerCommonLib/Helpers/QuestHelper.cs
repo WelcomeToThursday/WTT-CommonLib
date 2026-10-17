@@ -8,12 +8,7 @@ namespace WTTServerCommonLib.Helpers;
 [Injectable]
 public class QuestHelper(ISptLogger<QuestHelper> logger)
 {
-    public void AddDogtagsToQuests(
-        Dictionary<MongoId, Quest> quests,
-        string questId,
-        List<MongoId> dogtagIds,
-        string faction
-    )
+    public void AddDogtagsToQuests(Dictionary<MongoId, Quest> quests, string questId, List<MongoId> dogtagIds, string faction)
     {
         if (!quests.TryGetValue(questId, out var quest))
         {
@@ -66,11 +61,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         }
     }
 
-    public void AddWeaponsToKillCondition(
-        Dictionary<MongoId, Quest> quests,
-        string questId,
-        string[] weaponIds
-    )
+    public void AddWeaponsToKillCondition(Dictionary<MongoId, Quest> quests, string questId, string[] weaponIds)
     {
         if (!quests.TryGetValue(questId, out var quest))
         {
@@ -115,9 +106,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
                             }
                         }
 
-                        logger.Debug(
-                            $"  Weapon count before: {beforeCount}, after: {counterCond.Weapon.Count}"
-                        );
+                        logger.Debug($"  Weapon count before: {beforeCount}, after: {counterCond.Weapon.Count}");
                     }
                 }
             }
@@ -129,22 +118,13 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         }
         else
         {
-            logger.Warning(
-                $"No modifications made to quest {questId} - condition structure might differ"
-            );
+            logger.Warning($"No modifications made to quest {questId} - condition structure might differ");
         }
     }
 
-    public void AddArmorToEquipmentExclusive(
-        Dictionary<MongoId, Quest> quests,
-        string questId,
-        string[] armorIds
-    )
+    public void AddArmorToEquipmentExclusive(Dictionary<MongoId, Quest> quests, string questId, string[] armorIds)
     {
-        if (
-            !quests.TryGetValue(questId, out var quest)
-            || quest.Conditions.AvailableForFinish == null
-        )
+        if (!quests.TryGetValue(questId, out var quest) || quest.Conditions.AvailableForFinish == null)
             return;
 
         foreach (var condition in quest.Conditions.AvailableForFinish)
@@ -165,11 +145,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         }
     }
 
-    public void AddArmorToEquipmentInclusive(
-        Dictionary<MongoId, Quest> quests,
-        string questId,
-        string[] armorIds
-    )
+    public void AddArmorToEquipmentInclusive(Dictionary<MongoId, Quest> quests, string questId, string[] armorIds)
     {
         if (
             armorIds == null
@@ -183,22 +159,14 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
 
         foreach (var condition in quest.Conditions.AvailableForFinish)
         {
-            if (condition is not
-                {
-                    ConditionType: "CounterCreator",
-                    Counter.Conditions: not null
-                })
+            if (condition is not { ConditionType: "CounterCreator", Counter.Conditions: not null })
             {
                 continue;
             }
 
             foreach (var counterCondition in condition.Counter.Conditions)
             {
-                if (counterCondition is not
-                    {
-                        ConditionType: "Equipment",
-                        EquipmentInclusive: not null
-                    })
+                if (counterCondition is not { ConditionType: "Equipment", EquipmentInclusive: not null })
                 {
                     continue;
                 }
@@ -212,24 +180,14 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         }
     }
 
-    public void AddWeaponsToFindOrHandoverCondition(
-        Dictionary<MongoId, Quest> quests,
-        string questId,
-        string[] weaponIds
-    )
+    public void AddWeaponsToFindOrHandoverCondition(Dictionary<MongoId, Quest> quests, string questId, string[] weaponIds)
     {
-        if (
-            !quests.TryGetValue(questId, out var quest)
-            || quest.Conditions.AvailableForFinish == null
-        )
+        if (!quests.TryGetValue(questId, out var quest) || quest.Conditions.AvailableForFinish == null)
             return;
 
         foreach (var condition in quest.Conditions.AvailableForFinish)
         {
-            if (
-                (condition.ConditionType == "FindItem" || condition.ConditionType == "HandoverItem")
-                && condition.Target != null
-            )
+            if ((condition.ConditionType == "FindItem" || condition.ConditionType == "HandoverItem") && condition.Target != null)
             {
                 foreach (var weaponId in weaponIds)
                 {
@@ -250,10 +208,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         bool isInclusive = true
     )
     {
-        if (
-            !quests.TryGetValue(questId, out var quest)
-            || quest.Conditions.AvailableForFinish == null
-        )
+        if (!quests.TryGetValue(questId, out var quest) || quest.Conditions.AvailableForFinish == null)
         {
             logger.Warning($"Quest {questId} not found or has no AvailableForFinish conditions");
             return;
@@ -287,9 +242,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
                                 // Add as a new single-item array
                                 modList.Add([modId]);
                                 modified = true;
-                                logger.Debug(
-                                    $"Added mod {modId} to WeaponMods{modType} in quest {questId}"
-                                );
+                                logger.Debug($"Added mod {modId} to WeaponMods{modType} in quest {questId}");
                             }
                         }
                     }
@@ -303,9 +256,7 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
         }
         else
         {
-            logger.Warning(
-                $"Existing mod {existingModId} not found in WeaponMods{modType} for quest {questId}"
-            );
+            logger.Warning($"Existing mod {existingModId} not found in WeaponMods{modType} for quest {questId}");
         }
     }
 }

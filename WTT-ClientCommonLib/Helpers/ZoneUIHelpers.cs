@@ -9,11 +9,16 @@ namespace WTTClientCommonLib.Helpers;
 
 public static class ZoneUiHelpers
 {
-    public static readonly AcceptableValueList<string> AcceptableTypes =
-        new("placeitem", "visit", "flarezone", "botkillzone", "salvage");
+    public static readonly AcceptableValueList<string> AcceptableTypes = new("placeitem", "visit", "flarezone", "botkillzone", "salvage");
 
-    public static readonly AcceptableValueList<string> AcceptableFlareTypes =
-        new("", "Light", "Airdrop", "ExitActivate", "Quest", "AIFollowEvent");
+    public static readonly AcceptableValueList<string> AcceptableFlareTypes = new(
+        "",
+        "Light",
+        "Airdrop",
+        "ExitActivate",
+        "Quest",
+        "AIFollowEvent"
+    );
 
     public static List<CustomQuestZone> ExistingQuestZones = new();
 

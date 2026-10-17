@@ -3,7 +3,6 @@ using EFT.Quests;
 
 namespace WTTClientCommonLib.Models;
 
-
 public class CustomQuestZone
 {
     public string ZoneId { get; set; }
@@ -19,7 +18,7 @@ public class CustomQuestZone
     public List<ZoneTransforms>? GroupPosition { get; set; }
 
     public SalvageConfig? Salvage { get; set; }
-    
+
     public ConditionTimeComparer? TimeRestriction { get; set; }
 }
 

@@ -58,11 +58,7 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
         return types;
     }
 
-    private void AddItemToHallSlots(
-        string itemId,
-        TemplateItem hallItem,
-        HashSet<string?> filterTypes
-    )
+    private void AddItemToHallSlots(string itemId, TemplateItem hallItem, HashSet<string?> filterTypes)
     {
         foreach (var slot in hallItem.Properties?.Slots!)
         {
@@ -92,10 +88,7 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
             filter.Filter ??= new HashSet<MongoId>();
 
             if (filter.Filter.Add(itemId))
-                LogHelper.Debug(
-                    logger,
-                    $"[HallOfFame] Added {itemId} to slot '{slot.Name}' in {hallName}"
-                );
+                LogHelper.Debug(logger, $"[HallOfFame] Added {itemId} to slot '{slot.Name}' in {hallName}");
             else if (logger.IsLogEnabled(LogLevel.Debug))
                 LogHelper.Debug(logger, $"[HallOfFame] {itemId} already in slot '{slot.Name}'");
         }

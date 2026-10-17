@@ -56,83 +56,61 @@ public class WTTCustomCustomizationService(
             // Load customization items
             var customizationDir = Path.Combine(
                 assemblyLocation,
-                customizationRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "Customization")
+                customizationRelativePath ?? Path.Combine("db", "CustomCustomization", "Customization")
             );
 
             if (Directory.Exists(customizationDir))
             {
                 var customizationCreated = await LoadAndRegisterCustomizations(customizationDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Created {customizationCreated} custom customization items"
-                );
+                LogHelper.Debug(logger, $"Created {customizationCreated} custom customization items");
             }
 
             // Load customization storage entries
             var storageDir = Path.Combine(
                 assemblyLocation,
-                storageRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "CustomizationStorage")
+                storageRelativePath ?? Path.Combine("db", "CustomCustomization", "CustomizationStorage")
             );
 
             if (Directory.Exists(storageDir))
             {
                 var storageCreated = await LoadAndRegisterCustomizationStorage(storageDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Created {storageCreated} custom customization storage entries"
-                );
+                LogHelper.Debug(logger, $"Created {storageCreated} custom customization storage entries");
             }
 
             // Load hideout customization configs
             var hideoutCustomizationDir = Path.Combine(
                 assemblyLocation,
-                hideoutCustomizationRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "HideoutCustomizationGlobals")
+                hideoutCustomizationRelativePath ?? Path.Combine("db", "CustomCustomization", "HideoutCustomizationGlobals")
             );
 
             if (Directory.Exists(hideoutCustomizationDir))
             {
-                var hideoutCustomizationCreated = await LoadAndRegisterHideoutCustomizations(
-                    hideoutCustomizationDir
-                );
-                LogHelper.Debug(
-                    logger,
-                    $"Created {hideoutCustomizationCreated} custom hideout customization configs"
-                );
+                var hideoutCustomizationCreated = await LoadAndRegisterHideoutCustomizations(hideoutCustomizationDir);
+                LogHelper.Debug(logger, $"Created {hideoutCustomizationCreated} custom hideout customization configs");
             }
 
             // Load hideout customization icons
             var hideoutIconsDir = Path.Combine(
                 assemblyLocation,
-                hideoutIconsRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "HideoutIcons")
+                hideoutIconsRelativePath ?? Path.Combine("db", "CustomCustomization", "HideoutIcons")
             );
 
             if (Directory.Exists(hideoutIconsDir))
             {
                 var iconsRegistered = LoadAndRegisterHideoutIcons(hideoutIconsDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Registered {iconsRegistered} hideout customization icons"
-                );
+                LogHelper.Debug(logger, $"Registered {iconsRegistered} hideout customization icons");
             }
 
             // Load shooting range mark textures
             var markTexturesDir = Path.Combine(
                 assemblyLocation,
-                markTexturesRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "ShootingRangeMarkTextures")
+                markTexturesRelativePath ?? Path.Combine("db", "CustomCustomization", "ShootingRangeMarkTextures")
             );
 
             if (Directory.Exists(markTexturesDir))
             {
                 var texturesRegistered = LoadAndRegisterMarkTextures(markTexturesDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Registered {texturesRegistered} shooting range mark textures"
-                );
+                LogHelper.Debug(logger, $"Registered {texturesRegistered} shooting range mark textures");
             }
         }
         catch (Exception ex)
@@ -143,9 +121,7 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterCustomizations(string customizationDir)
     {
-        var customizationConfigDicts = await configHelper.LoadAllJsonFiles<
-            Dictionary<string, CustomizationItem>
-        >(customizationDir);
+        var customizationConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomizationItem>>(customizationDir);
         var totalCreated = 0;
 
         foreach (var configDict in customizationConfigDicts)
@@ -163,9 +139,7 @@ public class WTTCustomCustomizationService(
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register customization {customizationId}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register customization {customizationId}: {ex.Message}");
                 }
             }
         }
@@ -175,9 +149,7 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterCustomizationStorage(string storageDir)
     {
-        var storageConfigDicts = await configHelper.LoadAllJsonFiles<List<CustomisationStorage>>(
-            storageDir
-        );
+        var storageConfigDicts = await configHelper.LoadAllJsonFiles<List<CustomisationStorage>>(storageDir);
         var totalCreated = 0;
 
         foreach (var configList in storageConfigDicts)
@@ -198,16 +170,11 @@ public class WTTCustomCustomizationService(
 
                     templateTable.CustomisationStorage.Add(customizationStorage);
                     totalCreated++;
-                    LogHelper.Debug(
-                        logger,
-                        $"Registered customization storage: {storageEntry.Id} ({storageEntry.Type})"
-                    );
+                    LogHelper.Debug(logger, $"Registered customization storage: {storageEntry.Id} ({storageEntry.Type})");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register customization storage {storageEntry.Id}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register customization storage {storageEntry.Id}: {ex.Message}");
                 }
             }
         }
@@ -217,9 +184,7 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterHideoutCustomizations(string hideoutCustomizationDir)
     {
-        var hideoutConfigDicts = await configHelper.LoadAllJsonFiles<
-            List<HideoutCustomisationGlobal>
-        >(hideoutCustomizationDir);
+        var hideoutConfigDicts = await configHelper.LoadAllJsonFiles<List<HideoutCustomisationGlobal>>(hideoutCustomizationDir);
         var totalCreated = 0;
 
         foreach (var configDict in hideoutConfigDicts)
@@ -240,9 +205,7 @@ public class WTTCustomCustomizationService(
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register hideout customization {hideoutConfig.Id}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register hideout customization {hideoutConfig.Id}: {ex.Message}");
                 }
             }
         }

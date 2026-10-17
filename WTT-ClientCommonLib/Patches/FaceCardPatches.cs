@@ -62,9 +62,7 @@ internal class FaceCardViewTogglePatch : ModulePatch
             return;
         }
 
-        LogHelper.LogDebug(
-            $"FaceCard toggle: {__instance.gameObject.name}, Selected: {isSelected}"
-        );
+        LogHelper.LogDebug($"FaceCard toggle: {__instance.gameObject.name}, Selected: {isSelected}");
 
         if (isSelected)
         {

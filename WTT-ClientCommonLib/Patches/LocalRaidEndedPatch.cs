@@ -16,13 +16,7 @@ namespace WTTClientCommonLib.Patches
             return AccessTools.Method(
                 typeof(EftClientBackendSession),
                 "LocalRaidEnded",
-                new[]
-                {
-                    typeof(LocalRaidSettings),
-                    typeof(SessionResult),
-                    typeof(FlatItem[]),
-                    typeof(Dictionary<string, FlatItem[]>),
-                }
+                new[] { typeof(LocalRaidSettings), typeof(SessionResult), typeof(FlatItem[]), typeof(Dictionary<string, FlatItem[]>) }
             );
         }
 

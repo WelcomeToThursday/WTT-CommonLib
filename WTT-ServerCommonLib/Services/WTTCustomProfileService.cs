@@ -36,10 +36,7 @@ public class WTTCustomProfileService(
             return;
         }
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
 
         if (jsonFiles.Length == 0)
         {

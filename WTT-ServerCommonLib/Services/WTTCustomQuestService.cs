@@ -111,9 +111,7 @@ public class WTTCustomQuestService(
 
         try
         {
-            var questDicts = await configHelper.LoadAllJsonFiles<Dictionary<MongoId, Quest>>(
-                questsDir
-            );
+            var questDicts = await configHelper.LoadAllJsonFiles<Dictionary<MongoId, Quest>>(questsDir);
 
             foreach (var questData in questDicts)
                 if (questData.Count != 0)
@@ -130,9 +128,7 @@ public class WTTCustomQuestService(
         return result;
     }
 
-    private async Task<List<Dictionary<string, Dictionary<MongoId, MongoId>>>> LoadAssortFiles(
-        string assortDir
-    )
+    private async Task<List<Dictionary<string, Dictionary<MongoId, MongoId>>>> LoadAssortFiles(string assortDir)
     {
         var result = new List<Dictionary<string, Dictionary<MongoId, MongoId>>>();
         if (!Directory.Exists(assortDir))
@@ -140,9 +136,7 @@ public class WTTCustomQuestService(
 
         try
         {
-            var assortDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, Dictionary<MongoId, MongoId>>
-            >(assortDir);
+            var assortDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, Dictionary<MongoId, MongoId>>>(assortDir);
 
             foreach (var assortData in assortDicts)
                 if (assortData.Count != 0)
@@ -228,10 +222,7 @@ public class WTTCustomQuestService(
         return now >= start && now <= end;
     }
 
-    private void ImportQuestAssortData(
-        List<Dictionary<string, Dictionary<MongoId, MongoId>>> assortFiles,
-        string traderId
-    )
+    private void ImportQuestAssortData(List<Dictionary<string, Dictionary<MongoId, MongoId>>> assortFiles, string traderId)
     {
         if (assortFiles.Count == 0)
         {
@@ -260,10 +251,7 @@ public class WTTCustomQuestService(
             {
                 value[questId] = assortId;
                 assortCount++;
-                LogHelper.Debug(
-                    logger,
-                    $"{traderId}: Added assort for quest {questId} in stage {stage}"
-                );
+                LogHelper.Debug(logger, $"{traderId}: Added assort for quest {questId} in stage {stage}");
             }
         }
 
@@ -287,31 +275,21 @@ public class WTTCustomQuestService(
         }
         catch (Exception ex)
         {
-            logger.Error(
-                $"{traderId}: Error loading locale files from {localesPath}: {ex.Message}"
-            );
+            logger.Error($"{traderId}: Error loading locale files from {localesPath}: {ex.Message}");
             return;
         }
 
         if (locales.Count == 0)
         {
-            LogHelper.Debug(
-                logger,
-                $"{traderId}: No locale files found or loaded from {localesPath}"
-            );
+            LogHelper.Debug(logger, $"{traderId}: No locale files found or loaded from {localesPath}");
             return;
         }
 
-        var fallback = locales.TryGetValue("en", out var englishLocales)
-            ? englishLocales
-            : locales.Values.FirstOrDefault();
+        var fallback = locales.TryGetValue("en", out var englishLocales) ? englishLocales : locales.Values.FirstOrDefault();
 
         if (fallback == null)
         {
-            LogHelper.Debug(
-                logger,
-                $"{traderId}: Locale directory loaded but no usable locale data was found"
-            );
+            LogHelper.Debug(logger, $"{traderId}: Locale directory loaded but no usable locale data was found");
             return;
         }
 
@@ -331,10 +309,7 @@ public class WTTCustomQuestService(
             });
         }
 
-        LogHelper.Debug(
-            logger,
-            $"{traderId}: Registered transformers for {locales.Count} locale files"
-        );
+        LogHelper.Debug(logger, $"{traderId}: Registered transformers for {locales.Count} locale files");
     }
 
     private void ImportImageData(List<string> imageFiles, string traderId)
@@ -363,9 +338,7 @@ public class WTTCustomQuestService(
     private async Task ImportQuestTimeConfig(string basePath)
     {
         string[] filenames = ["QuestTimeData.json", "QuestTimeData.jsonc"];
-        var configPath = filenames
-            .Select(name => Path.Combine(basePath, name))
-            .FirstOrDefault(File.Exists);
+        var configPath = filenames.Select(name => Path.Combine(basePath, name)).FirstOrDefault(File.Exists);
 
         if (configPath == null)
         {
@@ -375,15 +348,9 @@ public class WTTCustomQuestService(
 
         try
         {
-            _timeWindows =
-                await jsonUtil.DeserializeFromFileAsync<Dictionary<string, CustomQuestTimeWindow>>(
-                    configPath
-                ) ?? [];
+            _timeWindows = await jsonUtil.DeserializeFromFileAsync<Dictionary<string, CustomQuestTimeWindow>>(configPath) ?? [];
 
-            LogHelper.Debug(
-                logger,
-                $"Loaded QuestTimeData from {Path.GetFileName(configPath)} for {_timeWindows.Count} quests"
-            );
+            LogHelper.Debug(logger, $"Loaded QuestTimeData from {Path.GetFileName(configPath)} for {_timeWindows.Count} quests");
         }
         catch (Exception ex)
         {
@@ -394,16 +361,11 @@ public class WTTCustomQuestService(
     private async Task ImportQuestSideConfig(string basePath)
     {
         string[] filenames = ["QuestSideData.json", "QuestSideData.jsonc"];
-        var configPath = filenames
-            .Select(name => Path.Combine(basePath, name))
-            .FirstOrDefault(File.Exists);
+        var configPath = filenames.Select(name => Path.Combine(basePath, name)).FirstOrDefault(File.Exists);
 
         if (configPath == null)
         {
-            LogHelper.Debug(
-                logger,
-                "No QuestSideData.json/.jsonc found, skipping side-exclusive setup"
-            );
+            LogHelper.Debug(logger, "No QuestSideData.json/.jsonc found, skipping side-exclusive setup");
             return;
         }
 
@@ -439,10 +401,7 @@ public class WTTCustomQuestService(
                         logger.Warning($"Invalid BEAR quest ID in QuestSideData.json: {questId}");
                     }
 
-            LogHelper.Debug(
-                logger,
-                $"Loaded QuestSideData.json: {usecAdded} USEC quests, {bearAdded} BEAR quests"
-            );
+            LogHelper.Debug(logger, $"Loaded QuestSideData.json: {usecAdded} USEC quests, {bearAdded} BEAR quests");
         }
         catch (Exception ex)
         {

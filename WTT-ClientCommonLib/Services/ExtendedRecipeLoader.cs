@@ -29,9 +29,7 @@ public class ExtendedRecipeLoader
     {
         try
         {
-            var recipeData = Helpers.Utils.Get<Dictionary<string, ExtendedProductionScheme>>(
-                "/wttcommonlib/recipes/extended/get"
-            );
+            var recipeData = Helpers.Utils.Get<Dictionary<string, ExtendedProductionScheme>>("/wttcommonlib/recipes/extended/get");
 
             if (recipeData != null)
             {

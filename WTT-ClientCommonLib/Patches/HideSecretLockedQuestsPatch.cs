@@ -23,8 +23,7 @@ namespace WTTClientCommonLib.Patches
 
             var quest = questView.Quest;
 
-            bool isSecretAndLocked =
-                quest.Template.ServerOnly && quest.QuestStatus == EQuestStatus.Locked;
+            bool isSecretAndLocked = quest.Template.ServerOnly && quest.QuestStatus == EQuestStatus.Locked;
 
             if (isSecretAndLocked)
             {

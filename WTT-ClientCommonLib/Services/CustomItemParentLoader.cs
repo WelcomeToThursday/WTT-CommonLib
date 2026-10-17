@@ -13,8 +13,7 @@ public class CustomItemParentLoader
 {
     public static CustomItemParentLoader Instance;
 
-    private Dictionary<string, ItemTemplate> _customParents =
-        new Dictionary<string, ItemTemplate>();
+    private Dictionary<string, ItemTemplate> _customParents = new Dictionary<string, ItemTemplate>();
     private bool _parentsRegistered = false;
 
     public CustomItemParentLoader()
@@ -29,9 +28,7 @@ public class CustomItemParentLoader
     {
         try
         {
-            var parentData = Helpers.Utils.Get<Dictionary<string, ItemTemplate>>(
-                "/wttcommonlib/parents/custom/get"
-            );
+            var parentData = Helpers.Utils.Get<Dictionary<string, ItemTemplate>>("/wttcommonlib/parents/custom/get");
 
             if (parentData != null)
             {
@@ -74,9 +71,7 @@ public class CustomItemParentLoader
         {
             if (parent.Item == null)
             {
-                mappings.Add(
-                    new TemplateIdToObjectType(parent.ParentId, null, parent.Template, null)
-                );
+                mappings.Add(new TemplateIdToObjectType(parent.ParentId, null, parent.Template, null));
                 continue;
             }
 
@@ -96,12 +91,7 @@ public class CustomItemParentLoader
                     parent.ParentId,
                     parent.Item,
                     parent.Template,
-                    (id, tpl) =>
-                        (Item)(
-                            parent.Template == null
-                                ? ctor.Invoke(new object[] { id })
-                                : ctor.Invoke(new object[] { id, tpl })
-                        )
+                    (id, tpl) => (Item)(parent.Template == null ? ctor.Invoke(new object[] { id }) : ctor.Invoke(new object[] { id, tpl }))
                 )
             );
         }
@@ -137,8 +127,8 @@ public class CustomItemParentLoader
 
             LogHelper.LogError(
                 $"Failed to load all types from {assembly.GetName().Name} — "
-                + $"{recovered.Length} type(s) recovered, {e.LoaderExceptions.Length} loader error(s). "
-                + "Continuing with the recovered types."
+                    + $"{recovered.Length} type(s) recovered, {e.LoaderExceptions.Length} loader error(s). "
+                    + "Continuing with the recovered types."
             );
 
             return recovered;
@@ -167,10 +157,7 @@ public class CustomItemParentLoader
         }
         catch (TypeLoadException e)
         {
-            LogHelper.LogError(
-                $"Failed to read [CustomParent] attributes from {type.FullName}: {e.Message} "
-                + "Skipping this type."
-            );
+            LogHelper.LogError($"Failed to read [CustomParent] attributes from {type.FullName}: {e.Message} " + "Skipping this type.");
 
             return [];
         }

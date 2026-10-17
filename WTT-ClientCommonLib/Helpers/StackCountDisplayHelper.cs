@@ -17,14 +17,16 @@ public static class StackCountDisplayHelper
             case < 1000000:
             {
                 var scaled = Math.Round(count / 1000.0, 1);
-                if (scaled >= 1000) return "1.0M";
+                if (scaled >= 1000)
+                    return "1.0M";
                 result = scaled.ToString("0.0") + "K";
                 break;
             }
             case < 1000000000:
             {
                 var scaled = Math.Round(count / 1000000.0, 1);
-                if (scaled >= 1000) return "1.0B";
+                if (scaled >= 1000)
+                    return "1.0B";
                 result = scaled.ToString("0.0") + "M";
                 break;
             }
@@ -35,9 +37,9 @@ public static class StackCountDisplayHelper
                 break;
             }
         }
-        
+
         var currency = GetCurrencySymbol(itemTpl);
-        
+
         return currency.Length <= 0 ? result : $"{result} {currency}";
     }
 
@@ -48,7 +50,7 @@ public static class StackCountDisplayHelper
             "5449016a4bdc2d6f028b456f" => "₽",
             "5696686a4bdc2da3298b456a" => "$",
             "569668774bdc2da2298b4568" => "€",
-            _ => ""
+            _ => "",
         };
     }
 }

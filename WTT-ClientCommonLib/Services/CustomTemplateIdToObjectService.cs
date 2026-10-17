@@ -20,10 +20,7 @@ public abstract class CustomTemplateIdToObjectService
         foreach (var mapping in mappings)
         {
             // Add to TypeTable
-            FieldInfo typeTableField = templateIdToObjectMappingsClass.GetField(
-                "TypeTable",
-                BindingFlags.Public | BindingFlags.Static
-            );
+            FieldInfo typeTableField = templateIdToObjectMappingsClass.GetField("TypeTable", BindingFlags.Public | BindingFlags.Static);
             if (typeTableField != null)
             {
                 var typeTable = (Dictionary<string, Type>)typeTableField.GetValue(null);
@@ -41,8 +38,7 @@ public abstract class CustomTemplateIdToObjectService
             );
             if (templateTypeTableField != null)
             {
-                var templateTypeTable =
-                    (Dictionary<string, Type>)templateTypeTableField.GetValue(null);
+                var templateTypeTable = (Dictionary<string, Type>)templateTypeTableField.GetValue(null);
                 if (!templateTypeTable.ContainsKey(mapping.TemplateId))
                 {
                     templateTypeTable.Add(mapping.TemplateId, mapping.TemplateType);
@@ -59,15 +55,11 @@ public abstract class CustomTemplateIdToObjectService
                 );
                 if (itemConstructorsField != null)
                 {
-                    var itemConstructors =
-                        (Dictionary<string, Func<string, object, Item>>)
-                            itemConstructorsField.GetValue(null);
+                    var itemConstructors = (Dictionary<string, Func<string, object, Item>>)itemConstructorsField.GetValue(null);
                     if (!itemConstructors.ContainsKey(mapping.TemplateId))
                     {
                         itemConstructors.Add(mapping.TemplateId, mapping.Constructor);
-                        LogHelper.LogDebug(
-                            $"Added {mapping.ItemType.Name} constructor to ItemConstructors."
-                        );
+                        LogHelper.LogDebug($"Added {mapping.ItemType.Name} constructor to ItemConstructors.");
                     }
                 }
             }

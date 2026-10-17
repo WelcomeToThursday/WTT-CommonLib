@@ -23,11 +23,11 @@ public class CustomItemConfig : CustomItemConfigBase
     [JsonPropertyName("addtoStaticLootContainers")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? AddToStaticLootContainers { get; set; }
-    
+
     [JsonPropertyName("inheritParentData")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? InheritParentData { get; set; }
-    
+
     [JsonPropertyName("inheritExtensionData")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? InheritExtensionData { get; set; }
@@ -308,22 +308,13 @@ public class CustomItemConfig : CustomItemConfigBase
                         if (item.Id == null || string.IsNullOrWhiteSpace(item.Id.ToString()))
                             yield return $"weaponPresets[{i}].items[{j}]._id is required";
 
-                        if (
-                            item.Template == null
-                            || string.IsNullOrWhiteSpace(item.Template.ToString())
-                        )
+                        if (item.Template == null || string.IsNullOrWhiteSpace(item.Template.ToString()))
                             yield return $"weaponPresets[{i}].items[{j}]._tpl is required";
 
-                        if (
-                            !string.IsNullOrWhiteSpace(item.ParentId)
-                            && string.IsNullOrWhiteSpace(item.SlotId)
-                        )
+                        if (!string.IsNullOrWhiteSpace(item.ParentId) && string.IsNullOrWhiteSpace(item.SlotId))
                             yield return $"weaponPresets[{i}].items[{j}] has parentId but no slotId";
 
-                        if (
-                            !string.IsNullOrWhiteSpace(item.SlotId)
-                            && string.IsNullOrWhiteSpace(item.ParentId)
-                        )
+                        if (!string.IsNullOrWhiteSpace(item.SlotId) && string.IsNullOrWhiteSpace(item.ParentId))
                             yield return $"weaponPresets[{i}].items[{j}] has slotId but no parentId";
                     }
                 }

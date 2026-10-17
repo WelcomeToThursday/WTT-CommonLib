@@ -90,9 +90,7 @@ public static class ImageManager
         try
         {
             LogHelper.LogDebug("Downloading shooting range marks manifest...");
-            var json = await RequestHandler.GetJsonAsync(
-                "/wttcommonlib/hideout/marktextures/manifest"
-            );
+            var json = await RequestHandler.GetJsonAsync("/wttcommonlib/hideout/marktextures/manifest");
             var textures = JsonConvert.DeserializeObject<ImageItem[]>(json);
 
             if (textures == null)
@@ -111,11 +109,7 @@ public static class ImageManager
         }
     }
 
-    public static async Task DownloadImage(
-        ImageItem image,
-        ImageType type,
-        System.Action<DownloadProgress> progressCallback = null
-    )
+    public static async Task DownloadImage(ImageItem image, ImageType type, System.Action<DownloadProgress> progressCallback = null)
     {
         try
         {
@@ -129,9 +123,7 @@ public static class ImageManager
                 LogHelper.LogDebug($"[DownloadImage] Created directory: {directoryPath}");
             }
 
-            LogHelper.LogDebug(
-                $"[DownloadImage] Downloading {image.FileName} ({type}) to {filepath}"
-            );
+            LogHelper.LogDebug($"[DownloadImage] Downloading {image.FileName} ({type}) to {filepath}");
 
             var route = GetDownloadRoute(type);
             var base64Data = await RequestHandler.GetJsonAsync($"{route}/{image.FileName}");
@@ -142,22 +134,16 @@ public static class ImageManager
                 return;
             }
 
-            LogHelper.LogDebug(
-                $"[DownloadImage] Received {base64Data.Length} chars of base64 for {image.FileName}"
-            );
+            LogHelper.LogDebug($"[DownloadImage] Received {base64Data.Length} chars of base64 for {image.FileName}");
 
             try
             {
                 var binaryData = Convert.FromBase64String(base64Data);
-                LogHelper.LogDebug(
-                    $"[DownloadImage] Decoded to {binaryData.Length} bytes, writing to disk..."
-                );
+                LogHelper.LogDebug($"[DownloadImage] Decoded to {binaryData.Length} bytes, writing to disk...");
 
                 await File.WriteAllBytesAsync(filepath, binaryData);
 
-                LogHelper.LogDebug(
-                    $"[DownloadImage] Successfully wrote {binaryData.Length} bytes to {filepath}"
-                );
+                LogHelper.LogDebug($"[DownloadImage] Successfully wrote {binaryData.Length} bytes to {filepath}");
 
                 if (File.Exists(filepath))
                 {
@@ -165,16 +151,12 @@ public static class ImageManager
                 }
                 else
                 {
-                    LogHelper.LogError(
-                        $"[DownloadImage] File write failed - file does not exist at {filepath}"
-                    );
+                    LogHelper.LogError($"[DownloadImage] File write failed - file does not exist at {filepath}");
                 }
             }
             catch (FormatException ex)
             {
-                LogHelper.LogError(
-                    $"[DownloadImage] Failed to decode base64 for {image.FileName}: {ex.Message}"
-                );
+                LogHelper.LogError($"[DownloadImage] Failed to decode base64 for {image.FileName}: {ex.Message}");
             }
         }
         catch (Exception ex)
@@ -222,6 +204,7 @@ public static class ImageManager
         LogHelper.LogDebug($"[ShouldAcquire] Acquiring: {image.FileName}");
         return true;
     }
+
     private static async Task<bool> IsCacheValid(string filepath, ImageItem image)
     {
         if (!VFS.Exists(filepath))
@@ -232,20 +215,14 @@ public static class ImageManager
 
         if (crc != image.Crc)
         {
-            LogHelper.LogDebug(
-                $"[ImageManager] CRC mismatch for {image.FileName}: " +
-                $"expected {image.Crc}, got {crc}"
-            );
+            LogHelper.LogDebug($"[ImageManager] CRC mismatch for {image.FileName}: " + $"expected {image.Crc}, got {crc}");
             return false;
         }
 
         return true;
     }
-    private static async Task<Texture2D?> LoadImageInternal(
-        string imageName,
-        ImageItem image,
-        ImageType type
-    )
+
+    private static async Task<Texture2D?> LoadImageInternal(string imageName, ImageItem image, ImageType type)
     {
         try
         {
@@ -269,15 +246,11 @@ public static class ImageManager
             {
                 if (VFS.Exists(filepath))
                 {
-                    LogHelper.LogDebug(
-                        $"[LoadImage] TEST MODE: File already in cache, using cached version: {imageName}"
-                    );
+                    LogHelper.LogDebug($"[LoadImage] TEST MODE: File already in cache, using cached version: {imageName}");
                 }
                 else
                 {
-                    LogHelper.LogDebug(
-                        $"[LoadImage] TEST MODE: File not in cache, downloading {imageName}"
-                    );
+                    LogHelper.LogDebug($"[LoadImage] TEST MODE: File not in cache, downloading {imageName}");
                     await DownloadImage(image, type);
                 }
             }

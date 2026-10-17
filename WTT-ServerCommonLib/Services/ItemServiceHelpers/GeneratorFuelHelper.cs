@@ -35,9 +35,7 @@ public class GeneratorFuelHelper(ISptLogger<GeneratorFuelHelper> logger, Hideout
                     if (stage.Bonuses != null)
                         foreach (var bonus in stage.Bonuses)
                         {
-                            if (
-                                bonus is not { Type: BonusType.AdditionalSlots, Filter: { } filter }
-                            )
+                            if (bonus is not { Type: BonusType.AdditionalSlots, Filter: { } filter })
                                 continue;
                             if (filter.Contains(itemId))
                                 continue;

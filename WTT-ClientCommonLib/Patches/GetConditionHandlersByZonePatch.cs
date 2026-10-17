@@ -15,20 +15,11 @@ namespace WTTClientCommonLib.Patches
         {
             Type[] parameters = [typeof(string)];
             Type[] generics = [typeof(ConditionZone)];
-            return AccessTools.Method(
-                typeof(QuestBook),
-                nameof(QuestBook.GetConditionHandlersByZone),
-                parameters,
-                generics
-            );
+            return AccessTools.Method(typeof(QuestBook), nameof(QuestBook.GetConditionHandlersByZone), parameters, generics);
         }
 
         [PatchPostfix]
-        public static void Postfix(
-            QuestBook __instance,
-            string zoneId,
-            ref IEnumerable<ConditionProgressChecker> __result
-        )
+        public static void Postfix(QuestBook __instance, string zoneId, ref IEnumerable<ConditionProgressChecker> __result)
         {
             var list = __result?.ToList() ?? new List<ConditionProgressChecker>();
 
@@ -37,10 +28,7 @@ namespace WTTClientCommonLib.Patches
                 if (quest == null)
                     continue;
 
-                if (
-                    quest.QuestStatus != EQuestStatus.Started
-                    && quest.QuestStatus != EQuestStatus.AvailableForFinish
-                )
+                if (quest.QuestStatus != EQuestStatus.Started && quest.QuestStatus != EQuestStatus.AvailableForFinish)
                     continue;
 
                 if (quest.Conditions == null || quest.ProgressCheckers == null)
@@ -54,10 +42,7 @@ namespace WTTClientCommonLib.Patches
                     if (conditions == null)
                         continue;
 
-                    if (
-                        !quest.CurrentStatusTransitions.Contains(status)
-                        && status != quest.QuestStatus
-                    )
+                    if (!quest.CurrentStatusTransitions.Contains(status) && status != quest.QuestStatus)
                         continue;
 
                     foreach (var condition in conditions)
@@ -76,16 +61,10 @@ namespace WTTClientCommonLib.Patches
                             if (zoneChild.zoneId != zoneId)
                                 continue;
 
-                            if (
-                                zoneChild is not ConditionLeaveItemAtLocation
-                                && zoneChild is not ConditionSalvage
-                            )
+                            if (zoneChild is not ConditionLeaveItemAtLocation && zoneChild is not ConditionSalvage)
                                 continue;
 
-                            if (
-                                !quest.ProgressCheckers.TryGetValue(child, out var cpc)
-                                || cpc == null
-                            )
+                            if (!quest.ProgressCheckers.TryGetValue(child, out var cpc) || cpc == null)
                                 continue;
 
                             if (!list.Contains(cpc))

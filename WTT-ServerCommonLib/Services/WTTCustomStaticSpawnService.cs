@@ -9,11 +9,7 @@ using WTTServerCommonLib.Models;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomStaticSpawnService(
-    ModHelper modHelper,
-    SptLogger<WTTCustomStaticSpawnService> logger,
-    JsonUtil jsonUtil
-)
+public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCustomStaticSpawnService> logger, JsonUtil jsonUtil)
 {
     private readonly Dictionary<string, Dictionary<string, string>> _modBundles = new();
 
@@ -32,16 +28,8 @@ public class WTTCustomStaticSpawnService(
         var assemblyLocation = modHelper.GetAbsolutePathToModFolder(assembly);
         var modKey = assembly.GetName().Name!;
         var defaultDir = Path.Combine("db", "CustomStaticSpawns");
-        var bundlesDir = Path.Combine(
-            assemblyLocation,
-            relativePath ?? defaultDir,
-            "StaticBundles"
-        );
-        var configsDir = Path.Combine(
-            assemblyLocation,
-            relativePath ?? defaultDir,
-            "CustomSpawnConfigs"
-        );
+        var bundlesDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir, "StaticBundles");
+        var configsDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir, "CustomSpawnConfigs");
 
         if (Directory.Exists(bundlesDir))
         {
@@ -52,18 +40,12 @@ public class WTTCustomStaticSpawnService(
             {
                 var name = Path.GetFileNameWithoutExtension(file);
                 _modBundles[modKey][name] = file;
-                LogHelper.Debug(
-                    logger,
-                    $"[SpawnService] Registered bundle '{name}' for mod '{modKey}'"
-                );
+                LogHelper.Debug(logger, $"[SpawnService] Registered bundle '{name}' for mod '{modKey}'");
             }
         }
         else
         {
-            LogHelper.Debug(
-                logger,
-                $"[SpawnService] No bundles dir at '{bundlesDir}' for mod '{modKey}'"
-            );
+            LogHelper.Debug(logger, $"[SpawnService] No bundles dir at '{bundlesDir}' for mod '{modKey}'");
         }
 
         if (Directory.Exists(configsDir))
@@ -75,14 +57,9 @@ public class WTTCustomStaticSpawnService(
                 try
                 {
                     var json = await File.ReadAllTextAsync(file);
-                    var info =
-                        jsonUtil.Deserialize<List<CustomSpawnConfig>>(json)
-                        ?? new List<CustomSpawnConfig>();
+                    var info = jsonUtil.Deserialize<List<CustomSpawnConfig>>(json) ?? new List<CustomSpawnConfig>();
                     _modConfigs[modKey].AddRange(info);
-                    LogHelper.Debug(
-                        logger,
-                        $"[SpawnService] Loaded {info.Count} configs from '{file}'"
-                    );
+                    LogHelper.Debug(logger, $"[SpawnService] Loaded {info.Count} configs from '{file}'");
                 }
                 catch (Exception ex)
                 {
@@ -91,10 +68,7 @@ public class WTTCustomStaticSpawnService(
         }
         else
         {
-            LogHelper.Debug(
-                logger,
-                $"[SpawnService] No configs dir at '{configsDir}' for mod '{modKey}'"
-            );
+            LogHelper.Debug(logger, $"[SpawnService] No configs dir at '{configsDir}' for mod '{modKey}'");
         }
     }
 
@@ -108,10 +82,7 @@ public class WTTCustomStaticSpawnService(
         foreach (var modBundles in _modBundles.Values)
             if (modBundles.TryGetValue(bundleName, out var path) && File.Exists(path))
             {
-                LogHelper.Debug(
-                    logger,
-                    $"[SpawnService] Serving bundle '{bundleName}' from '{path}'"
-                );
+                LogHelper.Debug(logger, $"[SpawnService] Serving bundle '{bundleName}' from '{path}'");
                 return await File.ReadAllBytesAsync(path);
             }
 

@@ -44,18 +44,12 @@ public class MasteryHelper(ISptLogger<MasteryHelper> logger, GlobalTable globalT
                     if (!templates.Contains(template))
                     {
                         templates.Add(template);
-                        LogHelper.Debug(
-                            logger,
-                            $"Added template {template} to mastery '{mastery.Name}'"
-                        );
+                        LogHelper.Debug(logger, $"Added template {template} to mastery '{mastery.Name}'");
                     }
                 }
 
                 existing.Templates = templates.ToArray();
-                LogHelper.Debug(
-                    logger,
-                    $"[Mastery] Updated existing mastery '{mastery.Name}' for {itemId}"
-                );
+                LogHelper.Debug(logger, $"[Mastery] Updated existing mastery '{mastery.Name}' for {itemId}");
             }
             else
             {
@@ -71,10 +65,7 @@ public class MasteryHelper(ISptLogger<MasteryHelper> logger, GlobalTable globalT
                 newMastering.Add(newMastery);
                 globalTable.Configuration.Mastering = newMastering.ToArray();
 
-                LogHelper.Debug(
-                    logger,
-                    $"[Mastery] Created new mastery '{mastery.Name}' for {itemId}"
-                );
+                LogHelper.Debug(logger, $"[Mastery] Created new mastery '{mastery.Name}' for {itemId}");
             }
         }
     }

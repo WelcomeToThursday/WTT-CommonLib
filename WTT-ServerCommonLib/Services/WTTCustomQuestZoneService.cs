@@ -8,11 +8,7 @@ using WTTServerCommonLib.Models;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomQuestZoneService(
-    ModHelper modHelper,
-    SptLogger<WTTCustomQuestZoneService> logger,
-    ConfigHelper configHelper
-)
+public class WTTCustomQuestZoneService(ModHelper modHelper, SptLogger<WTTCustomQuestZoneService> logger, ConfigHelper configHelper)
 {
     private readonly Lock _lock = new();
     private readonly List<CustomQuestZone> _zones = new();
@@ -47,10 +43,7 @@ public class WTTCustomQuestZoneService(
         {
             var collection = zones.ToList();
             _zones.AddRange(collection);
-            LogHelper.Debug(
-                logger,
-                $"Registered {collection.Count} zones. Total zones: {_zones.Count}"
-            );
+            LogHelper.Debug(logger, $"Registered {collection.Count} zones. Total zones: {_zones.Count}");
         }
     }
 
@@ -59,10 +52,7 @@ public class WTTCustomQuestZoneService(
         lock (_lock)
         {
             _zones.Add(zone);
-            LogHelper.Debug(
-                logger,
-                $"Registered zone: {zone.ZoneName}. Total zones: {_zones.Count}"
-            );
+            LogHelper.Debug(logger, $"Registered zone: {zone.ZoneName}. Total zones: {_zones.Count}");
         }
     }
 

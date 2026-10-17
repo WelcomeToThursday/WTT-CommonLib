@@ -8,10 +8,6 @@ public class ConditionSalvage : ConditionZone
 
     public override string FormattedDescription
     {
-        get
-        {
-            return string.Format(base.FormattedDescription, this.zoneId, this.plantTime);
-        }
+        get { return string.Format(base.FormattedDescription, this.zoneId, this.plantTime); }
     }
 }
-

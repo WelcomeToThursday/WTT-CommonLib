@@ -40,7 +40,7 @@ namespace WTTClientCommonLib.Patches
             {
                 ZoneTimeRestrictionTracker.Remove(zone);
             }
-            
+
             if (zone is not SalvageItemTrigger salvage)
             {
                 return;
@@ -56,10 +56,7 @@ namespace WTTClientCommonLib.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(
-                typeof(GamePlayerOwner),
-                nameof(GamePlayerOwner.InteractionsChangedHandler)
-            );
+            return AccessTools.Method(typeof(GamePlayerOwner), nameof(GamePlayerOwner.InteractionsChangedHandler));
         }
 
         [PatchPrefix]

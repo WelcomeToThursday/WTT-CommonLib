@@ -25,7 +25,7 @@ public class ExplosionHelper
     {
         DetonateGrenadeAt(position, new FakeGrenade(3, 7, 90, 80), originalItem, owner);
     }
-    
+
     /// <summary>
     ///     Create an explosion at a given position
     /// </summary>
@@ -36,7 +36,15 @@ public class ExplosionHelper
     /// <param name="maxDist">Maximum explosion distance in meters(?)</param>
     /// <param name="fragCount">The number of fragments the explosion should create</param>
     /// <param name="strength">The strength of the explosion</param>
-    public static void DetonateAt(Vector3 position, Item originalItem, IPlayer owner, float minDist, float maxDist, int fragCount, float strength)
+    public static void DetonateAt(
+        Vector3 position,
+        Item originalItem,
+        IPlayer owner,
+        float minDist,
+        float maxDist,
+        int fragCount,
+        float strength
+    )
     {
         DetonateGrenadeAt(position, new FakeGrenade(minDist, maxDist, fragCount, strength), originalItem, owner);
     }
@@ -55,15 +63,7 @@ public class ExplosionHelper
         var shift = Vector3.up * 0.08f;
 
         Singleton<Effects>.Instance.EmitGrenade(grenade.ExplosionType, position, Vector3.up);
-        
-        Grenade.Explosion(
-            null,
-            explosiveAmmoComponent,
-            position,
-            owner.ProfileId,
-            ballisticsCalculator,
-            originalItem,
-            shift
-        );
+
+        Grenade.Explosion(null, explosiveAmmoComponent, position, owner.ProfileId, ballisticsCalculator, originalItem, shift);
     }
 }

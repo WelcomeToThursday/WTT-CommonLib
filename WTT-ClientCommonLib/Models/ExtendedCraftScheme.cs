@@ -43,9 +43,7 @@ public class ExtendedProductionScheme : BaseHideoutScheme
                     }
                 }
 
-                var items = Singleton<ItemFactory>
-                    .Instance.FlatItemsToTree(craftResult.Items)
-                    .Items;
+                var items = Singleton<ItemFactory>.Instance.FlatItemsToTree(craftResult.Items).Items;
 
                 foreach ((string _, Item item) in items)
                 {
@@ -57,10 +55,7 @@ public class ExtendedProductionScheme : BaseHideoutScheme
                         {
                             RecipeResultStack resultStack;
 
-                            if (
-                                craftResult.MinStackCount.HasValue
-                                && craftResult.MaxStackCount.HasValue
-                            )
+                            if (craftResult.MinStackCount.HasValue && craftResult.MaxStackCount.HasValue)
                             {
                                 resultStack = new RecipeResultStack
                                 {
@@ -72,11 +67,7 @@ public class ExtendedProductionScheme : BaseHideoutScheme
                             }
                             else
                             {
-                                resultStack = new RecipeResultStack
-                                {
-                                    Item = item,
-                                    Count = craftResult.Count,
-                                };
+                                resultStack = new RecipeResultStack { Item = item, Count = craftResult.Count };
                             }
 
                             ResultItemStacks.Add(resultId, resultStack);

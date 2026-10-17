@@ -7,10 +7,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomSlotImageService(
-    ModHelper modHelper,
-    SptLogger<WTTCustomSlotImageService> logger
-)
+public class WTTCustomSlotImageService(ModHelper modHelper, SptLogger<WTTCustomSlotImageService> logger)
 {
     private readonly Dictionary<string, string> _imagePaths = new();
 

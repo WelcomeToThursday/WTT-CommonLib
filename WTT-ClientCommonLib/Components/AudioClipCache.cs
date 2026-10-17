@@ -17,11 +17,11 @@ public class AudioClipCache : MonoBehaviour
 
         clip.hideFlags = HideFlags.DontUnloadUnusedAsset;
         _clipMap[key] = clip;
-        
+
         float[] audioData = new float[clip.samples * clip.channels];
         clip.GetData(audioData, 0);
         _audioDataMap[key] = audioData;
-        
+
         LogHelper.LogDebug($"Cached audio clip: {key}, duration: {clip.length}s, data samples: {audioData.Length}");
     }
 

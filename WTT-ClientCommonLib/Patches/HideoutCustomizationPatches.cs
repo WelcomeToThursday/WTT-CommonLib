@@ -13,10 +13,7 @@ internal class HideoutCustomizationIconPatch : ModulePatch
 {
     protected override MethodBase GetTargetMethod()
     {
-        return AccessTools.Method(
-            typeof(HideoutCustomizationIcons),
-            nameof(HideoutCustomizationIcons.GetSprite)
-        );
+        return AccessTools.Method(typeof(HideoutCustomizationIcons), nameof(HideoutCustomizationIcons.GetSprite));
     }
 
     [PatchPrefix]
@@ -45,18 +42,13 @@ internal class HideoutCustomizationTexturesPatch : ModulePatch
     }
 
     [PatchPrefix]
-    static void Prefix(
-        ResourceKey resourceKey,
-        EHideoutCustomizationType customizationType,
-        HideoutCustomizationController __instance
-    )
+    static void Prefix(ResourceKey resourceKey, EHideoutCustomizationType customizationType, HideoutCustomizationController __instance)
     {
         if (customizationType != EHideoutCustomizationType.ShootingRangeMark)
             return;
 
         string assetName = resourceKey.ToAssetName();
-        if (assetName == null ||
-            !ResourceLoader._customMarkTextures.TryGetValue(assetName, out var customTexture))
+        if (assetName == null || !ResourceLoader._customMarkTextures.TryGetValue(assetName, out var customTexture))
             return;
 
         try
@@ -73,4 +65,3 @@ internal class HideoutCustomizationTexturesPatch : ModulePatch
         }
     }
 }
-

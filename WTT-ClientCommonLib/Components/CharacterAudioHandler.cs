@@ -33,9 +33,7 @@ public class CharacterAudioHandler : MonoBehaviour
         }
 
         LogHelper.LogDebug($"Found audio clip in cache: {audioKey}");
-        LogHelper.LogDebug(
-            $"Clip details - duration: {audioClip.length}s, samples: {audioClip.samples}, channels: {audioClip.channels}"
-        );
+        LogHelper.LogDebug($"Clip details - duration: {audioClip.length}s, samples: {audioClip.samples}, channels: {audioClip.channels}");
 
         AssignAudioToSource(audioClip, faceName);
         RadioSettings.FaceCardVolume.SettingChanged += OnFaceCardVolumeChanged;
@@ -81,9 +79,7 @@ public class CharacterAudioHandler : MonoBehaviour
         _audioSource.spatialBlend = 0f;
         _isInitialized = true;
 
-        LogHelper.LogDebug(
-            $"Audio source configured: spatialBlend={_audioSource.spatialBlend}, volume={_audioSource.volume}"
-        );
+        LogHelper.LogDebug($"Audio source configured: spatialBlend={_audioSource.spatialBlend}, volume={_audioSource.volume}");
     }
 
     public void FadeIn()
@@ -135,9 +131,7 @@ public class CharacterAudioHandler : MonoBehaviour
         _isFadingIn = targetVolume > 0;
         _isFadingOut = targetVolume == 0;
 
-        LogHelper.LogDebug(
-            $"FadeAudio started: targetVolume={targetVolume}, duration={duration}, isFadingIn={_isFadingIn}"
-        );
+        LogHelper.LogDebug($"FadeAudio started: targetVolume={targetVolume}, duration={duration}, isFadingIn={_isFadingIn}");
 
         float startVolume = _audioSource.volume;
         float time = 0f;
@@ -162,9 +156,7 @@ public class CharacterAudioHandler : MonoBehaviour
         {
             _audioSource.volume = _isFadingIn ? RadioSettings.FaceCardVolume.Value : targetVolume;
 
-            LogHelper.LogDebug(
-                $"FadeAudio completed: final volume={_audioSource.volume}, isFadingOut={_isFadingOut}"
-            );
+            LogHelper.LogDebug($"FadeAudio completed: final volume={_audioSource.volume}, isFadingOut={_isFadingOut}");
 
             if (_isFadingOut)
             {

@@ -34,11 +34,7 @@ public class WTTCustomAudioService(ModHelper modHelper, SptLogger<WTTCustomAudio
     /// <param name="playOnRadioIfFaceIsSelected">
     /// If true, the audio will be included in the radio pool only when the face is actively selected. Defaults to false.
     /// </param>
-    public void CreateFaceCardAudio(
-        string faceName,
-        string audioKey,
-        bool playOnRadioIfFaceIsSelected = false
-    )
+    public void CreateFaceCardAudio(string faceName, string audioKey, bool playOnRadioIfFaceIsSelected = false)
     {
         if (!_faceCardAudio.TryGetValue(faceName, out var entry))
         {

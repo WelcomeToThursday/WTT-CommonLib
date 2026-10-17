@@ -1,7 +1,7 @@
-﻿using SPTarkov.Server.Core.Extensions;
+﻿using System.Text.Json.Serialization;
+using SPTarkov.Server.Core.Extensions;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Spt.Mod;
-using System.Text.Json.Serialization;
 
 public abstract class CustomItemConfigBase
 {

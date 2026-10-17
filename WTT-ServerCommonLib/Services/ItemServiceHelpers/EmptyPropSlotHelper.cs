@@ -8,10 +8,7 @@ using WTTServerCommonLib.Models;
 namespace WTTServerCommonLib.Services.ItemServiceHelpers;
 
 [Injectable]
-public class EmptyPropSlotHelper(
-    ISptLogger<EmptyPropSlotHelper> logger,
-    TemplateTable templateTable
-)
+public class EmptyPropSlotHelper(ISptLogger<EmptyPropSlotHelper> logger, TemplateTable templateTable)
 {
     public void AddCustomSlots(CustomItemConfig config, string itemToAdd)
     {
@@ -35,10 +32,7 @@ public class EmptyPropSlotHelper(
                 Parent = itemToAddTo,
                 Properties = new SlotProperties
                 {
-                    Filters = new List<SlotFilter>
-                    {
-                        new SlotFilter { Filter = new HashSet<MongoId> { itemToAdd } },
-                    },
+                    Filters = new List<SlotFilter> { new SlotFilter { Filter = new HashSet<MongoId> { itemToAdd } } },
                 },
                 Prototype = new MongoId(),
                 Required = false,

@@ -24,7 +24,6 @@ public class RandomLootContainerHelper(
         }
         itemInDb.Name = newItemId;
         inventoryConfig.RandomLootContainers[newItemId] =
-            itemConfig.RandomLootContainerRewards
-            ?? throw new ArgumentNullException(nameof(itemConfig.RandomLootContainerRewards));
+            itemConfig.RandomLootContainerRewards ?? throw new ArgumentNullException(nameof(itemConfig.RandomLootContainerRewards));
     }
 }

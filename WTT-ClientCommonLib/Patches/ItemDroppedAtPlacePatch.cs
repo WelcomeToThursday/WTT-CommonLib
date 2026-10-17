@@ -46,8 +46,7 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
 
                     if (
                         !cc.Conditions.Any(cond =>
-                            cond is ConditionZone zone
-                            && (zone is ConditionSalvage || zone is ConditionLeaveItemAtLocation)
+                            cond is ConditionZone zone && (zone is ConditionSalvage || zone is ConditionLeaveItemAtLocation)
                         )
                     )
                         continue;
@@ -68,18 +67,12 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
                         if (zoneChild.zoneId != zoneId)
                             continue;
 
-                        if (
-                            child is ConditionSalvage
-                            && quest.ProgressCheckers.TryGetValue(child, out var scpc)
-                        )
+                        if (child is ConditionSalvage && quest.ProgressCheckers.TryGetValue(child, out var scpc))
                         {
                             salvageCond = (ConditionSalvage)child;
                             salvageCpc = (SalvageConditionChecker)scpc;
                         }
-                        else if (
-                            child is ConditionLeaveItemAtLocation
-                            && quest.ProgressCheckers.TryGetValue(child, out var lcpc)
-                        )
+                        else if (child is ConditionLeaveItemAtLocation && quest.ProgressCheckers.TryGetValue(child, out var lcpc))
                         {
                             leaveCond = (ConditionLeaveItemAtLocation)child;
                             leaveCpc = (LeaveItemAtLocationChecker)lcpc;
@@ -104,9 +97,7 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
                         if (target <= 0)
                             target = 1;
 
-                        ccCpc.SetCurrentValueGetter(_ =>
-                            (state.SalvageDone && state.LeaveDone) ? target : 0.0
-                        );
+                        ccCpc.SetCurrentValueGetter(_ => (state.SalvageDone && state.LeaveDone) ? target : 0.0);
                     }
 
                     if (salvageCond != null && salvageCpc != null)
@@ -154,12 +145,7 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
         return true;
     }
 
-    private static void SignalConditionCompleted(
-        Player player,
-        Quest quest,
-        EQuestStatus status,
-        Condition condition
-    )
+    private static void SignalConditionCompleted(Player player, Quest quest, EQuestStatus status, Condition condition)
     {
         var controller = player?.QuestController;
         if (controller == null)

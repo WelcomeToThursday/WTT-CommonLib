@@ -10,10 +10,7 @@ namespace WTTClientCommonLib.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(
-                typeof(ItemExtensions),
-                nameof(ItemExtensions.GetIndexOfItemType)
-            );
+            return AccessTools.Method(typeof(ItemExtensions), nameof(ItemExtensions.GetIndexOfItemType));
         }
 
         [PatchPrefix]

@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
 using EFT.Hideout;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using WTTClientCommonLib.Helpers;
 
 namespace WTTClientCommonLib.Converters;
@@ -20,20 +20,20 @@ public class RequirementArrayConverter : JsonConverter
             {
                 continue;
             }
-            
+
             JObject jsonObject = (JObject)token;
             string typeName = jsonObject.Value<string>("type");
             if (typeName == null)
             {
                 continue;
             }
-            
+
             bool found = Enum.TryParse(typeName, out ERequirementType requirementType);
             if (!found)
             {
                 LogHelper.LogWarn($"Could not convert requirement type {typeName} to ERequirementType");
             }
-            
+
             Requirement requirement = requirementType switch
             {
                 ERequirementType.Area => new AreaRequirement(),
@@ -54,14 +54,14 @@ public class RequirementArrayConverter : JsonConverter
             {
                 return null;
             }
-            
+
             serializer.Populate(jsonObject.CreateReader(), requirement);
             result.Add(requirement);
         }
-        
+
         return result.ToArray();
     }
-    
+
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
         serializer.Serialize(writer, value);

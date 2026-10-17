@@ -45,9 +45,7 @@ public class WTTCustomClothingService(
                 return;
             }
 
-            var clothingConfigsList = await configHelper.LoadAllJsonFiles<
-                List<CustomClothingConfig>
-            >(finalDir);
+            var clothingConfigsList = await configHelper.LoadAllJsonFiles<List<CustomClothingConfig>>(finalDir);
 
             if (clothingConfigsList.Count == 0)
             {
@@ -73,16 +71,14 @@ public class WTTCustomClothingService(
                 }
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Created {totalClothingCreated} custom clothing items from {clothingConfigsList.Count} files"
-            );
+            LogHelper.Debug(logger, $"Created {totalClothingCreated} custom clothing items from {clothingConfigsList.Count} files");
         }
         catch (Exception ex)
         {
             logger.Error($"Error loading clothing configs: {ex.Message}");
         }
     }
+
     private bool CustomizationIdExists(string id)
     {
         return templateTable.Customization.ContainsKey(id);
@@ -93,12 +89,11 @@ public class WTTCustomClothingService(
         if (!CustomizationIdExists(id))
             return true;
 
-        logger.Error(
-            $"Cannot add {label} '{id}' for outfit '{config.OutfitId}' because it already exists in templateTable.Customization."
-        );
+        logger.Error($"Cannot add {label} '{id}' for outfit '{config.OutfitId}' because it already exists in templateTable.Customization.");
 
         return false;
     }
+
     private bool ProcessClothingConfig(CustomClothingConfig config)
     {
         try
@@ -359,9 +354,7 @@ public class WTTCustomClothingService(
                 if (localeData == null)
                     return localeData;
 
-                var localeInfo =
-                    config.Locales.GetValueOrDefault(localeCode)
-                    ?? config.Locales.GetValueOrDefault("en");
+                var localeInfo = config.Locales.GetValueOrDefault(localeCode) ?? config.Locales.GetValueOrDefault("en");
 
                 if (localeInfo != null)
                 {

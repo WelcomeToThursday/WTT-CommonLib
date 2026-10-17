@@ -48,19 +48,25 @@ public static class StaticSpawnSystemConfigManager
         RotatePitchDownKey = CreateKeybind(config, "Keybinds", "Rotate Pitch Down", KeyCode.Keypad2, orderCounter++);
         RotateYawLeftKey = CreateKeybind(config, "Keybinds", "Rotate Yaw Left", KeyCode.Keypad4, orderCounter++);
         RotateYawRightKey = CreateKeybind(config, "Keybinds", "Rotate Yaw Right", KeyCode.Keypad6, orderCounter++);
-        RotatePitchRollLeftKey =
-            CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Left", KeyCode.Keypad7, orderCounter++);
-        RotatePitchRollRightKey =
-            CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Right", KeyCode.Keypad9, orderCounter++);
-        RotatePitchRollLeftInvertKey = CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Left Inverted",
-            KeyCode.Keypad1, orderCounter++);
-        RotatePitchRollRightInvertKey = CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Right Inverted",
-            KeyCode.Keypad3, orderCounter++);
-        DeleteSelectedObject =
-            CreateKeybind(config, "Keybinds", "Delete Selected Object", KeyCode.Delete, orderCounter++);
+        RotatePitchRollLeftKey = CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Left", KeyCode.Keypad7, orderCounter++);
+        RotatePitchRollRightKey = CreateKeybind(config, "Keybinds", "Rotate Pitch+Roll Right", KeyCode.Keypad9, orderCounter++);
+        RotatePitchRollLeftInvertKey = CreateKeybind(
+            config,
+            "Keybinds",
+            "Rotate Pitch+Roll Left Inverted",
+            KeyCode.Keypad1,
+            orderCounter++
+        );
+        RotatePitchRollRightInvertKey = CreateKeybind(
+            config,
+            "Keybinds",
+            "Rotate Pitch+Roll Right Inverted",
+            KeyCode.Keypad3,
+            orderCounter++
+        );
+        DeleteSelectedObject = CreateKeybind(config, "Keybinds", "Delete Selected Object", KeyCode.Delete, orderCounter++);
         CycleSpawnedObjects = CreateKeybind(config, "Keybinds", "Cycle Spawned Object", KeyCode.Period, orderCounter++);
-        CyclePreviousSpawnedObject = CreateKeybind(config, "Keybinds", "Cycle Previous Spawned Object", KeyCode.Comma,
-            orderCounter++);
+        CyclePreviousSpawnedObject = CreateKeybind(config, "Keybinds", "Cycle Previous Spawned Object", KeyCode.Comma, orderCounter++);
         ConfirmPositionKey = CreateKeybind(config, "Keybinds", "Confirm Position", KeyCode.Backslash, orderCounter++);
     }
 
@@ -76,9 +82,7 @@ public static class StaticSpawnSystemConfigManager
             section,
             name,
             new KeyboardShortcut(defaultKey),
-            new ConfigDescription($"Key for {name}", null,
-                new ConfigurationManagerAttributes { Order = order }
-            )
+            new ConfigDescription($"Key for {name}", null, new ConfigurationManagerAttributes { Order = order })
         );
     }
 }

@@ -6,10 +6,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services.ItemServiceHelpers;
 
 [Injectable]
-public class InventorySlotHelper(
-    ISptLogger<InventorySlotHelper> logger,
-    TemplateTable templateTable
-)
+public class InventorySlotHelper(ISptLogger<InventorySlotHelper> logger, TemplateTable templateTable)
 {
     public void ProcessInventorySlots(CustomItemConfigBase itemConfig, string itemId)
     {
@@ -42,10 +39,7 @@ public class InventorySlotHelper(
                     continue;
 
                 if (firstFilter.Filter.Add(itemId))
-                    LogHelper.Debug(
-                        logger,
-                        $"[InventorySlots] Added {itemId} to inventory slot '{slot.Name}'"
-                    );
+                    LogHelper.Debug(logger, $"[InventorySlots] Added {itemId} to inventory slot '{slot.Name}'");
             }
         }
     }

@@ -33,10 +33,7 @@ public class WTTResourcesRouter(
                 {
                     var zones = zoneService.GetZones();
                     return ValueTask.FromResult(
-                        jsonUtil.Serialize(zones)
-                            ?? throw new NullReferenceException(
-                                "Could not serialize voice mappings!"
-                            )
+                        jsonUtil.Serialize(zones) ?? throw new NullReferenceException("Could not serialize voice mappings!")
                     );
                 }
             ),
@@ -53,8 +50,7 @@ public class WTTResourcesRouter(
                             payload.Add(bundleName, Convert.ToBase64String(bundleData));
                     }
 
-                    return jsonUtil.Serialize(payload)
-                        ?? throw new NullReferenceException("Could not serialize payload!");
+                    return jsonUtil.Serialize(payload) ?? throw new NullReferenceException("Could not serialize payload!");
                 }
             ),
             // Configs route
@@ -79,8 +75,7 @@ public class WTTResourcesRouter(
                             result.Add(name, Convert.ToBase64String(data));
                     }
 
-                    return jsonUtil.Serialize(result)
-                        ?? throw new NullReferenceException("Could not serialize payload!");
+                    return jsonUtil.Serialize(result) ?? throw new NullReferenceException("Could not serialize payload!");
                 }
             ),
             new RouteAction<EmptyRequestData>(
@@ -107,8 +102,7 @@ public class WTTResourcesRouter(
                         }
                     }
 
-                    return jsonUtil.Serialize(result)
-                        ?? throw new NullReferenceException("Could not serialize image manifest!");
+                    return jsonUtil.Serialize(result) ?? throw new NullReferenceException("Could not serialize image manifest!");
                 }
             ),
             new RouteAction<EmptyRequestData>(
@@ -135,10 +129,7 @@ public class WTTResourcesRouter(
                         }
                     }
 
-                    return jsonUtil.Serialize(result)
-                        ?? throw new NullReferenceException(
-                            "Could not serialize mark textures manifest!"
-                        );
+                    return jsonUtil.Serialize(result) ?? throw new NullReferenceException("Could not serialize mark textures manifest!");
                 }
             ),
             // Voices
@@ -148,10 +139,7 @@ public class WTTResourcesRouter(
                 {
                     var voiceMappings = voiceService.GetVoiceBundleMappings();
                     return ValueTask.FromResult(
-                        jsonUtil.Serialize(voiceMappings)
-                            ?? throw new NullReferenceException(
-                                "Could not serialize voice mappings!"
-                            )
+                        jsonUtil.Serialize(voiceMappings) ?? throw new NullReferenceException("Could not serialize voice mappings!")
                     );
                 }
             ),
@@ -162,10 +150,7 @@ public class WTTResourcesRouter(
                 {
                     var manifest = audioService.GetAudioManifest();
                     return ValueTask.FromResult(
-                        jsonUtil.Serialize(manifest)
-                            ?? throw new NullReferenceException(
-                                "Could not serialize audio manifest!"
-                            )
+                        jsonUtil.Serialize(manifest) ?? throw new NullReferenceException("Could not serialize audio manifest!")
                     );
                 }
             ),
@@ -176,10 +161,7 @@ public class WTTResourcesRouter(
                 {
                     var recipes = customHideoutRecipeService.GetExtendedRecipes();
                     return ValueTask.FromResult(
-                        jsonUtil.Serialize(recipes)
-                            ?? throw new NullReferenceException(
-                                "Could not serialize extended recipes!"
-                            )
+                        jsonUtil.Serialize(recipes) ?? throw new NullReferenceException("Could not serialize extended recipes!")
                     );
                 }
             ),
@@ -190,10 +172,7 @@ public class WTTResourcesRouter(
                 {
                     var parents = customItemParentService.GetCustomParents();
                     return ValueTask.FromResult(
-                        jsonUtil.Serialize(parents)
-                            ?? throw new NullReferenceException(
-                                "Could not serialize custom parents!"
-                            )
+                        jsonUtil.Serialize(parents) ?? throw new NullReferenceException("Could not serialize custom parents!")
                     );
                 }
             ),

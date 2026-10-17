@@ -22,10 +22,7 @@ internal class BoomboxAudioPatch : ModulePatch
     }
 
     [PatchPrefix]
-    private static bool Prefix(
-        AudioArray __instance,
-        ref AudioClip sound,
-        out AudioClip __state)
+    private static bool Prefix(AudioArray __instance, ref AudioClip sound, out AudioClip __state)
     {
         __state = null;
 
@@ -75,17 +72,16 @@ internal class BoomboxAudioPatch : ModulePatch
     }
 
     [PatchPostfix]
-    private static void Postfix(
-        AudioArray __instance,
-        AudioClip sound,
-        AudioClip __state)
+    private static void Postfix(AudioArray __instance, AudioClip sound, AudioClip __state)
     {
-        if (__state == null || sound == __state) return;
+        if (__state == null || sound == __state)
+            return;
 
         try
         {
             var tracker = __instance.gameObject.GetComponent<HideoutRadioStateTracker>();
-            if (tracker == null) return;
+            if (tracker == null)
+                return;
 
             var sources = __instance.GetComponents<AudioSource>();
             foreach (var source in sources)
@@ -111,7 +107,7 @@ internal class BoomboxAudioPatch : ModulePatch
         {
             RadioLocation.Gym => RadioSettings.GymRadioVolume.Value,
             RadioLocation.RestSpace => RadioSettings.RestSpaceRadioVolume.Value,
-            _ => 1f
+            _ => 1f,
         };
     }
 
@@ -173,10 +169,12 @@ internal class BoomboxAudioPatch : ModulePatch
             var faceId = player.Profile.Customization.TryGetValue(EBodyModelPart.Head, out var headId) ? headId : null;
             var faceName = faceId.LocalizedName();
 
-            if (!string.IsNullOrEmpty(faceName) 
+            if (
+                !string.IsNullOrEmpty(faceName)
                 && ResourceLoader.Manifest.FaceCardMappings.TryGetValue(faceName, out var faceEntry)
-                && faceEntry.PlayOnRadio 
-                && faceEntry.Audio is { Count: > 0 })
+                && faceEntry.PlayOnRadio
+                && faceEntry.Audio is { Count: > 0 }
+            )
             {
                 // Check if none of the audios are already in the radioPool
                 if (!faceEntry.Audio.Any(audioKey => radioPool.Contains(audioKey)))
@@ -194,6 +192,4 @@ internal class BoomboxAudioPatch : ModulePatch
 
         return false;
     }
-
-    
 }

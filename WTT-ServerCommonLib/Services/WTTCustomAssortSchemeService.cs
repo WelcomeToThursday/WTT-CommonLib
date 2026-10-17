@@ -36,10 +36,7 @@ public class WTTCustomAssortSchemeService(
         if (!Directory.Exists(finalDir))
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
 
         if (jsonFiles.Length == 0)
         {
@@ -47,9 +44,7 @@ public class WTTCustomAssortSchemeService(
             return;
         }
 
-        var assortList = await configHelper.LoadAllJsonFiles<Dictionary<string, TraderAssort>>(
-            finalDir
-        );
+        var assortList = await configHelper.LoadAllJsonFiles<Dictionary<string, TraderAssort>>(finalDir);
 
         if (assortList.Count == 0)
         {

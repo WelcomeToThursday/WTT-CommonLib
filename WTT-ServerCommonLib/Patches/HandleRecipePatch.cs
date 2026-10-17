@@ -45,13 +45,7 @@ public class HandleRecipePatch(
 
         if (extendedRecipe != null)
         {
-            _hideoutControllerExtended.HandleExtendedRecipe(
-                sessionID,
-                recipe,
-                pmcData,
-                request,
-                output
-            );
+            _hideoutControllerExtended.HandleExtendedRecipe(sessionID, recipe, pmcData, request, output);
             return false;
         }
 

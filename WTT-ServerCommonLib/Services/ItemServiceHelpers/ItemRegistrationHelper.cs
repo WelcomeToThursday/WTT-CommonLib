@@ -22,10 +22,7 @@ namespace WTTServerCommonLib.Services.ItemServiceHelpers
         ItemHelper itemHelper
     )
     {
-        public void UpdateBaseItemPropertiesWithOverrides(
-            TemplateItemProperties? overrideProperties,
-            TemplateItem itemClone
-        )
+        public void UpdateBaseItemPropertiesWithOverrides(TemplateItemProperties? overrideProperties, TemplateItem itemClone)
         {
             if (overrideProperties is null || itemClone.Properties is null)
                 return;
@@ -83,7 +80,7 @@ namespace WTTServerCommonLib.Services.ItemServiceHelpers
                 }
             );
         }
-        
+
         // TODO: Use return value in validation errors logic
         // ReSharper disable once UnusedMethodReturnValue.Global
         public bool AddParentExtensionData(string newItemId)
@@ -99,21 +96,21 @@ namespace WTTServerCommonLib.Services.ItemServiceHelpers
                 logger.Warning($"Unable to find parent of {newItemId} in template table.");
                 return false;
             }
-            
+
             var itemProps = item.Properties;
             if (itemProps is null)
             {
                 logger.Warning($"OverrideProperties of {item.Id} is null.");
                 return false;
             }
-            
+
             var parentProps = parent.Properties;
             if (parentProps is null)
             {
                 logger.Warning($"OverrideProperties of {parent.Id} is null.");
                 return false;
             }
-            
+
             var parentPropsExtensionData = parentProps.ExtensionData;
             if (parentPropsExtensionData is null)
             {
@@ -130,17 +127,17 @@ namespace WTTServerCommonLib.Services.ItemServiceHelpers
 
             foreach (var property in itemPropsExtensionData)
             {
-                if (property.Key == null || property.Value == null) { continue; }
+                if (property.Key == null || property.Value == null)
+                {
+                    continue;
+                }
                 item.Properties!.ExtensionData?[property.Key] = property.Value;
             }
 
             return true;
         }
 
-        public void AddToLocaleDbs(
-            Dictionary<string, LocaleDetails> localeDetails,
-            string newItemId
-        )
+        public void AddToLocaleDbs(Dictionary<string, LocaleDetails> localeDetails, string newItemId)
         {
             var defaultLocale = localeDetails.Keys.FirstOrDefault();
             if (defaultLocale == null)
@@ -192,31 +189,46 @@ namespace WTTServerCommonLib.Services.ItemServiceHelpers
             {
                 var wall = itemHelper.GetItem(wallId);
                 if (wall.Key)
-                    wall.Value.Properties.Grids.First()
-                        .Properties.Filters.First()
-                        .Filter.Add(newItemId);
+                    wall.Value.Properties.Grids.First().Properties.Filters.First().Filter.Add(newItemId);
             }
         }
 
         public void AddParentData(string newItemId)
         {
-            if (!templateTable.Items.TryGetValue(newItemId, out var item)
+            if (
+                !templateTable.Items.TryGetValue(newItemId, out var item)
                 || !templateTable.Items.TryGetValue(item.Parent, out var parent)
                 || item.Properties == null
-                || parent.Properties == null) { return; }
+                || parent.Properties == null
+            )
+            {
+                return;
+            }
 
             var type = typeof(TemplateItemProperties);
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties)
             {
-                if (!property.CanRead || !property.CanWrite) { continue; }
-                if (property.Name == "ExtensionData") { continue; }
-                    
+                if (!property.CanRead || !property.CanWrite)
+                {
+                    continue;
+                }
+                if (property.Name == "ExtensionData")
+                {
+                    continue;
+                }
+
                 var target = property.GetValue(item.Properties);
-                if (target != null) { continue; }
-                    
+                if (target != null)
+                {
+                    continue;
+                }
+
                 var source = property.GetValue(parent.Properties);
-                if (source != null) { property.SetValue(item.Properties, source); }
+                if (source != null)
+                {
+                    property.SetValue(item.Properties, source);
+                }
             }
         }
     }

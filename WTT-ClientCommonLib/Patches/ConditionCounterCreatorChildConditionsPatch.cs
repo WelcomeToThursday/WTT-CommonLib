@@ -1,10 +1,10 @@
-﻿using EFT.Quests;
-using HarmonyLib;
-using SPT.Reflection.Patching;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using EFT.Quests;
+using HarmonyLib;
+using SPT.Reflection.Patching;
 using WTTClientCommonLib.Components;
 
 namespace WTTClientCommonLib.Patches
@@ -32,8 +32,7 @@ namespace WTTClientCommonLib.Patches
                 if (cond == null)
                     continue;
 
-                if (cond is not ConditionSalvage &&
-                    cond is not ConditionLeaveItemAtLocation)
+                if (cond is not ConditionSalvage && cond is not ConditionLeaveItemAtLocation)
                     continue;
 
                 if (!childList.Contains(cond))

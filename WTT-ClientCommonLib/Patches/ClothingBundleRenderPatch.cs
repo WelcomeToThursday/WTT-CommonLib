@@ -17,10 +17,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
 {
     protected override MethodBase GetTargetMethod()
     {
-        return AccessTools.Method(
-            typeof(ClothingIconCreator),
-            nameof(ClothingIconCreator.RenderModel)
-        );
+        return AccessTools.Method(typeof(ClothingIconCreator), nameof(ClothingIconCreator.RenderModel));
     }
 
     [PatchPrefix]
@@ -37,17 +34,12 @@ internal class ClothingBundleRendererPatch : ModulePatch
             GameObject asset = null;
             try
             {
-                asset = __instance._easyAssets.GetAsset<GameObject>(
-                    clothing.Prefab.path,
-                    clothing.Prefab.rcid
-                );
+                asset = __instance._easyAssets.GetAsset<GameObject>(clothing.Prefab.path, clothing.Prefab.rcid);
             }
             catch (Exception ex)
             {
                 // Bundle not loaded, fall back to original method
-                LogHelper.LogDebug(
-                    $"Bundle not loaded for {clothing.Prefab.path}, using original method"
-                );
+                LogHelper.LogDebug($"Bundle not loaded for {clothing.Prefab.path}, using original method");
                 return true;
             }
             var allRenderers = asset?.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -68,9 +60,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             // Skip if 1 or fewer materials found
             if (uniqueMaterials.Count <= 1)
             {
-                Logger.LogDebug(
-                    $"Skipping patch: Only {uniqueMaterials.Count} unique materials found"
-                );
+                Logger.LogDebug($"Skipping patch: Only {uniqueMaterials.Count} unique materials found");
                 return true;
             }
 
@@ -113,10 +103,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
         }
     }
 
-    private static async Task<IconCreatorBase<
-        CustomizationClothing,
-        ClothingIcon
-    >.RenderModelResult> CompleteRendering(
+    private static async Task<IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult> CompleteRendering(
         ClothingIconCreator instance,
         IconCreatorBase<CustomizationClothing, ClothingIcon>.SpriteFactory spriteFactory,
         GameObject parentObject,
@@ -203,9 +190,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
                 }
             }
 
-            LogHelper.LogDebug(
-                $"Rendering with {validMeshCount} valid meshes. Bounds size: {combinedBounds.size}"
-            );
+            LogHelper.LogDebug($"Rendering with {validMeshCount} valid meshes. Bounds size: {combinedBounds.size}");
 
             if (validMeshCount == 0)
             {
@@ -248,11 +233,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             if (boundsMesh != null)
                 Object.Destroy(boundsMesh);
 
-            return new IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult
-            {
-                sprite = result,
-                zeroMipWasLoaded = true,
-            };
+            return new IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult { sprite = result, zeroMipWasLoaded = true };
         }
         catch (Exception e)
         {

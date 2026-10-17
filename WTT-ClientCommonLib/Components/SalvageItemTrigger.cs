@@ -30,15 +30,11 @@ public class SalvageItemTrigger : TriggerWithId
     public IReadOnlyList<SalvageReward> Rewards => _rewards;
     public bool ConsumeRequiredItem => _consumeRequiredItem;
 
-    public void Configure(
-        string requiredTpl,
-        float time,
-        IEnumerable<SalvageReward> rewards,
-        bool consumeRequiredItem = true)
+    public void Configure(string requiredTpl, float time, IEnumerable<SalvageReward> rewards, bool consumeRequiredItem = true)
     {
         _requiredItemTpl = requiredTpl;
-        _salvageTime     = time;
-        _rewards         = new List<SalvageReward>(rewards);
+        _salvageTime = time;
+        _rewards = new List<SalvageReward>(rewards);
         _consumeRequiredItem = consumeRequiredItem;
     }
 }

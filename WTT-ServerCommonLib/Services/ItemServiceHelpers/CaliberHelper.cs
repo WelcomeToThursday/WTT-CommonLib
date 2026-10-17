@@ -53,19 +53,10 @@ public class CaliberHelper(ISptLogger<CaliberHelper> logger, TemplateTable templ
                     UpdateFilters(chamber.Properties.Filters, cloneId, newId, itemId);
     }
 
-    private void UpdateFilters(
-        IEnumerable<SlotFilter> filters,
-        string cloneId,
-        string newId,
-        string itemId
-    )
+    private void UpdateFilters(IEnumerable<SlotFilter> filters, string cloneId, string newId, string itemId)
     {
         foreach (var filter in filters)
-            if (
-                filter.Filter != null
-                && filter.Filter.Contains(cloneId)
-                && filter.Filter.Add(newId)
-            )
+            if (filter.Filter != null && filter.Filter.Contains(cloneId) && filter.Filter.Add(newId))
                 LogHelper.Debug(logger, $"Added {newId} to filter in {itemId}");
     }
 }

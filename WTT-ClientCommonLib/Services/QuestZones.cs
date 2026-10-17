@@ -58,9 +58,7 @@ internal class QuestZones
         var loadedZoneCount = 0;
         if (request != null)
             foreach (var zone in request)
-                if (
-                    string.Equals(zone.ZoneLocation, Singleton<GameWorld>.Instance.MainPlayer.Location, StringComparison.OrdinalIgnoreCase)
-                )
+                if (string.Equals(zone.ZoneLocation, Singleton<GameWorld>.Instance.MainPlayer.Location, StringComparison.OrdinalIgnoreCase))
                 {
                     LogHelper.LogDebug("-------------------------------------");
                     LogHelper.LogDebug("ZoneScale:");
@@ -90,9 +88,7 @@ internal class QuestZones
 
         LogHelper.LogDebug("-------------------------------------");
         LogHelper.LogDebug($"Loaded CustomQuestZone Count: {loadedZoneCount}");
-        LogHelper.LogDebug(
-            $"Player Map Location: {Singleton<GameWorld>.Instance.MainPlayer.Location}"
-        );
+        LogHelper.LogDebug($"Player Map Location: {Singleton<GameWorld>.Instance.MainPlayer.Location}");
 #endif
         return request;
     }
@@ -268,12 +264,7 @@ internal class QuestZones
 
         _salvageRewards.AddRange(rewards);
 
-        trigger.Configure(
-            salvage.RequiredItemTpl,
-            salvage.SalvageTime,
-            rewards,
-            salvage.ConsumeRequiredItem
-        );
+        trigger.Configure(salvage.RequiredItemTpl, salvage.SalvageTime, rewards, salvage.ConsumeRequiredItem);
 
         newZone.layer = LayerMask.NameToLayer("Triggers");
         newZone.name = customQuestZone.ZoneId;
@@ -325,12 +316,8 @@ internal class QuestZones
         if (zoneIDField != null)
             zoneIDField.SetValue(flareDetector, customQuestZone.ZoneId);
 
-        var flareType = (FlareEventType)
-            Enum.Parse(typeof(FlareEventType), customQuestZone.FlareType);
-        var flareTypeForHandleField = flareDetectorType.GetField(
-            "flareTypeForHandle",
-            bindingFlags
-        );
+        var flareType = (FlareEventType)Enum.Parse(typeof(FlareEventType), customQuestZone.FlareType);
+        var flareTypeForHandleField = flareDetectorType.GetField("flareTypeForHandle", bindingFlags);
         if (flareTypeForHandleField != null)
             flareTypeForHandleField.SetValue(flareDetector, flareType);
 
@@ -340,8 +327,7 @@ internal class QuestZones
         var triggerHandlersField = flareDetectorType.GetField("_triggerHandlers", bindingFlags);
         if (triggerHandlersField != null)
         {
-            var triggerHandlers =
-                (List<PhysicsTriggerHandler>)triggerHandlersField.GetValue(flareDetector);
+            var triggerHandlers = (List<PhysicsTriggerHandler>)triggerHandlersField.GetValue(flareDetector);
             triggerHandlers.Add(triggerHandler);
         }
 
@@ -434,9 +420,7 @@ internal class QuestZones
         }
         else
         {
-            LogHelper.LogWarn(
-                $"All GroupPosition positions for {zone.ZoneId} are already used; allowing reuse."
-            );
+            LogHelper.LogWarn($"All GroupPosition positions for {zone.ZoneId} are already used; allowing reuse.");
             index = UnityEngine.Random.Range(0, zone.GroupPosition.Count);
         }
 

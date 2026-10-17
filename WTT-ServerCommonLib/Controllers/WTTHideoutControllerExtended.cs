@@ -107,19 +107,11 @@ public class WTTHideoutControllerExtended(
         // If we're unable to find the production, send an error to the client
         if (prodId is null)
         {
-            logger.Error(
-                serverLocalisationService.GetText(
-                    "hideout-unable_to_find_production_in_profile_by_recipie_id",
-                    request.RecipeId
-                )
-            );
+            logger.Error(serverLocalisationService.GetText("hideout-unable_to_find_production_in_profile_by_recipie_id", request.RecipeId));
 
             httpResponseUtil.AppendErrorToOutput(
                 output,
-                serverLocalisationService.GetText(
-                    "hideout-unable_to_find_production_in_profile_by_recipie_id",
-                    request.RecipeId
-                )
+                serverLocalisationService.GetText("hideout-unable_to_find_production_in_profile_by_recipie_id", request.RecipeId)
             );
 
             return;
@@ -161,10 +153,7 @@ public class WTTHideoutControllerExtended(
             {
                 rewardItems.FirstOrDefault()?.AddUpd();
 
-                rewardItems.FirstOrDefault().Upd.RecodableComponent = new UpdRecodableComponent
-                {
-                    IsEncoded = true,
-                };
+                rewardItems.FirstOrDefault().Upd.RecodableComponent = new UpdRecodableComponent { IsEncoded = true };
             }
         }
 
@@ -193,9 +182,7 @@ public class WTTHideoutControllerExtended(
         if (totalCraftingHours / hideoutConfig.HoursForSkillCrafting >= 1)
         {
             // Spent enough time crafting to get a bonus xp multiplier
-            var multiplierCrafting = Math.Floor(
-                totalCraftingHours.Value / hideoutConfig.HoursForSkillCrafting
-            );
+            var multiplierCrafting = Math.Floor(totalCraftingHours.Value / hideoutConfig.HoursForSkillCrafting);
             craftingExpAmount += (hideoutConfig.CraftingExpForHoursOfCrafting * multiplierCrafting);
             totalCraftingHours -= hideoutConfig.HoursForSkillCrafting * multiplierCrafting;
         }
@@ -263,12 +250,7 @@ public class WTTHideoutControllerExtended(
         // Add Crafting skill to player profile
         if (craftingExpAmount > 0)
         {
-            profileHelper.AddSkillPointsToPlayer(
-                pmcData,
-                SkillTypes.Crafting,
-                craftingExpAmount,
-                true
-            );
+            profileHelper.AddSkillPointsToPlayer(pmcData, SkillTypes.Crafting, craftingExpAmount, true);
 
             // TODO: verify this is still giving intellect skill points on live
             var intellectAmountToGive = 0.5 * Math.Round((double)(craftingExpAmount / 15));
@@ -296,11 +278,7 @@ public class WTTHideoutControllerExtended(
         // production.json is set to
         if (recipe.Continuous.GetValueOrDefault(false))
         {
-            hideoutProduction.ProductionTime = hideoutHelper.GetAdjustedCraftTimeWithSkills(
-                pmcData,
-                recipe.Id,
-                true
-            );
+            hideoutProduction.ProductionTime = hideoutHelper.GetAdjustedCraftTimeWithSkills(pmcData, recipe.Id, true);
         }
 
         // Flag normal (not continuous) crafts as complete

@@ -27,9 +27,7 @@ namespace WTTClientCommonLib.Patches
         {
             return AccessTools.FirstMethod(
                 typeof(InteractionContextHelper),
-                x =>
-                    x.Name == nameof(InteractionContextHelper.GetAvailableActions)
-                    && x.GetParameters()[0].Name == "owner"
+                x => x.Name == nameof(InteractionContextHelper.GetAvailableActions) && x.GetParameters()[0].Name == "owner"
             );
         }
 
@@ -38,12 +36,13 @@ namespace WTTClientCommonLib.Patches
         {
             var owner = (GamePlayerOwner)__args[0];
             var interactive = __args[1];
-            
+
             var player = owner.Player;
             if (interactive is TriggerWithId trigger && trigger.TryGetTimeRestrictions(out var restrictions))
             {
-                var hour = player.GameWorld.GameDateTime.Calculate().Hour; 
-                return Enumerable.Range(restrictions!.from, restrictions.to).Contains(hour);;
+                var hour = player.GameWorld.GameDateTime.Calculate().Hour;
+                return Enumerable.Range(restrictions!.from, restrictions.to).Contains(hour);
+                ;
             }
 
             if (interactive is not SalvageItemTrigger salvageTrigger)
@@ -68,9 +67,7 @@ namespace WTTClientCommonLib.Patches
             _activeSalvageChecker = null;
             ConditionProgressChecker activeChecker = null;
 
-            foreach (
-                var cpc in questBook.GetConditionHandlersByZone<ConditionZone>(salvageTrigger.Id)
-            )
+            foreach (var cpc in questBook.GetConditionHandlersByZone<ConditionZone>(salvageTrigger.Id))
             {
                 if (cpc.Condition is not ConditionSalvage)
                     continue;
@@ -92,22 +89,14 @@ namespace WTTClientCommonLib.Patches
 
             var actions = new List<InteractionAction>
             {
-                new()
-                {
-                    Name = "SALVAGE_ZONE".Localized(null),
-                    Action = () => StartSalvage(owner, salvageTrigger, inventoryController),
-                },
+                new() { Name = "SALVAGE_ZONE".Localized(null), Action = () => StartSalvage(owner, salvageTrigger, inventoryController) },
             };
 
             __result = new AvailableInteractionState { Actions = actions };
             return false;
         }
 
-        private static void StartSalvage(
-            GamePlayerOwner owner,
-            SalvageItemTrigger trigger,
-            InventoryController inventoryController
-        )
+        private static void StartSalvage(GamePlayerOwner owner, SalvageItemTrigger trigger, InventoryController inventoryController)
         {
             var player = owner.Player;
             var items = player.Inventory.GetPlayerItems(EPlayerItems.InRaidItems).ToArray();
@@ -126,9 +115,7 @@ namespace WTTClientCommonLib.Patches
 
             if (player.CurrentState is not IdlePlayerState)
             {
-                NotificationManager.DisplaySingletonWarningNotification(
-                    "CANT_SALVAGE_WHILE_MOVING".Localized(null)
-                );
+                NotificationManager.DisplaySingletonWarningNotification("CANT_SALVAGE_WHILE_MOVING".Localized(null));
                 return;
             }
 
@@ -176,11 +163,7 @@ namespace WTTClientCommonLib.Patches
             {
                 try
                 {
-                    var removeResult = ItemManipulator.Remove(
-                        requiredItem,
-                        inventoryController,
-                        simulate: true
-                    );
+                    var removeResult = ItemManipulator.Remove(requiredItem, inventoryController, simulate: true);
 
                     if (removeResult.Failed)
                     {
@@ -188,10 +171,7 @@ namespace WTTClientCommonLib.Patches
                         return;
                     }
 
-                    var netResult = await inventoryController.TryRunNetworkTransaction(
-                        removeResult,
-                        null
-                    );
+                    var netResult = await inventoryController.TryRunNetworkTransaction(removeResult, null);
                     if (!netResult.Succeed)
                     {
                         LogHelper.LogError("Network transaction for removing required item failed");
@@ -219,14 +199,7 @@ namespace WTTClientCommonLib.Patches
                         }
 
                         var fakeStash = itemFactory.CreateFakeStash(null);
-                        var fakeGrid = new Grid(
-                            "salvage fake stash",
-                            5,
-                            5,
-                            false,
-                            Array.Empty<ItemFilter>(),
-                            fakeStash
-                        );
+                        var fakeGrid = new Grid("salvage fake stash", 5, 5, false, Array.Empty<ItemFilter>(), fakeStash);
 
                         fakeStash.Grids[0] = fakeGrid;
 
@@ -259,55 +232,36 @@ namespace WTTClientCommonLib.Patches
                             item.SpawnedInSession = true;
 
                             IEnumerable<CompoundItem> targets = reward.ToQuestInventory
-                                ? new[] { inventoryController.Inventory.QuestRaidItems }.Where(c =>
-                                    c != null
-                                )
-                                : inventoryController
-                                    .Inventory.Equipment.ToEnumerable()
-                                    .OfType<CompoundItem>();
+                                ? new[] { inventoryController.Inventory.QuestRaidItems }.Where(c => c != null)
+                                : inventoryController.Inventory.Equipment.ToEnumerable().OfType<CompoundItem>();
 
                             if (!targets.Any())
                             {
-                                LogHelper.LogError(
-                                    $"No in-raid targets for salvage reward {reward.ItemTpl}"
-                                );
+                                LogHelper.LogError($"No in-raid targets for salvage reward {reward.ItemTpl}");
                                 continue;
                             }
 
                             const ItemManipulator.EMoveItemOrder flags =
-                                ItemManipulator.EMoveItemOrder.PickUp
-                                | ItemManipulator.EMoveItemOrder.IgnoreItemParent;
+                                ItemManipulator.EMoveItemOrder.PickUp | ItemManipulator.EMoveItemOrder.IgnoreItemParent;
 
-                            var op = ItemManipulator.QuickFindAppropriatePlace(
-                                item,
-                                inventoryController,
-                                targets,
-                                flags,
-                                simulate: true
-                            );
+                            var op = ItemManipulator.QuickFindAppropriatePlace(item, inventoryController, targets, flags, simulate: true);
 
                             if (op.Failed)
                             {
-                                LogHelper.LogError(
-                                    $"QuickFind failed for salvage reward {reward.ItemTpl}: {op.Error}"
-                                );
+                                LogHelper.LogError($"QuickFind failed for salvage reward {reward.ItemTpl}: {op.Error}");
                                 continue;
                             }
 
                             var tx = await inventoryController.TryRunNetworkTransaction(op, null);
                             if (!tx.Succeed)
                             {
-                                LogHelper.LogError(
-                                    $"Network transaction failed for salvage reward {reward.ItemTpl}"
-                                );
+                                LogHelper.LogError($"Network transaction failed for salvage reward {reward.ItemTpl}");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        LogHelper.LogError(
-                            $"Error preparing salvage reward {reward.ItemTpl}: {ex}"
-                        );
+                        LogHelper.LogError($"Error preparing salvage reward {reward.ItemTpl}: {ex}");
                     }
                 }
             }

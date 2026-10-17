@@ -63,10 +63,7 @@ namespace WTTClientCommonLib.Patches
             return false;
         }
 
-        private static ConditionCounterCreator? FindParentCounterCreator(
-            Quest quest,
-            Condition child
-        )
+        private static ConditionCounterCreator? FindParentCounterCreator(Quest quest, Condition child)
         {
             if (quest == null || child == null || child.ParentId == null)
                 return null;

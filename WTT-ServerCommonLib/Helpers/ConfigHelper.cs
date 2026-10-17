@@ -127,9 +127,7 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
         return result;
     }
 
-    public async Task<Dictionary<string, Dictionary<string, string>>> LoadLocalesFromDirectory(
-        string directoryPath
-    )
+    public async Task<Dictionary<string, Dictionary<string, string>>> LoadLocalesFromDirectory(string directoryPath)
     {
         var locales = new Dictionary<string, Dictionary<string, string>>();
 
@@ -144,9 +142,7 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
 
             try
             {
-                var data = await jsonUtil.DeserializeFromFileAsync<Dictionary<string, string>>(
-                    filePath
-                );
+                var data = await jsonUtil.DeserializeFromFileAsync<Dictionary<string, string>>(filePath);
 
                 if (data != null)
                 {

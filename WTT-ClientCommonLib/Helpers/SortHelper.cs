@@ -6,11 +6,7 @@ namespace WTTClientCommonLib.Helpers
 {
     public static class SortHelper
     {
-        public static void AddToSortOrder(
-            this Type itemType,
-            Type itemTypeToInsertAfter,
-            int offset = 1
-        )
+        public static void AddToSortOrder(this Type itemType, Type itemTypeToInsertAfter, int offset = 1)
         {
             InsertAfter(itemType, itemTypeToInsertAfter, offset);
         }
@@ -32,9 +28,7 @@ namespace WTTClientCommonLib.Helpers
 
             if (oldIndex < 0)
             {
-                LogHelper.LogWarn(
-                    $"failed to set sort index for item {itemType} because it does not exist in sort order list"
-                );
+                LogHelper.LogWarn($"failed to set sort index for item {itemType} because it does not exist in sort order list");
                 return;
             }
 

@@ -14,7 +14,7 @@ public static class ZoneTimeRestrictionTracker
     ///     It uses ConditionTimeComparer, a vanilla class only used in ConditionHit.
     /// </summary>
     private static readonly Dictionary<TriggerWithId, ConditionTimeComparer> Active = new();
-    
+
     /// <summary>
     ///     Register a trigger as time-restricted. Overwrites any existing restriction already tracked for the trigger.
     /// </summary>
@@ -22,8 +22,11 @@ public static class ZoneTimeRestrictionTracker
     /// <param name="timeRestriction">The time window the trigger's interaction is restricted to</param>
     public static void Set(TriggerWithId trigger, ConditionTimeComparer timeRestriction)
     {
-        if (!trigger) { return; }
-        
+        if (!trigger)
+        {
+            return;
+        }
+
         Active[trigger] = timeRestriction;
     }
 
@@ -33,7 +36,10 @@ public static class ZoneTimeRestrictionTracker
     /// <param name="trigger">The trigger to remove the restriction from</param>
     public static void Remove(TriggerWithId trigger)
     {
-        if (!trigger) { return; }
+        if (!trigger)
+        {
+            return;
+        }
 
         Active.Remove(trigger, out _);
     }

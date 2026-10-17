@@ -24,9 +24,7 @@ public class SpecialSlotsHelper(ISptLogger<SpecialSlotsHelper> logger, TemplateT
         {
             if (!items.TryGetValue(pocketsId, out var pockets))
             {
-                logger.Warning(
-                    $"[SpecialSlots] Could not find pockets template with id {pocketsId}"
-                );
+                logger.Warning($"[SpecialSlots] Could not find pockets template with id {pocketsId}");
                 continue;
             }
 
@@ -46,10 +44,7 @@ public class SpecialSlotsHelper(ISptLogger<SpecialSlotsHelper> logger, TemplateT
                     continue;
 
                 if (firstFilter.Filter.Add(itemId))
-                    LogHelper.Debug(
-                        logger,
-                        $"[SpecialSlots] Added {itemId} to pockets slot in {pocketsId}"
-                    );
+                    LogHelper.Debug(logger, $"[SpecialSlots] Added {itemId} to pockets slot in {pocketsId}");
             }
         }
     }

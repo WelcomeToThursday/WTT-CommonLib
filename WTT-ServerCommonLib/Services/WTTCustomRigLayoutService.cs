@@ -7,10 +7,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomRigLayoutService(
-    ModHelper modHelper,
-    ISptLogger<WTTCustomRigLayoutService> logger
-)
+public class WTTCustomRigLayoutService(ModHelper modHelper, ISptLogger<WTTCustomRigLayoutService> logger)
 {
     private readonly Dictionary<string, Dictionary<string, string>> _modBundles = [];
 
@@ -30,10 +27,7 @@ public class WTTCustomRigLayoutService(
 
         if (!Directory.Exists(finalDir))
         {
-            LogHelper.Debug(
-                logger,
-                $"No CustomRigLayouts directory at {finalDir} for mod {modKey}"
-            );
+            LogHelper.Debug(logger, $"No CustomRigLayouts directory at {finalDir} for mod {modKey}");
             return;
         }
 

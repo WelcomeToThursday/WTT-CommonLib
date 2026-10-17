@@ -46,9 +46,7 @@ public class WTTCustomVoiceService(
                 return;
             }
 
-            var voiceConfigDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, CustomVoiceConfig>
-            >(finalDir);
+            var voiceConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomVoiceConfig>>(finalDir);
 
             if (voiceConfigDicts.Count == 0)
             {
@@ -72,10 +70,7 @@ public class WTTCustomVoiceService(
                     }
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Created {totalVoicesCreated} custom voices from {voiceConfigDicts.Count} files"
-            );
+            LogHelper.Debug(logger, $"Created {totalVoicesCreated} custom voices from {voiceConfigDicts.Count} files");
         }
         catch (Exception ex)
         {
@@ -189,10 +184,7 @@ public class WTTCustomVoiceService(
                 if (botDb != null)
                     botDb.BotAppearance.Voice[voiceId] = weight;
 
-                LogHelper.Debug(
-                    logger,
-                    $"Added voice {voiceId} to bot type '{botTypeKey}' with weight {weight}"
-                );
+                LogHelper.Debug(logger, $"Added voice {voiceId} to bot type '{botTypeKey}' with weight {weight}");
             }
             catch (Exception ex)
             {

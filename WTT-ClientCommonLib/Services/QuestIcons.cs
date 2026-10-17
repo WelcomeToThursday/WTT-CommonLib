@@ -41,18 +41,13 @@ namespace WTTClientCommonLib.Services
                 var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
                 if (!tex.LoadImage(bytes))
                 {
-                    LogHelper.LogError ($"Failed to load texture for salvage quest icon: {iconPath}");
+                    LogHelper.LogError($"Failed to load texture for salvage quest icon: {iconPath}");
                     UnityEngine.Object.Destroy(tex);
                     _failed = true;
                     return;
                 }
 
-                _salvageSprite = Sprite.Create(
-                    tex,
-                    new Rect(0, 0, tex.width, tex.height),
-                    new Vector2(0.5f, 0.5f),
-                    100f
-                );
+                _salvageSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
 
                 _salvageSprite.texture.ignoreMipmapLimit = true;
                 _salvageSprite.texture.mipMapBias = -1f;

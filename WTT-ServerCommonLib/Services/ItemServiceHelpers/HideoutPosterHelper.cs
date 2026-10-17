@@ -8,10 +8,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services.ItemServiceHelpers;
 
 [Injectable]
-public class HideoutPosterHelper(
-    ISptLogger<HideoutPosterHelper> logger,
-    TemplateTable templateTable
-)
+public class HideoutPosterHelper(ISptLogger<HideoutPosterHelper> logger, TemplateTable templateTable)
 {
     private const string CustomizationItem = "673c7b00cbf4b984b5099181";
 
@@ -53,10 +50,7 @@ public class HideoutPosterHelper(
         var items = templateTable.Items;
         foreach (var posterSlotId in PosterSlotIds)
         {
-            if (
-                !items.TryGetValue(CustomizationItem, out var posterParent)
-                || posterParent.Properties?.Slots == null
-            )
+            if (!items.TryGetValue(CustomizationItem, out var posterParent) || posterParent.Properties?.Slots == null)
                 continue;
 
             AddItemToPosterSlots(itemId, posterParent, posterSlotId);
@@ -85,10 +79,7 @@ public class HideoutPosterHelper(
             filter.Filter ??= new HashSet<MongoId>();
 
             if (filter.Filter.Add(itemId))
-                LogHelper.Debug(
-                    logger,
-                    $"[Poster] Added {itemId} to slot '{slot.Name}' in {slotName}"
-                );
+                LogHelper.Debug(logger, $"[Poster] Added {itemId} to slot '{slot.Name}' in {slotName}");
             else if (logger.IsLogEnabled(LogLevel.Debug))
                 LogHelper.Debug(logger, $"[Poster] {itemId} already in slot '{slot.Name}'");
         }
