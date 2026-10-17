@@ -26,7 +26,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
             {
                 MongoId actualTraderId;
 
-                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLower(), out var traderId))
+                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
                 {
                     actualTraderId = traderId;
                 }

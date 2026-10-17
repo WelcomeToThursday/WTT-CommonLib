@@ -29,7 +29,7 @@ public class ModSlotHelper(ISptLogger<ModSlotHelper> logger, TemplateTable templ
 
             foreach (var slot in parentTemplate.Properties.Slots)
             {
-                var slotNameLower = slot.Name?.ToLower();
+                var slotNameLower = slot.Name?.ToLowerInvariant();
                 if (slotNameLower == null || !targetSlotNames.Contains(slotNameLower))
                     continue;
 

@@ -103,7 +103,7 @@ public class WTTCustomClothingService(
     {
         try
         {
-            return config.Type?.ToLower() switch
+            return config.Type.ToLowerInvariant() switch
             {
                 "top" => AddTop(config),
                 "bottom" => AddBottom(config),
@@ -291,7 +291,7 @@ public class WTTCustomClothingService(
     {
         MongoId actualTraderId;
 
-        if (TraderIds.TraderMap.TryGetValue(config.TraderId.ToLower(), out var traderId))
+        if (TraderIds.TraderMap.TryGetValue(config.TraderId.ToLowerInvariant(), out var traderId))
         {
             actualTraderId = traderId;
         }

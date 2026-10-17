@@ -75,7 +75,7 @@ public class WTTCustomAssortSchemeService(
 
             MongoId actualTraderId;
 
-            if (TraderIds.TraderMap.TryGetValue(traderKey.ToLower(), out var traderId))
+            if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
             {
                 actualTraderId = traderId;
             }

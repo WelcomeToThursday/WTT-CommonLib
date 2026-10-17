@@ -178,7 +178,7 @@ public class WTTCustomVoiceService(
         foreach (var (botType, weight) in voiceConfig.AddToBotTypes)
             try
             {
-                var botTypeKey = botType.ToLower();
+                var botTypeKey = botType.ToLowerInvariant();
 
                 if (!botTable.Types.TryGetValue(botTypeKey, out var botDb))
                 {

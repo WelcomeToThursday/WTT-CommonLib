@@ -59,8 +59,7 @@ internal class QuestZones
         if (request != null)
             foreach (var zone in request)
                 if (
-                    zone.ZoneLocation.ToLower()
-                    == Singleton<GameWorld>.Instance.MainPlayer.Location.ToLower()
+                    string.Equals(zone.ZoneLocation, Singleton<GameWorld>.Instance.MainPlayer.Location, StringComparison.OrdinalIgnoreCase)
                 )
                 {
                     LogHelper.LogDebug("-------------------------------------");

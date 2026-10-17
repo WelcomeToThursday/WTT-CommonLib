@@ -29,7 +29,7 @@ internal class OnGameStarted : ModulePatch
                 return;
             }
 
-            var validZones = questZones.Where(zone => zone.ZoneLocation.ToLower() == currentMap.ToLower()).ToList();
+            var validZones = questZones.Where(zone => string.Equals(zone.ZoneLocation, currentMap, StringComparison.OrdinalIgnoreCase)).ToList();
             
             ZoneConfigManager.ExistingQuestZones = validZones;
             QuestZones.CreateZones(validZones);

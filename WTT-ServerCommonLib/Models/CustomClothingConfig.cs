@@ -108,7 +108,7 @@ public static class CustomClothingConfigValidator
         if (string.IsNullOrWhiteSpace(config.TraderId))
             throw new InvalidOperationException("'traderId' is required and cannot be empty.");
 
-        var typeValue = config.Type.ToLower();
+        var typeValue = config.Type.ToLowerInvariant();
         if (typeValue != "top" && typeValue != "bottom")
             throw new InvalidOperationException(
                 $"'type' must be 'top' or 'bottom', got '{config.Type}'."
@@ -117,7 +117,7 @@ public static class CustomClothingConfigValidator
 
     private static void ValidateTypeSpecific(CustomClothingConfig config)
     {
-        var typeValue = config.Type.ToLower();
+        var typeValue = config.Type.ToLowerInvariant();
 
         if (typeValue == "top")
         {

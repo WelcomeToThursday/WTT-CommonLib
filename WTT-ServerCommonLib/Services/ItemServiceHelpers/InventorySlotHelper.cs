@@ -23,7 +23,7 @@ public class InventorySlotHelper(
         if (defaultInventorySlots == null)
             return;
 
-        var allowedSlots = itemConfig.AddToInventorySlots.Select(slot => slot.ToLower()).ToList();
+        var allowedSlots = itemConfig.AddToInventorySlots.Select(slot => slot.ToLowerInvariant()).ToList();
 
         foreach (var slot in defaultInventorySlots)
         {
@@ -31,7 +31,7 @@ public class InventorySlotHelper(
             if (filtersList == null || filtersList.Count == 0)
                 continue;
 
-            var slotNameLower = slot.Name?.ToLower();
+            var slotNameLower = slot.Name?.ToLowerInvariant();
             if (slotNameLower == null)
                 continue;
 
