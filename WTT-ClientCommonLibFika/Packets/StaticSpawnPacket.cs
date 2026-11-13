@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Fika.Core.Networking.LiteNetLib.Utils;
+using UnityEngine;
 
 namespace WTTClientCommonLibFika.Packets;
 
