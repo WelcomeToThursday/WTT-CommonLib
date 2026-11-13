@@ -75,10 +75,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             }
 
             // Create a parent object to hold all mesh objects
-            var parentObject = new GameObject("ClothingBundleParent")
-            {
-                layer = LayersMaskController.WeaponPreview
-            };
+            var parentObject = new GameObject("ClothingBundleParent") { layer = LayersMaskController.WeaponPreview };
             parentObject.transform.SetPositionAndRotation(
                 __instance._clothingMeshContainer.transform.position,
                 __instance._clothingMeshContainer.transform.rotation
@@ -89,10 +86,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             {
                 if (skinnedRenderer.sharedMesh != null && skinnedRenderer.enabled)
                 {
-                    var meshObject = new GameObject(skinnedRenderer.name + "_Preview")
-                    {
-                        layer = parentObject.layer
-                    };
+                    var meshObject = new GameObject(skinnedRenderer.name + "_Preview") { layer = parentObject.layer };
                     meshObject.transform.SetParent(parentObject.transform, false);
 
                     var mf = meshObject.AddComponent<MeshFilter>();
@@ -227,10 +221,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             instance._clothingMeshContainer = parentObject;
 
             // Create a dummy mesh with the combined bounds
-            var boundsMesh = new Mesh
-            {
-                bounds = combinedBounds
-            };
+            var boundsMesh = new Mesh { bounds = combinedBounds };
 
             var parentMeshFilter = parentObject.AddComponent<MeshFilter>();
             parentMeshFilter.sharedMesh = boundsMesh;

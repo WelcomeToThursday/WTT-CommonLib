@@ -67,35 +67,35 @@ public class WTTCustomAssortSchemeService(
         foreach (var schemeDict in assortsToApply)
         {
             foreach (var kvp in schemeDict)
-        {
-            var traderKey = kvp.Key;
-            var newAssort = kvp.Value;
-
-            MongoId actualTraderId;
-
-            if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
             {
-                actualTraderId = traderId;
-            }
-            else if (traderKey.IsValidMongoId())
-            {
-                actualTraderId = traderKey;
-            }
-            else
-            {
-                logger.Error($"Invalid trader key: {traderKey}");
-                continue;
-            }
+                var traderKey = kvp.Key;
+                var newAssort = kvp.Value;
 
-            if (!tradersTable.TryGetValue(actualTraderId, out var trader))
-            {
-                logger.Warning($"Trader not found in DB: ({actualTraderId})");
-                continue;
-            }
+                MongoId actualTraderId;
 
-            trader.Assort.Items.AddRange(newAssort.Items);
+                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
+                {
+                    actualTraderId = traderId;
+                }
+                else if (traderKey.IsValidMongoId())
+                {
+                    actualTraderId = traderKey;
+                }
+                else
+                {
+                    logger.Error($"Invalid trader key: {traderKey}");
+                    continue;
+                }
 
-            foreach (var scheme in newAssort.BarterScheme)
+                if (!tradersTable.TryGetValue(actualTraderId, out var trader))
+                {
+                    logger.Warning($"Trader not found in DB: ({actualTraderId})");
+                    continue;
+                }
+
+                trader.Assort.Items.AddRange(newAssort.Items);
+
+                foreach (var scheme in newAssort.BarterScheme)
                 {
                     trader.Assort.BarterScheme[scheme.Key] = scheme.Value;
                 }
@@ -106,7 +106,7 @@ public class WTTCustomAssortSchemeService(
                 }
 
                 LogHelper.Debug(logger, $"Merged {newAssort.Items.Count} items into trader");
-        }
+            }
         }
     }
 }

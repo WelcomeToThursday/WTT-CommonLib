@@ -29,11 +29,11 @@ public class BotLootHelper(BotTable botTable, SptLogger<BotLootHelper> logger)
                 foreach (var (existingItem, chance) in container)
                 {
                     if (existingItem.ToString() == cloneItemId)
-                {
-                    container[new MongoId(newItemId)] = chance;
-                    LogHelper.Debug(logger, $"Added {newItemId} to {container[new MongoId(newItemId)]}");
-                    break;
-                }
+                    {
+                        container[new MongoId(newItemId)] = chance;
+                        LogHelper.Debug(logger, $"Added {newItemId} to {container[new MongoId(newItemId)]}");
+                        break;
+                    }
                 }
             }
         }

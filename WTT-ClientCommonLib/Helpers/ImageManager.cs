@@ -197,9 +197,7 @@ public static class ImageManager
 
     public static async Task<bool> ShouldAcquire(ImageItem image, ImageType type)
     {
-        var filepath = WTTClientCommonLib.FikaInstalled
-            ? Path.Combine(GetCachePath(type), image.FileName)
-            : GetImageFilePath(image, type);
+        var filepath = WTTClientCommonLib.FikaInstalled ? Path.Combine(GetCachePath(type), image.FileName) : GetImageFilePath(image, type);
 
         var valid = await IsCacheValid(filepath, image);
 

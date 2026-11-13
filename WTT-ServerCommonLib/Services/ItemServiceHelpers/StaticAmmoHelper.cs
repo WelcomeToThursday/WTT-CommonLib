@@ -42,9 +42,7 @@ public class StaticAmmoHelper(ISptLogger<StaticAmmoHelper> logger, LocationTable
 
                 try
                 {
-                    var ammoList = location.StaticAmmo.TryGetValue(caliber, out var details)
-                        ? details.ToList()
-                        : [];
+                    var ammoList = location.StaticAmmo.TryGetValue(caliber, out var details) ? details.ToList() : [];
 
                     if (ammoList.Any(a => a.Tpl == newItemId))
                     {

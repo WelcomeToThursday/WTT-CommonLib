@@ -195,22 +195,22 @@ public class WTTCustomQuestService(
         foreach (var file in questFiles)
         {
             foreach (var (key, quest) in file)
-        {
-            if (!key.IsValidMongoId())
             {
-                logger.Warning($"{traderId}: Invalid quest ID '{key}', skipping");
-                continue;
-            }
+                if (!key.IsValidMongoId())
+                {
+                    logger.Warning($"{traderId}: Invalid quest ID '{key}', skipping");
+                    continue;
+                }
 
-            if (_timeWindows.TryGetValue(key, out var window) && !IsWithin(window))
+                if (_timeWindows.TryGetValue(key, out var window) && !IsWithin(window))
                 {
                     continue;
                 }
 
                 templateTable.Quests[key] = quest;
-            questCount++;
-            LogHelper.Debug(logger, $"{traderId}: Added quest {key}");
-        }
+                questCount++;
+                LogHelper.Debug(logger, $"{traderId}: Added quest {key}");
+            }
         }
 
         LogHelper.Debug(logger, $"{traderId}: Successfully loaded {questCount} quests");
@@ -258,20 +258,20 @@ public class WTTCustomQuestService(
         foreach (var questAssort in assortFiles)
         {
             foreach (var (stage, questAssortDict) in questAssort)
-        {
-            if (!trader.QuestAssort.TryGetValue(stage, out var value))
             {
-                value = [];
-                trader.QuestAssort[stage] = value;
-            }
+                if (!trader.QuestAssort.TryGetValue(stage, out var value))
+                {
+                    value = [];
+                    trader.QuestAssort[stage] = value;
+                }
 
-            foreach (var (questId, assortId) in questAssortDict)
-            {
-                value[questId] = assortId;
-                assortCount++;
-                LogHelper.Debug(logger, $"{traderId}: Added assort for quest {questId} in stage {stage}");
+                foreach (var (questId, assortId) in questAssortDict)
+                {
+                    value[questId] = assortId;
+                    assortCount++;
+                    LogHelper.Debug(logger, $"{traderId}: Added assort for quest {questId} in stage {stage}");
+                }
             }
-        }
         }
 
         LogHelper.Debug(logger, $"{traderId}: Loaded {assortCount} quest assort items");

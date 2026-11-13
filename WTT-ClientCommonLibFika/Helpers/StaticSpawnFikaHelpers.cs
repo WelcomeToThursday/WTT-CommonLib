@@ -2,9 +2,9 @@
 using Comfort.Common;
 using JetBrains.Annotations;
 using UnityEngine;
-using WTTClientCommonLibFika.Packets;
 using WTTClientCommonLib.Helpers;
 using WTTClientCommonLib.Models;
+using WTTClientCommonLibFika.Packets;
 
 namespace WTTClientCommonLibFika.Helpers;
 
@@ -40,7 +40,10 @@ public class StaticSpawnFikaHelpers
     {
         try
         {
-            var prefab = WTTClientCommonLib.WTTClientCommonLib.Instance.AssetLoader.LoadPrefabFromBundle(packet.BundleName, packet.PrefabName);
+            var prefab = WTTClientCommonLib.WTTClientCommonLib.Instance.AssetLoader.LoadPrefabFromBundle(
+                packet.BundleName,
+                packet.PrefabName
+            );
             if (prefab == null)
             {
                 LogHelper.LogError($"[WTT-ClientCommonLibFika] Could not load prefab {packet.PrefabName} from {packet.BundleName}");
