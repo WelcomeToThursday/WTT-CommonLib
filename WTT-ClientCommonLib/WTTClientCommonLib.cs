@@ -17,10 +17,7 @@ using WTTClientCommonLib.Services;
 namespace WTTClientCommonLib;
 
 [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
-[BepInPlugin(
-    PluginConstants.Guid,
-    PluginConstants.Name,
-    PluginConstants.Version)]
+[BepInPlugin(PluginConstants.Guid, PluginConstants.Name, PluginConstants.Version)]
 public class WTTClientCommonLib : BaseUnityPlugin
 {
     private static CommandProcessor.CommandProcessor _commandProcessor;
@@ -86,8 +83,8 @@ public class WTTClientCommonLib : BaseUnityPlugin
     {
         try
         {
-            string pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string fikaAssemblyPath = Path.Combine(pluginDir, "WTT-ClientCommonLibFika.dll");
+            var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var fikaAssemblyPath = Path.Combine(pluginDir, "WTT-ClientCommonLibFika.dll");
 
             if (!File.Exists(fikaAssemblyPath))
             {
@@ -97,9 +94,7 @@ public class WTTClientCommonLib : BaseUnityPlugin
             }
 
             _fikaAssembly = Assembly.LoadFrom(fikaAssemblyPath);
-            _fikaHelperType = _fikaAssembly.GetType(
-                "WTTClientCommonLib.Fika.Helpers.StaticSpawnFikaHelpers"
-            );
+            _fikaHelperType = _fikaAssembly.GetType("WTTClientCommonLib.Fika.Helpers.StaticSpawnFikaHelpers");
 
             if (_fikaHelperType != null)
             {
@@ -107,10 +102,7 @@ public class WTTClientCommonLib : BaseUnityPlugin
                 var subscribeMethod = _fikaHelperType.GetMethod("SubscribeToFikaEvents");
                 subscribeMethod?.Invoke(_fikaHelper, null);
 
-                _sendFikaPacketMethod = _fikaHelperType.GetMethod(
-                    "SendFikaSpawnPacket",
-                    BindingFlags.Public | BindingFlags.Static
-                );
+                _sendFikaPacketMethod = _fikaHelperType.GetMethod("SendFikaSpawnPacket", BindingFlags.Public | BindingFlags.Static);
             }
             else
             {
@@ -128,7 +120,9 @@ public class WTTClientCommonLib : BaseUnityPlugin
     public static void SendFikaPacket(CustomSpawnConfig config, Quaternion rotation)
     {
         if (!FikaInstalled || _sendFikaPacketMethod == null)
+        {
             return;
+        }
 
         try
         {
@@ -146,10 +140,7 @@ public class WTTClientCommonLib : BaseUnityPlugin
         {
             if (_commandProcessor == null)
             {
-                _commandProcessor = new CommandProcessor.CommandProcessor(
-                    _playerWorldStats,
-                    SpawnCommands
-                );
+                _commandProcessor = new CommandProcessor.CommandProcessor(_playerWorldStats, SpawnCommands);
                 _commandProcessor.RegisterCommandProcessor();
             }
 

@@ -36,10 +36,7 @@ public class WTTCustomDialogueService(
             return;
         }
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
 
         if (jsonFiles.Length == 0)
         {
@@ -48,7 +45,7 @@ public class WTTCustomDialogueService(
         }
 
         var traderDialogElements = templateTable.Dialogue.Elements;
-        int added = 0;
+        var added = 0;
         foreach (var file in jsonFiles)
         {
             try
@@ -76,9 +73,7 @@ public class WTTCustomDialogueService(
                     }
                     else
                     {
-                        logger.Warning(
-                            $"Dialogue element with ID {element.Id} already exists, skipping"
-                        );
+                        logger.Warning($"Dialogue element with ID {element.Id} already exists, skipping");
                     }
                 }
             }

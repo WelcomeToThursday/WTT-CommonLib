@@ -15,9 +15,10 @@ public static class UniversalConfigManager
 #if DEBUG
             true,
 #else
-                false,
+            false,
 #endif
-            new ConfigDescription("Enable Developer Mode and RESTART YOUR GAME to access zone editor and static spawn system tools",
+            new ConfigDescription(
+                "Enable Developer Mode and RESTART YOUR GAME to access zone editor and static spawn system tools",
                 null,
                 new ConfigurationManagerAttributes { Order = 0 }
             )

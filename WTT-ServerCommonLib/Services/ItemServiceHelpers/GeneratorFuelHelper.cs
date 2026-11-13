@@ -23,7 +23,9 @@ public class GeneratorFuelHelper(ISptLogger<GeneratorFuelHelper> logger, Hideout
         }
 
         if (generator.Stages != null)
+        {
             if (validStages != null)
+            {
                 foreach (var validStage in validStages)
                 {
                     if (!generator.Stages.TryGetValue(validStage, out Stage? stage))
@@ -33,14 +35,18 @@ public class GeneratorFuelHelper(ISptLogger<GeneratorFuelHelper> logger, Hideout
                     }
 
                     if (stage.Bonuses != null)
+                    {
                         foreach (var bonus in stage.Bonuses)
                         {
-                            if (
-                                bonus is not { Type: BonusType.AdditionalSlots, Filter: { } filter }
-                            )
+                            if (bonus is not { Type: BonusType.AdditionalSlots, Filter: { } filter })
+                            {
                                 continue;
+                            }
+
                             if (filter.Contains(itemId))
+                            {
                                 continue;
+                            }
 
                             filter.Add(itemId);
                             LogHelper.Debug(
@@ -48,6 +54,9 @@ public class GeneratorFuelHelper(ISptLogger<GeneratorFuelHelper> logger, Hideout
                                 $"[GeneratorFuel] Added item {itemId} as fuel to generator at stage with bonus ID {bonus.Id}"
                             );
                         }
+                    }
                 }
+            }
+        }
     }
 }

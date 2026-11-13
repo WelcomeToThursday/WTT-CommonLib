@@ -4,34 +4,30 @@ using HarmonyLib;
 using SPT.Reflection.Patching;
 using WTTClientCommonLib.Components;
 
-namespace WTTClientCommonLib.Patches
+namespace WTTClientCommonLib.Patches;
+
+public class CreateConditionPatch : ModulePatch
 {
-    public class CreateConditionPatch : ModulePatch
+    protected override MethodBase GetTargetMethod()
     {
-        protected override MethodBase GetTargetMethod()
+        return AccessTools.Method(typeof(ConditionProgressCheckersFactory), nameof(ConditionProgressCheckersFactory.Create));
+    }
+
+    [PatchPrefix]
+    public static bool Prefix(Condition condition, ref ConditionProgressChecker __result)
+    {
+        if (condition is ConditionSalvage salvage)
         {
-            return AccessTools.Method(
-                typeof(ConditionProgressCheckersFactory),
-                nameof(ConditionProgressCheckersFactory.Create)
-            );
+            __result = new SalvageConditionChecker(salvage);
+            return false;
         }
 
-        [PatchPrefix]
-        public static bool Prefix(Condition condition, ref ConditionProgressChecker __result)
+        if (condition is ConditionLeaveItemAtLocation leaveitem)
         {
-            if (condition is ConditionSalvage salvage)
-            {
-                __result = new SalvageConditionChecker(salvage);
-                return false;
-            }
-
-            if (condition is ConditionLeaveItemAtLocation leaveitem)
-            {
-                __result = new LeaveItemAtLocationChecker(leaveitem);
-                return false;
-            }
-
-            return true;
+            __result = new LeaveItemAtLocationChecker(leaveitem);
+            return false;
         }
+
+        return true;
     }
 }

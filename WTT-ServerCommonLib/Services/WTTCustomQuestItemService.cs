@@ -1,15 +1,14 @@
-﻿using SPTarkov.Common.Models.Logging;
+﻿using System.Reflection;
+using SPTarkov.Common.Models.Logging;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Spt.Tables;
 using SPTarkov.Server.Core.Utils.Cloners;
-using System.Reflection;
 using WTTServerCommonLib.Constants;
 using WTTServerCommonLib.Helpers;
 using WTTServerCommonLib.Models;
 using WTTServerCommonLib.Services.ItemServiceHelpers;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using Path = System.IO.Path;
 
 namespace WTTServerCommonLib.Services;
@@ -29,22 +28,13 @@ public class WTTCustomQuestItemService(
     ItemBlacklistHelper rewardItemBlacklistHelper
 )
 {
-    private readonly List<(
-        string newItemId,
-        CustomQuestItemConfig config
-    )> _deferredModSlotConfigs = new();
-    private readonly List<(
-        string newItemId,
-        CustomQuestItemConfig config
-    )> _deferredSecureFilterConfigs = new();
+    private readonly List<(string newItemId, CustomQuestItemConfig config)> _deferredModSlotConfigs = [];
+    private readonly List<(string newItemId, CustomQuestItemConfig config)> _deferredSecureFilterConfigs = [];
     private CommonlibConfig _commonlibConfig;
 
     public async Task CreateCustomQuestItems(Assembly assembly, string? relativePath = null)
     {
-        var file = Path.Combine(
-            modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly()),
-            "config.jsonc"
-        );
+        var file = Path.Combine(modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly()), "config.jsonc");
         var commonlibConfig = await configHelper.LoadJsonFile<CommonlibConfig>(file);
         if (commonlibConfig != null)
         {
@@ -64,9 +54,7 @@ public class WTTCustomQuestItemService(
                 return;
             }
 
-            var itemConfigDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, CustomQuestItemConfig>
-            >(finalDir);
+            var itemConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomQuestItemConfig>>(finalDir);
 
             if (itemConfigDicts.Count == 0)
             {
@@ -101,10 +89,7 @@ public class WTTCustomQuestItemService(
                 }
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Created {totalItemsCreated} custom quest items from {itemConfigDicts.Count} files"
-            );
+            LogHelper.Debug(logger, $"Created {totalItemsCreated} custom quest items from {itemConfigDicts.Count} files");
 
             if (validationFailures.Count > 0 || creationFailures.Count > 0)
             {
@@ -125,9 +110,7 @@ public class WTTCustomQuestItemService(
 
                     warningSb.AppendLine();
                     warningSb.AppendLine("==================================================");
-                    warningSb.AppendLine(
-                        $"CUSTOM QUEST ITEM VALIDATION WARNINGS FOR MOD: {modName}"
-                    );
+                    warningSb.AppendLine($"CUSTOM QUEST ITEM VALIDATION WARNINGS FOR MOD: {modName}");
                     warningSb.AppendLine("==================================================");
                     warningSb.AppendLine($"Created items: {totalItemsCreated}");
                     warningSb.AppendLine($"Validation failures: {validationFailures.Count}");
@@ -140,7 +123,9 @@ public class WTTCustomQuestItemService(
                         warningSb.AppendLine($"[{failure.ItemId}]");
 
                         foreach (var error in failure.Errors)
+                        {
                             warningSb.AppendLine($" - {error}");
+                        }
 
                         warningSb.AppendLine();
                     }
@@ -168,7 +153,9 @@ public class WTTCustomQuestItemService(
                     errorSb.AppendLine("--------------------------------------------------");
 
                     foreach (var failure in creationFailures)
+                    {
                         errorSb.AppendLine($"[{failure.ItemId}] {failure.Error}");
+                    }
 
                     errorSb.AppendLine("==================================================");
 
@@ -182,11 +169,7 @@ public class WTTCustomQuestItemService(
         }
     }
 
-    private bool CreateQuestItemFromConfig(
-        Assembly assembly,
-        string newItemId,
-        CustomQuestItemConfig config
-    )
+    private bool CreateQuestItemFromConfig(Assembly assembly, string newItemId, CustomQuestItemConfig config)
     {
         var modName = assembly.GetName().Name ?? "UnknownMod";
         CreateQuestItemFromClone(assembly, newItemId, config);
@@ -195,23 +178,18 @@ public class WTTCustomQuestItemService(
         return true;
     }
 
-    private void CreateQuestItemFromClone(
-        Assembly assembly,
-        string newItemId,
-        CustomQuestItemConfig config
-    )
+    private void CreateQuestItemFromClone(Assembly assembly, string newItemId, CustomQuestItemConfig config)
     {
         if (templateTable.Items.TryGetValue(newItemId, out var existingItem))
+        {
             throw new InvalidOperationException($"ItemId already exists. {existingItem.Name}");
+        }
 
         var cloneTplId = ItemTplResolver.ResolveId(config.ItemTplToClone);
-        if (
-            !templateTable.Items.TryGetValue(cloneTplId, out var itemToClone)
-            || itemToClone == null
-        )
-            throw new InvalidOperationException(
-                $"Unable to find item to clone: {config.ItemTplToClone}"
-            );
+        if (!templateTable.Items.TryGetValue(cloneTplId, out var itemToClone) || itemToClone == null)
+        {
+            throw new InvalidOperationException($"Unable to find item to clone: {config.ItemTplToClone}");
+        }
 
         var itemClone = cloner.Clone(itemToClone);
         itemClone.Id = newItemId;
@@ -223,18 +201,14 @@ public class WTTCustomQuestItemService(
         var registerInFleaPrices = config.RegisterInFleaPrices ?? false;
 
         var modName = assembly.GetName().Name ?? "unknown_mod";
-        string newName = GenerateInternalName(modName, newItemId, config, itemClone);
+        var newName = GenerateInternalName(modName, newItemId, config, itemClone);
 
-        itemRegistrationHelper.UpdateBaseItemPropertiesWithOverrides(
-            config.OverrideProperties,
-            itemClone
-        );
+        itemRegistrationHelper.UpdateBaseItemPropertiesWithOverrides(config.OverrideProperties, itemClone);
 
         itemClone.Name = newName;
         itemClone.Properties.Name = newName;
         itemClone.Properties.ShortName = newName;
         itemClone.Properties.Description = newName;
-
 
         itemRegistrationHelper.AddToItemsDb(newItemId, itemClone);
 
@@ -256,20 +230,15 @@ public class WTTCustomQuestItemService(
 
         itemRegistrationHelper.AddItemToBaseClassCache(assembly, newItemId);
     }
-    private string GenerateInternalName(
-    string modName,
-    string newItemId,
-    CustomQuestItemConfig config,
-    TemplateItem itemClone
-)
+
+    private string GenerateInternalName(string modName, string newItemId, CustomQuestItemConfig config, TemplateItem itemClone)
     {
         if (!string.IsNullOrWhiteSpace(config.NewName))
+        {
             return $"[{modName}]_({config.NewName})";
+        }
 
-        if (
-            !string.IsNullOrWhiteSpace(config.OverrideProperties?.Name)
-            && itemClone.Properties.Name != config.OverrideProperties.Name
-        )
+        if (!string.IsNullOrWhiteSpace(config.OverrideProperties?.Name) && itemClone.Properties.Name != config.OverrideProperties.Name)
         {
             return $"[{modName}]_({config.OverrideProperties.Name})";
         }
@@ -277,13 +246,19 @@ public class WTTCustomQuestItemService(
         var itemName = config.Locales?["en"]?.Name;
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = config.Locales?.FirstOrDefault().Value?.Name;
+        }
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = itemClone.Properties.Name;
+        }
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = newItemId;
+        }
 
         return $"[{modName}]_({itemName})";
     }
@@ -291,16 +266,24 @@ public class WTTCustomQuestItemService(
     private void ProcessAdditionalProperties(string newItemId, CustomQuestItemConfig config)
     {
         if (config.AddToModSlots == true)
+        {
             AddDeferredModSlot(newItemId, config);
+        }
 
         if (config.AddToInventorySlots != null)
+        {
             inventorySlotHelper.ProcessInventorySlots(config, newItemId);
+        }
 
         if (config.AddToSpecialSlots == true)
+        {
             specialSlotsHelper.AddToSpecialSlots(config, newItemId);
+        }
 
         if (config.AddToSecureFilters == true)
+        {
             AddDeferredSecureFilters(newItemId, config);
+        }
 
         rewardItemBlacklistHelper.AddToItemBlacklist(newItemId);
     }
@@ -363,10 +346,7 @@ public class WTTCustomQuestItemService(
             return;
         }
 
-        LogHelper.Debug(
-            logger,
-            $"Processing {_deferredSecureFilterConfigs.Count} deferred secure filters..."
-        );
+        LogHelper.Debug(logger, $"Processing {_deferredSecureFilterConfigs.Count} deferred secure filters...");
 
         foreach (var (newItemId, config) in _deferredSecureFilterConfigs)
         {

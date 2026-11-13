@@ -17,12 +17,11 @@ public class WTTCustomCustomizationService(
     TemplateTable templateTable,
     HideoutTable hideoutTable,
     ModHelper modHelper,
-    ConfigHelper configHelper,
-    ImageRouterService imageRouterService
+    ConfigHelper configHelper
 )
 {
-    private readonly Dictionary<string, string> _hideoutIconPaths = new();
-    private readonly Dictionary<string, string> _markTexturePaths = new();
+    private readonly Dictionary<string, string> _hideoutIconPaths = [];
+    private readonly Dictionary<string, string> _markTexturePaths = [];
 
     /// <summary>
     /// Loads custom customization configs, customization storage entries, hideout customization configs,
@@ -56,83 +55,61 @@ public class WTTCustomCustomizationService(
             // Load customization items
             var customizationDir = Path.Combine(
                 assemblyLocation,
-                customizationRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "Customization")
+                customizationRelativePath ?? Path.Combine("db", "CustomCustomization", "Customization")
             );
 
             if (Directory.Exists(customizationDir))
             {
                 var customizationCreated = await LoadAndRegisterCustomizations(customizationDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Created {customizationCreated} custom customization items"
-                );
+                LogHelper.Debug(logger, $"Created {customizationCreated} custom customization items");
             }
 
             // Load customization storage entries
             var storageDir = Path.Combine(
                 assemblyLocation,
-                storageRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "CustomizationStorage")
+                storageRelativePath ?? Path.Combine("db", "CustomCustomization", "CustomizationStorage")
             );
 
             if (Directory.Exists(storageDir))
             {
                 var storageCreated = await LoadAndRegisterCustomizationStorage(storageDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Created {storageCreated} custom customization storage entries"
-                );
+                LogHelper.Debug(logger, $"Created {storageCreated} custom customization storage entries");
             }
 
             // Load hideout customization configs
             var hideoutCustomizationDir = Path.Combine(
                 assemblyLocation,
-                hideoutCustomizationRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "HideoutCustomizationGlobals")
+                hideoutCustomizationRelativePath ?? Path.Combine("db", "CustomCustomization", "HideoutCustomizationGlobals")
             );
 
             if (Directory.Exists(hideoutCustomizationDir))
             {
-                var hideoutCustomizationCreated = await LoadAndRegisterHideoutCustomizations(
-                    hideoutCustomizationDir
-                );
-                LogHelper.Debug(
-                    logger,
-                    $"Created {hideoutCustomizationCreated} custom hideout customization configs"
-                );
+                var hideoutCustomizationCreated = await LoadAndRegisterHideoutCustomizations(hideoutCustomizationDir);
+                LogHelper.Debug(logger, $"Created {hideoutCustomizationCreated} custom hideout customization configs");
             }
 
             // Load hideout customization icons
             var hideoutIconsDir = Path.Combine(
                 assemblyLocation,
-                hideoutIconsRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "HideoutIcons")
+                hideoutIconsRelativePath ?? Path.Combine("db", "CustomCustomization", "HideoutIcons")
             );
 
             if (Directory.Exists(hideoutIconsDir))
             {
                 var iconsRegistered = LoadAndRegisterHideoutIcons(hideoutIconsDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Registered {iconsRegistered} hideout customization icons"
-                );
+                LogHelper.Debug(logger, $"Registered {iconsRegistered} hideout customization icons");
             }
 
             // Load shooting range mark textures
             var markTexturesDir = Path.Combine(
                 assemblyLocation,
-                markTexturesRelativePath
-                    ?? Path.Combine("db", "CustomCustomization", "ShootingRangeMarkTextures")
+                markTexturesRelativePath ?? Path.Combine("db", "CustomCustomization", "ShootingRangeMarkTextures")
             );
 
             if (Directory.Exists(markTexturesDir))
             {
                 var texturesRegistered = LoadAndRegisterMarkTextures(markTexturesDir);
-                LogHelper.Debug(
-                    logger,
-                    $"Registered {texturesRegistered} shooting range mark textures"
-                );
+                LogHelper.Debug(logger, $"Registered {texturesRegistered} shooting range mark textures");
             }
         }
         catch (Exception ex)
@@ -143,15 +120,15 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterCustomizations(string customizationDir)
     {
-        var customizationConfigDicts = await configHelper.LoadAllJsonFiles<
-            Dictionary<string, CustomizationItem>
-        >(customizationDir);
+        var customizationConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomizationItem>>(customizationDir);
         var totalCreated = 0;
 
         foreach (var configDict in customizationConfigDicts)
         {
             if (configDict.Count == 0)
+            {
                 continue;
+            }
 
             foreach (var (customizationId, customizationItem) in configDict)
             {
@@ -163,9 +140,7 @@ public class WTTCustomCustomizationService(
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register customization {customizationId}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register customization {customizationId}: {ex.Message}");
                 }
             }
         }
@@ -175,15 +150,15 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterCustomizationStorage(string storageDir)
     {
-        var storageConfigDicts = await configHelper.LoadAllJsonFiles<List<CustomisationStorage>>(
-            storageDir
-        );
+        var storageConfigDicts = await configHelper.LoadAllJsonFiles<List<CustomisationStorage>>(storageDir);
         var totalCreated = 0;
 
         foreach (var configList in storageConfigDicts)
         {
             if (configList.Count == 0)
+            {
                 continue;
+            }
 
             foreach (var storageEntry in configList)
             {
@@ -198,16 +173,11 @@ public class WTTCustomCustomizationService(
 
                     templateTable.CustomisationStorage.Add(customizationStorage);
                     totalCreated++;
-                    LogHelper.Debug(
-                        logger,
-                        $"Registered customization storage: {storageEntry.Id} ({storageEntry.Type})"
-                    );
+                    LogHelper.Debug(logger, $"Registered customization storage: {storageEntry.Id} ({storageEntry.Type})");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register customization storage {storageEntry.Id}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register customization storage {storageEntry.Id}: {ex.Message}");
                 }
             }
         }
@@ -217,17 +187,17 @@ public class WTTCustomCustomizationService(
 
     private async Task<int> LoadAndRegisterHideoutCustomizations(string hideoutCustomizationDir)
     {
-        var hideoutConfigDicts = await configHelper.LoadAllJsonFiles<
-            List<HideoutCustomisationGlobal>
-        >(hideoutCustomizationDir);
+        var hideoutConfigDicts = await configHelper.LoadAllJsonFiles<List<HideoutCustomisationGlobal>>(hideoutCustomizationDir);
         var totalCreated = 0;
 
         foreach (var configDict in hideoutConfigDicts)
         {
             if (configDict.Count == 0)
+            {
                 continue;
+            }
 
-            foreach (HideoutCustomisationGlobal hideoutConfig in configDict)
+            foreach (var hideoutConfig in configDict)
             {
                 try
                 {
@@ -240,9 +210,7 @@ public class WTTCustomCustomizationService(
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(
-                        $"Failed to register hideout customization {hideoutConfig.Id}: {ex.Message}"
-                    );
+                    logger.Error($"Failed to register hideout customization {hideoutConfig.Id}: {ex.Message}");
                 }
             }
         }
@@ -306,10 +274,10 @@ public class WTTCustomCustomizationService(
 
     public List<string> GetHideoutIconManifest()
     {
-        return _hideoutIconPaths.Keys.ToList();
+        return [.. _hideoutIconPaths.Keys];
     }
 
-    public string GetHideoutIconFullPath(string iconName)
+    public string? GetHideoutIconFullPath(string iconName)
     {
         if (_hideoutIconPaths.TryGetValue(iconName, out var path))
         {
@@ -324,23 +292,29 @@ public class WTTCustomCustomizationService(
     public async Task<byte[]?> GetHideoutIconData(string iconName)
     {
         if (_hideoutIconPaths.TryGetValue(iconName, out var path) && File.Exists(path))
+        {
             return await File.ReadAllBytesAsync(path);
+        }
+
         return null;
     }
 
     public List<string> GetMarkTextureManifest()
     {
-        return _markTexturePaths.Keys.ToList();
+        return [.. _markTexturePaths.Keys];
     }
 
     public async Task<byte[]?> GetMarkTextureData(string textureName)
     {
         if (_markTexturePaths.TryGetValue(textureName, out var path) && File.Exists(path))
+        {
             return await File.ReadAllBytesAsync(path);
+        }
+
         return null;
     }
 
-    public string GetMarkTextureFullPath(string textureName)
+    public string? GetMarkTextureFullPath(string textureName)
     {
         if (_markTexturePaths.TryGetValue(textureName, out var path))
         {

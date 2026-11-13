@@ -14,12 +14,17 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
     public void ProcessStaticLootContainers(CustomItemConfig config, string itemId)
     {
         if (config.StaticLootContainers != null)
+        {
             foreach (var container in config.StaticLootContainers)
             {
                 if (string.IsNullOrWhiteSpace(container.ContainerName))
+                {
                     continue;
+                }
+
                 AddToStaticLoot(container.ContainerName, itemId, container.Probability);
             }
+        }
     }
 
     private void AddToStaticLoot(string containerId, string itemId, int probability)
@@ -35,12 +40,16 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
         foreach (var (locationId, location) in locations)
         {
             if (location.StaticLoot is null)
+            {
                 continue;
+            }
 
             location.StaticLoot.AddTransformer(lazyloadedStaticLootData =>
             {
                 if (lazyloadedStaticLootData is null)
+                {
                     return lazyloadedStaticLootData;
+                }
 
                 var actualContainerId = ItemTplResolver.ResolveId(containerId);
 
@@ -50,27 +59,13 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
                     return lazyloadedStaticLootData;
                 }
 
-                if (
-                    !lazyloadedStaticLootData.TryGetValue(
-                        actualContainerId,
-                        out var containerDetails
-                    )
-                )
+                if (!lazyloadedStaticLootData.TryGetValue(actualContainerId, out var containerDetails))
                 {
-                    LogHelper.Debug(
-                        logger,
-                        $"[StaticLoot] Loot container '{containerId}' not found in {locationId}"
-                    );
+                    LogHelper.Debug(logger, $"[StaticLoot] Loot container '{containerId}' not found in {locationId}");
                     return lazyloadedStaticLootData;
                 }
 
-                AddDistributionToContainer(
-                    containerDetails,
-                    itemId,
-                    probability,
-                    locationId,
-                    actualContainerId
-                );
+                AddDistributionToContainer(containerDetails, itemId, probability, locationId, actualContainerId);
 
                 return lazyloadedStaticLootData;
             });
@@ -93,9 +88,7 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
 
         var newItemDistribution = containerDetails.ItemDistribution.ToList();
 
-        newItemDistribution.Add(
-            new ItemDistribution { Tpl = itemId, RelativeProbability = probability }
-        );
+        newItemDistribution.Add(new ItemDistribution { Tpl = itemId, RelativeProbability = probability });
 
         containerDetails.ItemDistribution = newItemDistribution.ToArray();
 

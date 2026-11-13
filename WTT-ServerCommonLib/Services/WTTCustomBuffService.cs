@@ -30,12 +30,11 @@ public class WTTCustomBuffService(
         var finalDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir);
 
         if (!Directory.Exists(finalDir))
+        {
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
+        }
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
         if (jsonFiles.Length == 0)
         {
             logger.Warning($"No CustomBuffs files found in {finalDir}");
@@ -43,9 +42,7 @@ public class WTTCustomBuffService(
         }
 
         var dbBuffs = globalTable.Configuration.Health.Effects.Stimulator.Buffs;
-        var customBuffs = await configHelper.LoadAllJsonFiles<Dictionary<string, List<Buff>>>(
-            finalDir
-        );
+        var customBuffs = await configHelper.LoadAllJsonFiles<Dictionary<string, List<Buff>>>(finalDir);
 
         if (customBuffs.Count == 0)
         {

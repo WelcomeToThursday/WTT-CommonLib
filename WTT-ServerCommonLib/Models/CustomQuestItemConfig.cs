@@ -1,5 +1,3 @@
 ﻿namespace WTTServerCommonLib.Models;
 
-public class CustomQuestItemConfig : CustomItemConfigBase
-{
-}
+public class CustomQuestItemConfig : CustomItemConfigBase { }

@@ -21,10 +21,12 @@ public class SpawnSystemUpdater : MonoBehaviour
             _spawnCommands.UpdateEditMode();
 
             if (_spawnCommands.IsEditing)
+            {
                 if (_spawnCommands.LastSpawnedObject != null)
                 {
                     var pos = _spawnCommands.LastSpawnedObject.transform.position;
                 }
+            }
         }
         catch (Exception ex)
         {

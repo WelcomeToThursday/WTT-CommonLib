@@ -34,12 +34,11 @@ public class WTTCustomAssortSchemeService(
         var finalDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir);
 
         if (!Directory.Exists(finalDir))
+        {
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
+        }
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
 
         if (jsonFiles.Length == 0)
         {
@@ -47,9 +46,7 @@ public class WTTCustomAssortSchemeService(
             return;
         }
 
-        var assortList = await configHelper.LoadAllJsonFiles<Dictionary<string, TraderAssort>>(
-            finalDir
-        );
+        var assortList = await configHelper.LoadAllJsonFiles<Dictionary<string, TraderAssort>>(finalDir);
 
         if (assortList.Count == 0)
         {
@@ -68,42 +65,48 @@ public class WTTCustomAssortSchemeService(
     private void ApplyAssorts(List<Dictionary<string, TraderAssort>> assortsToApply)
     {
         foreach (var schemeDict in assortsToApply)
-        foreach (var kvp in schemeDict)
         {
-            var traderKey = kvp.Key;
-            var newAssort = kvp.Value;
-
-            MongoId actualTraderId;
-
-            if (TraderIds.TraderMap.TryGetValue(traderKey.ToLower(), out var traderId))
+            foreach (var kvp in schemeDict)
             {
-                actualTraderId = traderId;
+                var traderKey = kvp.Key;
+                var newAssort = kvp.Value;
+
+                MongoId actualTraderId;
+
+                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
+                {
+                    actualTraderId = traderId;
+                }
+                else if (traderKey.IsValidMongoId())
+                {
+                    actualTraderId = traderKey;
+                }
+                else
+                {
+                    logger.Error($"Invalid trader key: {traderKey}");
+                    continue;
+                }
+
+                if (!tradersTable.TryGetValue(actualTraderId, out var trader))
+                {
+                    logger.Warning($"Trader not found in DB: ({actualTraderId})");
+                    continue;
+                }
+
+                trader.Assort.Items.AddRange(newAssort.Items);
+
+                foreach (var scheme in newAssort.BarterScheme)
+                {
+                    trader.Assort.BarterScheme[scheme.Key] = scheme.Value;
+                }
+
+                foreach (var levelItem in newAssort.LoyalLevelItems)
+                {
+                    trader.Assort.LoyalLevelItems[levelItem.Key] = levelItem.Value;
+                }
+
+                LogHelper.Debug(logger, $"Merged {newAssort.Items.Count} items into trader");
             }
-            else if (traderKey.IsValidMongoId())
-            {
-                actualTraderId = traderKey;
-            }
-            else
-            {
-                logger.Error($"Invalid trader key: {traderKey}");
-                continue;
-            }
-
-            if (!tradersTable.TryGetValue(actualTraderId, out var trader))
-            {
-                logger.Warning($"Trader not found in DB: ({actualTraderId})");
-                continue;
-            }
-
-            trader.Assort.Items.AddRange(newAssort.Items);
-
-            foreach (var scheme in newAssort.BarterScheme)
-                trader.Assort.BarterScheme[scheme.Key] = scheme.Value;
-
-            foreach (var levelItem in newAssort.LoyalLevelItems)
-                trader.Assort.LoyalLevelItems[levelItem.Key] = levelItem.Value;
-
-            LogHelper.Debug(logger, $"Merged {newAssort.Items.Count} items into trader");
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace WTTClientCommonLib.Models;
 
-
 public class ImageItem
 {
     public string FileName { get; set; }

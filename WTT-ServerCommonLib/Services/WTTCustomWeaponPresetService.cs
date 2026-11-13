@@ -31,12 +31,11 @@ public class WTTCustomWeaponPresetService(
         var finalDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir);
 
         if (!Directory.Exists(finalDir))
+        {
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
+        }
 
-        var jsonFiles = Directory
-            .GetFiles(finalDir, "*.json")
-            .Concat(Directory.GetFiles(finalDir, "*.jsonc"))
-            .ToArray();
+        var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
         if (jsonFiles.Length == 0)
         {
             logger.Warning($"No CustomWeaponPresets files found in {finalDir}");
@@ -44,9 +43,7 @@ public class WTTCustomWeaponPresetService(
         }
 
         var itemPresets = globalTable.ItemPresets;
-        var customPresets = await configHelper.LoadAllJsonFiles<Dictionary<string, Preset>>(
-            finalDir
-        );
+        var customPresets = await configHelper.LoadAllJsonFiles<Dictionary<string, Preset>>(finalDir);
 
         if (customPresets.Count == 0)
         {

@@ -7,10 +7,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomRigLayoutService(
-    ModHelper modHelper,
-    ISptLogger<WTTCustomRigLayoutService> logger
-)
+public class WTTCustomRigLayoutService(ModHelper modHelper, ISptLogger<WTTCustomRigLayoutService> logger)
 {
     private readonly Dictionary<string, Dictionary<string, string>> _modBundles = [];
 
@@ -30,15 +27,14 @@ public class WTTCustomRigLayoutService(
 
         if (!Directory.Exists(finalDir))
         {
-            LogHelper.Debug(
-                logger,
-                $"No CustomRigLayouts directory at {finalDir} for mod {modKey}"
-            );
+            LogHelper.Debug(logger, $"No CustomRigLayouts directory at {finalDir} for mod {modKey}");
             return;
         }
 
         if (!_modBundles.ContainsKey(modKey))
-            _modBundles[modKey] = new Dictionary<string, string>();
+        {
+            _modBundles[modKey] = [];
+        }
 
         foreach (var bundlePath in Directory.GetFiles(finalDir, "*.bundle"))
         {
@@ -52,7 +48,10 @@ public class WTTCustomRigLayoutService(
     {
         var allBundles = new List<string>();
         foreach (var modBundles in _modBundles.Values)
+        {
             allBundles.AddRange(modBundles.Keys);
+        }
+
         return allBundles;
     }
 
@@ -61,10 +60,14 @@ public class WTTCustomRigLayoutService(
         foreach (var bundles in _modBundles.Values)
         {
             if (!bundles.TryGetValue(bundleName, out var path))
+            {
                 continue;
+            }
 
             if (!File.Exists(path))
+            {
                 continue;
+            }
 
             LogHelper.Debug(logger, $"Serving bundle {bundleName} from {path}");
             return await File.ReadAllBytesAsync(path);

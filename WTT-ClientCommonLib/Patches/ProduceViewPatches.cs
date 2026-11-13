@@ -35,20 +35,16 @@ public class ProduceViewShowPatch : ModulePatch
     }
 
     [PatchPostfix]
-    private static void PatchPostfix(
-        ProduceView __instance,
-        ProductionScheme scheme,
-        HideoutItemViewFactory ____resultItemIconViewFactory
-    )
+    private static void PatchPostfix(ProduceView __instance, ProductionScheme scheme, HideoutItemViewFactory ____resultItemIconViewFactory)
     {
         HideoutItemViewFactory viewFactory = ____resultItemIconViewFactory;
         ExtendedRecipeLoader recipeLoader = ExtendedRecipeLoader.Instance;
-        string schemeId = scheme._id;
+        var schemeId = scheme._id;
         ExtendedProductionScheme extendedScheme = recipeLoader.GetExtendedScheme(schemeId);
 
         if (extendedScheme != null)
         {
-            int createdStacks = 0;
+            var createdStacks = 0;
 
             List<RecipeResultStack> recipeResultStacks = [];
             foreach (RecipeResultStack resultStack in extendedScheme.ResultItemStacks.Values)
@@ -58,16 +54,9 @@ public class ProduceViewShowPatch : ModulePatch
 
             // update initial end product
             RecipeResultStack firstStack = extendedScheme.FirstResult;
-            viewFactory.Show(
-                firstStack.Item,
-                __instance.InventoryController,
-                __instance.ItemUiContext
-            );
+            viewFactory.Show(firstStack.Item, __instance.InventoryController, __instance.ItemUiContext);
 
-            if (
-                firstStack.MinStackCount >= 1
-                && firstStack.MinStackCount < firstStack.MaxStackCount
-            )
+            if (firstStack.MinStackCount >= 1 && firstStack.MinStackCount < firstStack.MaxStackCount)
             {
                 viewFactory.SetCounterText(
                     $"{StackCountDisplayHelper.GetShortBalance(firstStack.MinStackCount.Value, firstStack.Item.TemplateId.ToString())} - {StackCountDisplayHelper.GetShortBalance(firstStack.MaxStackCount.Value, firstStack.Item.TemplateId.ToString())}"
@@ -89,14 +78,13 @@ public class ProduceViewShowPatch : ModulePatch
 
             // instantiate previews for additional results
             // spoiler alert: this SUUUUUCKS :waytoodank:
-            int totalResultCount = extendedScheme.EndProductItems.Count;
+            var totalResultCount = extendedScheme.EndProductItems.Count;
             if (createdStacks != totalResultCount)
             {
-                int additionalResults = totalResultCount - createdStacks;
+                var additionalResults = totalResultCount - createdStacks;
 
                 // fix height
-                HorizontalLayoutGroup produceLayout =
-                    __instance.gameObject.GetComponent<HorizontalLayoutGroup>();
+                HorizontalLayoutGroup produceLayout = __instance.gameObject.GetComponent<HorizontalLayoutGroup>();
                 produceLayout.childScaleHeight = true;
 
                 // create horizontal list object
@@ -105,8 +93,7 @@ public class ProduceViewShowPatch : ModulePatch
                 resultList.transform.SetSiblingIndex(resultList.transform.GetSiblingIndex() - 1);
 
                 // initialize components and properties for horizontal list
-                HorizontalLayoutGroup layoutGroup =
-                    resultList.AddComponent<HorizontalLayoutGroup>();
+                HorizontalLayoutGroup layoutGroup = resultList.AddComponent<HorizontalLayoutGroup>();
                 layoutGroup.childForceExpandWidth = false;
                 layoutGroup.childForceExpandHeight = false;
                 layoutGroup.spacing = 10f;
@@ -115,21 +102,16 @@ public class ProduceViewShowPatch : ModulePatch
 
                 // create additional copies
                 List<GameObject> additionalViews = [];
-                for (int i = 0; i < additionalResults; i++)
+                for (var i = 0; i < additionalResults; i++)
                 {
-                    GameObject factory = GameObject.Instantiate(
-                        ____resultItemIconViewFactory.gameObject,
-                        resultList.transform,
-                        true
-                    );
+                    GameObject factory = GameObject.Instantiate(____resultItemIconViewFactory.gameObject, resultList.transform, true);
                     additionalViews.Add(factory);
                 }
 
                 // set up additional views
                 foreach (GameObject factoryGameObject in additionalViews)
                 {
-                    HideoutItemViewFactory factory =
-                        factoryGameObject.GetComponent<HideoutItemViewFactory>();
+                    HideoutItemViewFactory factory = factoryGameObject.GetComponent<HideoutItemViewFactory>();
 
                     // delete the original view
                     Transform viewContainer = factory.transform.Find("ItemViewContainer");
@@ -144,16 +126,9 @@ public class ProduceViewShowPatch : ModulePatch
 
                     // create a new view from current result stack
                     RecipeResultStack resultStack = recipeResultStacks[createdStacks];
-                    factory.Show(
-                        resultStack.Item,
-                        __instance.InventoryController,
-                        __instance.ItemUiContext
-                    );
+                    factory.Show(resultStack.Item, __instance.InventoryController, __instance.ItemUiContext);
                     // use result stack count for item count
-                    if (
-                        resultStack.MinStackCount >= 1
-                        && resultStack.MaxStackCount > resultStack.MinStackCount
-                    )
+                    if (resultStack.MinStackCount >= 1 && resultStack.MaxStackCount > resultStack.MinStackCount)
                     {
                         viewFactory.SetCounterText(
                             $"{StackCountDisplayHelper.GetShortBalance(resultStack.MinStackCount.Value, resultStack.Item.TemplateId.ToString())} - {StackCountDisplayHelper.GetShortBalance(resultStack.MaxStackCount.Value, resultStack.Item.TemplateId.ToString())}"
@@ -192,36 +167,26 @@ public class ProduceViewLoadedPatch : ModulePatch
                 typeof(ItemsProducerBase),
                 typeof(Action<string>),
                 typeof(Action<string>),
-                typeof(bool)
+                typeof(bool),
             }
         );
     }
 
     [PatchPostfix]
-    private static void PatchPostfix(
-        ProduceView __instance,
-        HideoutItemViewFactory ____resultItemIconViewFactory
-    )
+    private static void PatchPostfix(ProduceView __instance, HideoutItemViewFactory ____resultItemIconViewFactory)
     {
         HideoutItemViewFactory viewFactory = ____resultItemIconViewFactory;
         ExtendedRecipeLoader recipeLoader = ExtendedRecipeLoader.Instance;
-        string schemeId = __instance.Scheme._id;
+        var schemeId = __instance.Scheme._id;
         ExtendedProductionScheme extendedScheme = recipeLoader.GetExtendedScheme(schemeId);
 
         if (extendedScheme != null)
         {
             // update initial end product
             RecipeResultStack firstStack = extendedScheme.FirstResult;
-            viewFactory.Show(
-                firstStack.Item,
-                __instance.InventoryController,
-                __instance.ItemUiContext
-            );
+            viewFactory.Show(firstStack.Item, __instance.InventoryController, __instance.ItemUiContext);
 
-            if (
-                firstStack.MinStackCount >= 1
-                && firstStack.MaxStackCount > firstStack.MinStackCount
-            )
+            if (firstStack.MinStackCount >= 1 && firstStack.MaxStackCount > firstStack.MinStackCount)
             {
                 viewFactory.SetCounterText(
                     $"{StackCountDisplayHelper.GetShortBalance(firstStack.MinStackCount.Value, firstStack.Item.TemplateId.ToString())} - {StackCountDisplayHelper.GetShortBalance(firstStack.MaxStackCount.Value, firstStack.Item.TemplateId.ToString())}"

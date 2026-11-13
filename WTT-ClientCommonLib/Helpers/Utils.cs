@@ -14,7 +14,6 @@ using WTTClientCommonLib.Models;
 namespace WTTClientCommonLib.Helpers;
 
 internal static class Utils
-
 {
     private static readonly int SrcBlend = Shader.PropertyToID("_SrcBlend");
     private static readonly int DstBlend = Shader.PropertyToID("_DstBlend");
@@ -49,9 +48,11 @@ internal static class Utils
         {
             var req = RequestHandler.GetJson(url);
 
-            if (string.IsNullOrWhiteSpace(req) ||
-                req == "null" ||
-                (req.TrimStart().StartsWith("{") && (req.Contains("\"err\"") || req.Contains("\"error\""))))
+            if (
+                string.IsNullOrWhiteSpace(req)
+                || req == "null"
+                || (req.TrimStart().StartsWith("{") && (req.Contains("\"err\"") || req.Contains("\"error\"")))
+            )
             {
                 LogHelper.LogError($"Invalid/empty/error response from {url}: {req}");
                 return default;
@@ -65,17 +66,22 @@ internal static class Utils
             return default;
         }
     }
+
     // Create and return a basic cube to represent a zone position
     public static GameObject? CreateNewZoneCube(string objectName)
     {
         var position = GetPlayerPosition();
-        if (position == null) return null;
+        if (position == null)
+        {
+            return null;
+        }
+
         var vectorPosition = (Vector3)position;
 
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         var renderer = cube.GetComponent<Renderer>();
 
-        // Thank you Timber for this 
+        // Thank you Timber for this
         renderer.material.SetOverrideTag("RenderType", "Transparent");
         renderer.material.SetInt(SrcBlend, (int)BlendMode.SrcAlpha);
         renderer.material.SetInt(DstBlend, (int)BlendMode.OneMinusSrcAlpha);
@@ -94,8 +100,7 @@ internal static class Utils
     }
 
     // Convert zone list from custom type to type used by the loader
-    public static List<CustomQuestZone> ConvertZoneFormat(List<CustomZoneContainer> customZoneContainer,
-        string locationId)
+    public static List<CustomQuestZone> ConvertZoneFormat(List<CustomZoneContainer> customZoneContainer, string locationId)
     {
         var convertedZones = new List<CustomQuestZone>();
 
@@ -109,13 +114,22 @@ internal static class Utils
                 ZoneLocation = locationId,
                 ZoneType = zone.ZoneType,
                 FlareType = zone.FlareZoneType,
-                Position = new ZoneTransform(zoneObject.transform.position.x.ToString(),
-                    zoneObject.transform.position.y.ToString(), zoneObject.transform.position.z.ToString()),
-                Scale = new ZoneTransform(zoneObject.transform.localScale.x.ToString(),
-                    zoneObject.transform.localScale.y.ToString(), zoneObject.transform.localScale.z.ToString()),
-                Rotation = new ZoneTransform(zoneObject.transform.rotation.x.ToString(),
-                    zoneObject.transform.rotation.y.ToString(), zoneObject.transform.rotation.z.ToString(),
-                    zoneObject.transform.rotation.w.ToString())
+                Position = new ZoneTransform(
+                    zoneObject.transform.position.x.ToString(),
+                    zoneObject.transform.position.y.ToString(),
+                    zoneObject.transform.position.z.ToString()
+                ),
+                Scale = new ZoneTransform(
+                    zoneObject.transform.localScale.x.ToString(),
+                    zoneObject.transform.localScale.y.ToString(),
+                    zoneObject.transform.localScale.z.ToString()
+                ),
+                Rotation = new ZoneTransform(
+                    zoneObject.transform.rotation.x.ToString(),
+                    zoneObject.transform.rotation.y.ToString(),
+                    zoneObject.transform.rotation.z.ToString(),
+                    zoneObject.transform.rotation.w.ToString()
+                ),
             };
 
             if (newCustomQuestZone.ZoneType == "salvage")
@@ -124,15 +138,15 @@ internal static class Utils
                 {
                     RequiredItemTpl = "PUT YOUR REQUIRED ITEM TPL HERE",
                     SalvageTime = 10f,
-                    Rewards = new List<SalvageRewardConfig>
-                    {
+                    Rewards =
+                    [
                         new()
                         {
                             ItemTpl = "PUT YOUR REWARD ITEM HERE",
                             Count = 1,
-                            ToQuestInventory = false
-                        }
-                    }
+                            ToQuestInventory = false,
+                        },
+                    ],
                 };
             }
             convertedZones.Add(newCustomQuestZone);

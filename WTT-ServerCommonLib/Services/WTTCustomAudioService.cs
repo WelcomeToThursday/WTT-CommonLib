@@ -6,11 +6,11 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomAudioService(ModHelper modHelper, SptLogger<WTTCustomAudioService> logger)
+public class WTTCustomAudioService(SptLogger<WTTCustomAudioService> logger)
 {
-    private readonly List<string> _audioBundleKeys = new();
-    private readonly Dictionary<string, FaceCardAudioEntry> _faceCardAudio = new();
-    private readonly List<string> _radioAudio = new();
+    private readonly List<string> _audioBundleKeys = [];
+    private readonly Dictionary<string, FaceCardAudioEntry> _faceCardAudio = [];
+    private readonly List<string> _radioAudio = [];
 
     /// <summary>
     /// Registers audio bundle keys that are already in your mods SPT bundles.json manifest
@@ -34,11 +34,7 @@ public class WTTCustomAudioService(ModHelper modHelper, SptLogger<WTTCustomAudio
     /// <param name="playOnRadioIfFaceIsSelected">
     /// If true, the audio will be included in the radio pool only when the face is actively selected. Defaults to false.
     /// </param>
-    public void CreateFaceCardAudio(
-        string faceName,
-        string audioKey,
-        bool playOnRadioIfFaceIsSelected = false
-    )
+    public void CreateFaceCardAudio(string faceName, string audioKey, bool playOnRadioIfFaceIsSelected = false)
     {
         if (!_faceCardAudio.TryGetValue(faceName, out var entry))
         {
@@ -74,13 +70,13 @@ public class WTTCustomAudioService(ModHelper modHelper, SptLogger<WTTCustomAudio
 
 public class AudioManifest
 {
-    public List<string> AudioBundles { get; set; } = new();
-    public Dictionary<string, FaceCardAudioEntry> FaceCardMappings { get; set; } = new();
-    public List<string> RadioAudio { get; set; } = new();
+    public List<string> AudioBundles { get; set; } = [];
+    public Dictionary<string, FaceCardAudioEntry> FaceCardMappings { get; set; } = [];
+    public List<string> RadioAudio { get; set; } = [];
 }
 
 public class FaceCardAudioEntry
 {
-    public List<string> Audio { get; set; } = new();
+    public List<string> Audio { get; set; } = [];
     public bool PlayOnRadio { get; set; } = false;
 }

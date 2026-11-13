@@ -11,7 +11,9 @@ public class SpecialSlotsHelper(ISptLogger<SpecialSlotsHelper> logger, TemplateT
     public void AddToSpecialSlots(CustomItemConfigBase itemConfig, string itemId)
     {
         if (itemConfig.AddToSpecialSlots != true)
+        {
             return;
+        }
 
         var pocketIds = new[]
         {
@@ -24,9 +26,7 @@ public class SpecialSlotsHelper(ISptLogger<SpecialSlotsHelper> logger, TemplateT
         {
             if (!items.TryGetValue(pocketsId, out var pockets))
             {
-                logger.Warning(
-                    $"[SpecialSlots] Could not find pockets template with id {pocketsId}"
-                );
+                logger.Warning($"[SpecialSlots] Could not find pockets template with id {pocketsId}");
                 continue;
             }
 
@@ -39,17 +39,20 @@ public class SpecialSlotsHelper(ISptLogger<SpecialSlotsHelper> logger, TemplateT
             foreach (var slot in pockets.Properties.Slots)
             {
                 if (slot.Properties?.Filters == null)
+                {
                     continue;
+                }
 
                 var firstFilter = slot.Properties.Filters.FirstOrDefault();
                 if (firstFilter?.Filter == null)
+                {
                     continue;
+                }
 
                 if (firstFilter.Filter.Add(itemId))
-                    LogHelper.Debug(
-                        logger,
-                        $"[SpecialSlots] Added {itemId} to pockets slot in {pocketsId}"
-                    );
+                {
+                    LogHelper.Debug(logger, $"[SpecialSlots] Added {itemId} to pockets slot in {pocketsId}");
+                }
             }
         }
     }

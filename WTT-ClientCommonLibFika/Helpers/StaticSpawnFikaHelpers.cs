@@ -6,11 +6,11 @@ using Fika.Core.Networking;
 using Fika.Core.Networking.LiteNetLib;
 using JetBrains.Annotations;
 using UnityEngine;
-using WTTClientCommonLib.Fika.Packets;
 using WTTClientCommonLib.Helpers;
 using WTTClientCommonLib.Models;
+using WTTClientCommonLibFika.Packets;
 
-namespace WTTClientCommonLib.Fika.Helpers;
+namespace WTTClientCommonLibFika.Helpers;
 
 [UsedImplicitly]
 public class StaticSpawnFikaHelpers
@@ -44,13 +44,16 @@ public class StaticSpawnFikaHelpers
     {
         try
         {
-            var prefab = WTTClientCommonLib.Instance.AssetLoader.LoadPrefabFromBundle(packet.BundleName, packet.PrefabName);
+            var prefab = WTTClientCommonLib.WTTClientCommonLib.Instance.AssetLoader.LoadPrefabFromBundle(
+                packet.BundleName,
+                packet.PrefabName
+            );
             if (prefab == null)
             {
                 LogHelper.LogError($"[WTT-ClientCommonLibFika] Could not load prefab {packet.PrefabName} from {packet.BundleName}");
                 return;
             }
-        
+
             var rotation = Quaternion.Euler(packet.Rotation);
             UnityEngine.Object.Instantiate(prefab, packet.Position, rotation);
             LogHelper.LogDebug($"[WTT-ClientCommonLibFika] Spawned synced object {packet.PrefabName}");
@@ -60,14 +63,14 @@ public class StaticSpawnFikaHelpers
             LogHelper.LogError($"[WTT-ClientCommonLibFika] Failed to spawn from packet: {ex}");
         }
     }
-    
+
     [UsedImplicitly]
     public static void SendFikaSpawnPacket(CustomSpawnConfig config, Quaternion rotation)
     {
         try
         {
             var eulerAngles = rotation.eulerAngles;
-            
+
             var packet = new StaticSpawnPacket
             {
                 PrefabName = config.PrefabName,
@@ -76,7 +79,7 @@ public class StaticSpawnFikaHelpers
                 Rotation = eulerAngles,
                 LocationID = config.LocationID,
             };
-        
+
             var networkManager = Singleton<IFikaNetworkManager>.Instance;
             if (networkManager != null)
             {

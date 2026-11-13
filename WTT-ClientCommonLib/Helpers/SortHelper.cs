@@ -2,67 +2,60 @@ using System;
 using System.Collections.Generic;
 using EFT.InventoryLogic;
 
-namespace WTTClientCommonLib.Helpers
+namespace WTTClientCommonLib.Helpers;
+
+public static class SortHelper
 {
-    public static class SortHelper
+    public static void AddToSortOrder(this Type itemType, Type itemTypeToInsertAfter, int offset = 1)
     {
-        public static void AddToSortOrder(
-            this Type itemType,
-            Type itemTypeToInsertAfter,
-            int offset = 1
-        )
+        InsertAfter(itemType, itemTypeToInsertAfter, offset);
+    }
+
+    public static int GetSortOrder(this Type itemType)
+    {
+        return ItemSorter._itemSuccessors.IndexOf(itemType);
+    }
+
+    public static void Insert(int sortIndex, Type itemType)
+    {
+        ItemSorter._itemSuccessors.Insert(sortIndex, itemType);
+    }
+
+    public static void SetIndex(int newIndex, Type itemType)
+    {
+        List<Type> list = ItemSorter._itemSuccessors;
+        var oldIndex = list.IndexOf(itemType);
+
+        if (oldIndex < 0)
         {
-            InsertAfter(itemType, itemTypeToInsertAfter, offset);
+            LogHelper.LogWarn($"failed to set sort index for item {itemType} because it does not exist in sort order list");
+            return;
         }
 
-        public static int GetSortOrder(this Type itemType)
+        newIndex = Math.Clamp(newIndex, 0, list.Count - 1);
+
+        list.RemoveAt(oldIndex);
+
+        if (newIndex > oldIndex)
         {
-            return ItemSorter._itemSuccessors.IndexOf(itemType);
+            newIndex--;
         }
 
-        public static void Insert(int sortIndex, Type itemType)
+        list.Insert(newIndex, itemType);
+    }
+
+    public static void InsertAfter(Type itemType, Type itemToInsertAfter, int offset = 1)
+    {
+        var itemIndex = ItemSorter.IndexOf(itemToInsertAfter);
+
+        if (itemIndex < 0)
         {
-            ItemSorter._itemSuccessors.Insert(sortIndex, itemType);
+            LogHelper.LogWarn(
+                $"failed to add item type {itemType} to sort order because item type {itemToInsertAfter} doesn't exist in sort order list"
+            );
+            return;
         }
 
-        public static void SetIndex(int newIndex, Type itemType)
-        {
-            List<Type> list = ItemSorter._itemSuccessors;
-            int oldIndex = list.IndexOf(itemType);
-
-            if (oldIndex < 0)
-            {
-                LogHelper.LogWarn(
-                    $"failed to set sort index for item {itemType} because it does not exist in sort order list"
-                );
-                return;
-            }
-
-            newIndex = Math.Clamp(newIndex, 0, list.Count - 1);
-
-            list.RemoveAt(oldIndex);
-
-            if (newIndex > oldIndex)
-            {
-                newIndex--;
-            }
-
-            list.Insert(newIndex, itemType);
-        }
-
-        public static void InsertAfter(Type itemType, Type itemToInsertAfter, int offset = 1)
-        {
-            int itemIndex = ItemSorter.IndexOf(itemToInsertAfter);
-
-            if (itemIndex < 0)
-            {
-                LogHelper.LogWarn(
-                    $"failed to add item type {itemType} to sort order because item type {itemToInsertAfter} doesn't exist in sort order list"
-                );
-                return;
-            }
-
-            ItemSorter._itemSuccessors.Insert(itemIndex + offset, itemType);
-        }
+        ItemSorter._itemSuccessors.Insert(itemIndex + offset, itemType);
     }
 }

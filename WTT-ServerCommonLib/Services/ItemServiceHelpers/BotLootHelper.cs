@@ -18,28 +18,24 @@ public class BotLootHelper(BotTable botTable, SptLogger<BotLootHelper> logger)
         {
             var items = bot?.BotInventory.Items;
             if (items == null)
-                continue;
-
-            var containers = new[]
             {
-                items.Backpack,
-                items.Pockets,
-                items.SecuredContainer,
-                items.SpecialLoot,
-                items.TacticalVest,
-            };
+                continue;
+            }
+
+            var containers = new[] { items.Backpack, items.Pockets, items.SecuredContainer, items.SpecialLoot, items.TacticalVest };
 
             foreach (var container in containers)
-            foreach (var (existingItem, chance) in container)
-                if (existingItem.ToString() == cloneItemId)
+            {
+                foreach (var (existingItem, chance) in container)
                 {
-                    container[new MongoId(newItemId)] = chance;
-                    LogHelper.Debug(
-                        logger,
-                        $"Added {newItemId} to {container[new MongoId(newItemId)]}"
-                    );
-                    break;
+                    if (existingItem.ToString() == cloneItemId)
+                    {
+                        container[new MongoId(newItemId)] = chance;
+                        LogHelper.Debug(logger, $"Added {newItemId} to {container[new MongoId(newItemId)]}");
+                        break;
+                    }
                 }
+            }
         }
     }
 }

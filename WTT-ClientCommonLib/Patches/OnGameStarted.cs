@@ -29,8 +29,10 @@ internal class OnGameStarted : ModulePatch
                 return;
             }
 
-            var validZones = questZones.Where(zone => zone.ZoneLocation.ToLower() == currentMap.ToLower()).ToList();
-            
+            var validZones = questZones
+                .Where(zone => string.Equals(zone.ZoneLocation, currentMap, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
             ZoneConfigManager.ExistingQuestZones = validZones;
             QuestZones.CreateZones(validZones);
 
@@ -83,8 +85,9 @@ internal class OnGameStarted : ModulePatch
 
             LogHelper.LogDebug($"Processing {configs.Count} spawn configs for {locationID}");
             foreach (var config in configs)
+            {
                 loader.ProcessSpawnConfig(__instance.MainPlayer, config, locationID);
-            
+            }
         }
         catch (Exception e)
         {

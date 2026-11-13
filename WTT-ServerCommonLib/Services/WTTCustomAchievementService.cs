@@ -71,27 +71,20 @@ public class WTTCustomAchievementService(
 
         try
         {
-            var achievementLists = await configHelper.LoadAllJsonFiles<List<Achievement>>(
-                achievementsDir
-            );
+            var achievementLists = await configHelper.LoadAllJsonFiles<List<Achievement>>(achievementsDir);
 
             foreach (var achievementData in achievementLists)
             {
                 if (achievementData.Count != 0)
                 {
                     result.Add(achievementData);
-                    LogHelper.Debug(
-                        logger,
-                        $"Loaded achievement data with {achievementData.Count} achievements"
-                    );
+                    LogHelper.Debug(logger, $"Loaded achievement data with {achievementData.Count} achievements");
                 }
             }
         }
         catch (Exception ex)
         {
-            logger.Error(
-                $"Error scanning for achievement files in {achievementsDir}: {ex.Message}"
-            );
+            logger.Error($"Error scanning for achievement files in {achievementsDir}: {ex.Message}");
         }
 
         return result;
@@ -102,7 +95,7 @@ public class WTTCustomAchievementService(
         if (!Directory.Exists(directoryPath))
         {
             LogHelper.Debug(logger, $"Images directory not found: {directoryPath}");
-            return new List<string>();
+            return [];
         }
 
         try
@@ -118,7 +111,7 @@ public class WTTCustomAchievementService(
         catch (Exception ex)
         {
             logger.Error($"Error loading images from {directoryPath}: {ex.Message}");
-            return new List<string>();
+            return [];
         }
     }
 
@@ -165,19 +158,21 @@ public class WTTCustomAchievementService(
                 return;
             }
 
-            var fallback = locales.TryGetValue("en", out var englishLocales)
-                ? englishLocales
-                : locales.Values.FirstOrDefault();
+            var fallback = locales.TryGetValue("en", out var englishLocales) ? englishLocales : locales.Values.FirstOrDefault();
 
             if (fallback == null)
+            {
                 return;
+            }
 
             foreach (var (localeCode, lazyLocale) in localeTable.Global)
             {
                 lazyLocale.AddTransformer(localeData =>
                 {
                     if (localeData is null)
+                    {
                         return localeData;
+                    }
 
                     var customLocale = locales.GetValueOrDefault(localeCode, fallback);
 
@@ -190,10 +185,7 @@ public class WTTCustomAchievementService(
                 });
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Registered transformers for {locales.Count} achievement locale files"
-            );
+            LogHelper.Debug(logger, $"Registered transformers for {locales.Count} achievement locale files");
         }
         catch (Exception ex)
         {

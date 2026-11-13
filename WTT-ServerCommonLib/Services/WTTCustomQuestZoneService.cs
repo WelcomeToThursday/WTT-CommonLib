@@ -8,14 +8,10 @@ using WTTServerCommonLib.Models;
 namespace WTTServerCommonLib.Services;
 
 [Injectable(InjectionType.Singleton)]
-public class WTTCustomQuestZoneService(
-    ModHelper modHelper,
-    SptLogger<WTTCustomQuestZoneService> logger,
-    ConfigHelper configHelper
-)
+public class WTTCustomQuestZoneService(ModHelper modHelper, SptLogger<WTTCustomQuestZoneService> logger, ConfigHelper configHelper)
 {
     private readonly Lock _lock = new();
-    private readonly List<CustomQuestZone> _zones = new();
+    private readonly List<CustomQuestZone> _zones = [];
 
     /// <summary>
     /// Loads custom quest zones from JSON/JSONC files and registers them for quest interactions.
@@ -47,10 +43,7 @@ public class WTTCustomQuestZoneService(
         {
             var collection = zones.ToList();
             _zones.AddRange(collection);
-            LogHelper.Debug(
-                logger,
-                $"Registered {collection.Count} zones. Total zones: {_zones.Count}"
-            );
+            LogHelper.Debug(logger, $"Registered {collection.Count} zones. Total zones: {_zones.Count}");
         }
     }
 
@@ -59,10 +52,7 @@ public class WTTCustomQuestZoneService(
         lock (_lock)
         {
             _zones.Add(zone);
-            LogHelper.Debug(
-                logger,
-                $"Registered zone: {zone.ZoneName}. Total zones: {_zones.Count}"
-            );
+            LogHelper.Debug(logger, $"Registered zone: {zone.ZoneName}. Total zones: {_zones.Count}");
         }
     }
 
@@ -73,11 +63,13 @@ public class WTTCustomQuestZoneService(
         var zoneLists = await configHelper.LoadAllJsonFiles<List<CustomQuestZone>>(directory);
 
         foreach (var fileZones in zoneLists)
+        {
             if (fileZones.Count > 0)
             {
                 loadedZones.AddRange(fileZones);
                 LogHelper.Debug(logger, $"Loaded {fileZones.Count} zones from a file");
             }
+        }
 
         return loadedZones;
     }

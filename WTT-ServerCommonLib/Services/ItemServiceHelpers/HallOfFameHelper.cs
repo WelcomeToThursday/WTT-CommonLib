@@ -33,7 +33,9 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
         foreach (var hallId in HallItemIds)
         {
             if (!items.TryGetValue(hallId, out var hallItem) || hallItem.Properties?.Slots == null)
+            {
                 continue;
+            }
 
             AddItemToHallSlots(itemId, hallItem, filterTypes);
         }
@@ -44,34 +46,48 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
         var types = new HashSet<string?>(StringComparer.OrdinalIgnoreCase);
 
         if (config.HallOfFameSlots == null)
+        {
             return types;
+        }
 
         foreach (var slot in config.HallOfFameSlots)
+        {
             if (string.Equals(slot, "all", StringComparison.OrdinalIgnoreCase))
+            {
                 foreach (var type in ValidTypes)
+                {
                     types.Add(type);
+                }
+            }
             else
+            {
                 foreach (var type in ValidTypes)
+                {
                     if (slot.Equals(type, StringComparison.OrdinalIgnoreCase))
+                    {
                         types.Add(type);
+                    }
+                }
+            }
+        }
 
         return types;
     }
 
-    private void AddItemToHallSlots(
-        string itemId,
-        TemplateItem hallItem,
-        HashSet<string?> filterTypes
-    )
+    private void AddItemToHallSlots(string itemId, TemplateItem hallItem, HashSet<string?> filterTypes)
     {
         foreach (var slot in hallItem.Properties?.Slots!)
         {
             if (string.IsNullOrWhiteSpace(slot.Name) || slot.Properties?.Filters == null)
+            {
                 continue;
+            }
 
             var slotType = GetMatchingSlotType(slot.Name);
             if (!filterTypes.Contains(slotType))
+            {
                 continue;
+            }
 
             AddItemToFilters(itemId, slot, hallItem.Name);
         }
@@ -80,8 +96,13 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
     private string? GetMatchingSlotType(string slotName)
     {
         foreach (var type in ValidTypes)
+        {
             if (type != null && slotName.StartsWith(type, StringComparison.OrdinalIgnoreCase))
+            {
                 return type;
+            }
+        }
+
         return null;
     }
 
@@ -89,15 +110,16 @@ public class HallOfFameHelper(ISptLogger<HallOfFameHelper> logger, TemplateTable
     {
         foreach (var filter in slot.Properties?.Filters!)
         {
-            filter.Filter ??= new HashSet<MongoId>();
+            filter.Filter ??= [];
 
             if (filter.Filter.Add(itemId))
-                LogHelper.Debug(
-                    logger,
-                    $"[HallOfFame] Added {itemId} to slot '{slot.Name}' in {hallName}"
-                );
+            {
+                LogHelper.Debug(logger, $"[HallOfFame] Added {itemId} to slot '{slot.Name}' in {hallName}");
+            }
             else if (logger.IsLogEnabled(LogLevel.Debug))
+            {
                 LogHelper.Debug(logger, $"[HallOfFame] {itemId} already in slot '{slot.Name}'");
+            }
         }
     }
 }

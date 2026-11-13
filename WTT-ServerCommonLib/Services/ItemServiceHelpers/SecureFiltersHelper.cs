@@ -6,10 +6,7 @@ using WTTServerCommonLib.Helpers;
 namespace WTTServerCommonLib.Services.ItemServiceHelpers;
 
 [Injectable]
-public class SecureFiltersHelper(
-    ISptLogger<SecureFiltersHelper> logger,
-    TemplateTable templateTable
-)
+public class SecureFiltersHelper(ISptLogger<SecureFiltersHelper> logger, TemplateTable templateTable)
 {
     private const string SecureContainerParentId = "5448bf274bdc2dfc2f8b456a";
     private const string WTTSecureContainerParentId = "68154651f849fb4e7d816738";
@@ -18,24 +15,29 @@ public class SecureFiltersHelper(
     public void AddToSecureFilters(CustomItemConfigBase itemConfig, string newItemId)
     {
         if (itemConfig.AddToSecureFilters != true)
+        {
             return;
+        }
 
         var items = templateTable.Items;
 
         foreach (var (_, itemTemplate) in items)
         {
-            if (
-                itemTemplate.Parent != SecureContainerParentId
-                && itemTemplate.Parent != WTTSecureContainerParentId
-            )
+            if (itemTemplate.Parent != SecureContainerParentId && itemTemplate.Parent != WTTSecureContainerParentId)
+            {
                 continue;
+            }
 
             if (itemTemplate.Id == BossContainerId)
+            {
                 continue;
+            }
 
             var grids = itemTemplate.Properties?.Grids?.ToList();
             if (grids == null || grids.Count == 0)
+            {
                 continue;
+            }
 
             var gridFilters = grids[0].Properties?.Filters?.FirstOrDefault();
             if (gridFilters?.Filter == null)
@@ -50,10 +52,7 @@ public class SecureFiltersHelper(
             if (!gridFilters.Filter.Contains(newItemId))
             {
                 gridFilters.Filter.Add(newItemId);
-                LogHelper.Debug(
-                    logger,
-                    $"[SecureFilters] Added {newItemId} to secure container {itemTemplate.Id}"
-                );
+                LogHelper.Debug(logger, $"[SecureFilters] Added {newItemId} to secure container {itemTemplate.Id}");
             }
         }
     }

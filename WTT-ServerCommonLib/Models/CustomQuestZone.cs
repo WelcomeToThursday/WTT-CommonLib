@@ -1,4 +1,6 @@
-﻿namespace WTTServerCommonLib.Models;
+﻿using SPTarkov.Server.Core.Models.Eft.Common.Tables;
+
+namespace WTTServerCommonLib.Models;
 
 public class CustomQuestZone
 {
@@ -15,6 +17,8 @@ public class CustomQuestZone
     public List<ZoneTransforms>? GroupPosition { get; set; }
 
     public SalvageConfig? Salvage { get; set; }
+
+    public DaytimeCounter? TimeRestriction { get; set; }
 }
 
 public class SalvageConfig
@@ -23,7 +27,7 @@ public class SalvageConfig
     public float SalvageTime { get; set; } = 10f;
     public bool ConsumeRequiredItem { get; set; } = true;
 
-    public List<SalvageRewardConfig> Rewards { get; set; } = new();
+    public List<SalvageRewardConfig> Rewards { get; set; } = [];
 }
 
 public class SalvageRewardConfig
@@ -33,20 +37,12 @@ public class SalvageRewardConfig
     public bool ToQuestInventory { get; set; } = false;
 }
 
-public class ZoneTransform
+public class ZoneTransform(string x, string y, string z, string w = "0")
 {
-    public ZoneTransform(string x, string y, string z, string w = "0")
-    {
-        X = x;
-        Y = y;
-        Z = z;
-        W = w;
-    }
-
-    public string X { get; set; }
-    public string Y { get; set; }
-    public string Z { get; set; }
-    public string W { get; set; }
+    public string X { get; set; } = x;
+    public string Y { get; set; } = y;
+    public string Z { get; set; } = z;
+    public string W { get; set; } = w;
 }
 
 public class ZoneTransforms

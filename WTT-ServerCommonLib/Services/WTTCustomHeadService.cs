@@ -41,9 +41,7 @@ public class WTTCustomHeadService(
                 return;
             }
 
-            var headConfigDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, CustomHeadConfig>
-            >(finalDir);
+            var headConfigDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, CustomHeadConfig>>(finalDir);
 
             if (headConfigDicts.Count == 0)
             {
@@ -56,17 +54,20 @@ public class WTTCustomHeadService(
             foreach (var configDict in headConfigDicts)
             {
                 if (configDict.Count == 0)
+                {
                     continue;
+                }
 
                 foreach (var (headId, customHeadConfig) in configDict)
+                {
                     if (ProcessCustomHeadConfig(headId, customHeadConfig))
+                    {
                         totalHeadsCreated++;
+                    }
+                }
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Created {totalHeadsCreated} custom heads from {headConfigDicts.Count} files"
-            );
+            LogHelper.Debug(logger, $"Created {totalHeadsCreated} custom heads from {headConfigDicts.Count} files");
         }
         catch (Exception ex)
         {
@@ -94,10 +95,7 @@ public class WTTCustomHeadService(
         }
     }
 
-    private CustomizationItem GenerateHeadCustomizationItem(
-        string headId,
-        CustomHeadConfig customHeadConfig
-    )
+    private CustomizationItem GenerateHeadCustomizationItem(string headId, CustomHeadConfig customHeadConfig)
     {
         return new CustomizationItem
         {
@@ -141,7 +139,9 @@ public class WTTCustomHeadService(
     private void AddHeadToCustomizationStorage(string headId, bool addHeadToPlayer)
     {
         if (!addHeadToPlayer)
+        {
             return;
+        }
 
         var customizationStorage = templateTable.CustomisationStorage;
 
@@ -155,38 +155,46 @@ public class WTTCustomHeadService(
         customizationStorage.Add(headStorage);
     }
 
-    private void AddHeadToTemplates(
-        string headId,
-        CustomizationItem customizationItem,
-        bool addHeadToPlayer
-    )
+    private void AddHeadToTemplates(string headId, CustomizationItem customizationItem, bool addHeadToPlayer)
     {
         templateTable.Customization[headId] = customizationItem;
 
         if (addHeadToPlayer)
+        {
             templateTable.Character.Add(headId);
+        }
     }
 
     private void AddHeadLocales(string headId, CustomHeadConfig customHeadConfig)
     {
         if (customHeadConfig.Locales == null)
+        {
             return;
+        }
 
         var globalLocales = localeTable.Global;
         var headLocaleKey = $"{headId} Name";
 
         foreach (var (localeCode, lazyLocale) in globalLocales)
+        {
             lazyLocale.AddTransformer(localeData =>
             {
                 if (localeData == null)
+                {
                     return localeData;
+                }
 
                 if (customHeadConfig.Locales.TryGetValue(localeCode, out var localizedName))
+                {
                     localeData[headLocaleKey] = localizedName;
+                }
                 else if (customHeadConfig.Locales.TryGetValue("en", out var fallbackName))
+                {
                     localeData[headLocaleKey] = fallbackName;
+                }
 
                 return localeData;
             });
+        }
     }
 }

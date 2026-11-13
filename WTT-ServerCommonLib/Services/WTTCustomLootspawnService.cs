@@ -18,9 +18,9 @@ public class WTTCustomLootspawnService(
 )
 {
     private const double Epsilon = 0.0001;
-    private readonly Dictionary<string, List<Spawnpoint>> _cachedForcedSpawns = new();
+    private readonly Dictionary<string, List<Spawnpoint>> _cachedForcedSpawns = [];
 
-    private readonly Dictionary<string, List<Spawnpoint>> _cachedGeneralSpawns = new();
+    private readonly Dictionary<string, List<Spawnpoint>> _cachedGeneralSpawns = [];
     private bool _transformersRegistered;
 
     /// <summary>
@@ -37,10 +37,7 @@ public class WTTCustomLootspawnService(
         try
         {
             var assemblyLocation = modHelper.GetAbsolutePathToModFolder(assembly);
-            var baseDir = Path.Combine(
-                assemblyLocation,
-                relativePath ?? Path.Combine("db", "CustomLootspawns")
-            );
+            var baseDir = Path.Combine(assemblyLocation, relativePath ?? Path.Combine("db", "CustomLootspawns"));
 
             LogHelper.Debug(logger, $"Creating custom loot spawns from: {baseDir}");
 
@@ -63,11 +60,7 @@ public class WTTCustomLootspawnService(
         }
     }
 
-    private async Task GatherSpawnsFromDirectory(
-        string directory,
-        Dictionary<string, List<Spawnpoint>> cache,
-        string spawnType
-    )
+    private async Task GatherSpawnsFromDirectory(string directory, Dictionary<string, List<Spawnpoint>> cache, string spawnType)
     {
         if (!Directory.Exists(directory))
         {
@@ -79,9 +72,7 @@ public class WTTCustomLootspawnService(
         {
             LogHelper.Debug(logger, $"Gathering {spawnType} spawns from: {directory}");
 
-            var spawnDicts = await configHelper.LoadAllJsonFiles<
-                Dictionary<string, List<Spawnpoint>>
-            >(directory);
+            var spawnDicts = await configHelper.LoadAllJsonFiles<Dictionary<string, List<Spawnpoint>>>(directory);
 
             if (spawnDicts.Count == 0)
             {
@@ -122,20 +113,16 @@ public class WTTCustomLootspawnService(
                     }
 
                     if (!cache.ContainsKey(locationId))
-                        cache[locationId] = new List<Spawnpoint>();
+                    {
+                        cache[locationId] = [];
+                    }
 
                     cache[locationId].AddRange(spawnList);
-                    LogHelper.Debug(
-                        logger,
-                        $"Cached {spawnList.Count} {spawnType} spawn(s) for '{mapName}' (ID: {locationId})"
-                    );
+                    LogHelper.Debug(logger, $"Cached {spawnList.Count} {spawnType} spawn(s) for '{mapName}' (ID: {locationId})");
                 }
             }
 
-            LogHelper.Debug(
-                logger,
-                $"Finished gathering {spawnType} spawns: {cache.Count} location(s) in cache"
-            );
+            LogHelper.Debug(logger, $"Finished gathering {spawnType} spawns: {cache.Count} location(s) in cache");
         }
         catch (Exception ex)
         {
@@ -157,38 +144,20 @@ public class WTTCustomLootspawnService(
                 location.LooseLoot?.AddTransformer(looseLoot =>
                 {
                     if (looseLoot == null)
-                        return looseLoot;
-
-                    if (
-                        _cachedGeneralSpawns.TryGetValue(locationId, out var generalSpawns)
-                        && generalSpawns.Count > 0
-                    )
                     {
-                        looseLoot.Spawnpoints = MergeGeneral(
-                            looseLoot.Spawnpoints,
-                            generalSpawns,
-                            locationId
-                        );
-                        LogHelper.Debug(
-                            logger,
-                            $"Applied {generalSpawns.Count} general spawn(s) to location '{locationId}'"
-                        );
+                        return looseLoot;
                     }
 
-                    if (
-                        _cachedForcedSpawns.TryGetValue(locationId, out var forcedSpawns)
-                        && forcedSpawns.Count > 0
-                    )
+                    if (_cachedGeneralSpawns.TryGetValue(locationId, out var generalSpawns) && generalSpawns.Count > 0)
                     {
-                        looseLoot.SpawnpointsForced = MergeForced(
-                            looseLoot.SpawnpointsForced,
-                            forcedSpawns,
-                            locationId
-                        );
-                        LogHelper.Debug(
-                            logger,
-                            $"Applied {forcedSpawns.Count} forced spawn(s) to location '{locationId}'"
-                        );
+                        looseLoot.Spawnpoints = MergeGeneral(looseLoot.Spawnpoints, generalSpawns, locationId);
+                        LogHelper.Debug(logger, $"Applied {generalSpawns.Count} general spawn(s) to location '{locationId}'");
+                    }
+
+                    if (_cachedForcedSpawns.TryGetValue(locationId, out var forcedSpawns) && forcedSpawns.Count > 0)
+                    {
+                        looseLoot.SpawnpointsForced = MergeForced(looseLoot.SpawnpointsForced, forcedSpawns, locationId);
+                        LogHelper.Debug(logger, $"Applied {forcedSpawns.Count} forced spawn(s) to location '{locationId}'");
                     }
 
                     return looseLoot;
@@ -209,13 +178,9 @@ public class WTTCustomLootspawnService(
         }
     }
 
-    private List<Spawnpoint> MergeForced(
-        IEnumerable<Spawnpoint>? existingForced,
-        List<Spawnpoint> newSpawns,
-        string locationId
-    )
+    private List<Spawnpoint> MergeForced(IEnumerable<Spawnpoint>? existingForced, List<Spawnpoint> newSpawns, string locationId)
     {
-        var existing = existingForced?.ToList() ?? new List<Spawnpoint>();
+        var existing = existingForced?.ToList() ?? [];
 
         try
         {
@@ -225,9 +190,7 @@ public class WTTCustomLootspawnService(
             {
                 if (string.IsNullOrEmpty(newSpawn.LocationId))
                 {
-                    logger.Warning(
-                        $"Spawn point missing LocationId in location '{locationId}', skipping"
-                    );
+                    logger.Warning($"Spawn point missing LocationId in location '{locationId}', skipping");
                     continue;
                 }
 
@@ -239,10 +202,9 @@ public class WTTCustomLootspawnService(
             }
 
             if (addedCount > 0)
-                LogHelper.Debug(
-                    logger,
-                    $"Merged {addedCount} new forced spawn(s) into location '{locationId}'"
-                );
+            {
+                LogHelper.Debug(logger, $"Merged {addedCount} new forced spawn(s) into location '{locationId}'");
+            }
 
             return existing;
         }
@@ -253,13 +215,9 @@ public class WTTCustomLootspawnService(
         }
     }
 
-    private List<Spawnpoint> MergeGeneral(
-        IEnumerable<Spawnpoint>? existingPoints,
-        List<Spawnpoint> newSpawns,
-        string locationId
-    )
+    private List<Spawnpoint> MergeGeneral(IEnumerable<Spawnpoint>? existingPoints, List<Spawnpoint> newSpawns, string locationId)
     {
-        var existing = existingPoints?.ToList() ?? new List<Spawnpoint>();
+        var existing = existingPoints?.ToList() ?? [];
 
         try
         {
@@ -270,9 +228,7 @@ public class WTTCustomLootspawnService(
             {
                 if (string.IsNullOrEmpty(custom.LocationId))
                 {
-                    logger.Warning(
-                        $"Spawn point missing LocationId in location '{locationId}', skipping"
-                    );
+                    logger.Warning($"Spawn point missing LocationId in location '{locationId}', skipping");
                     continue;
                 }
 
@@ -290,10 +246,9 @@ public class WTTCustomLootspawnService(
             }
 
             if (addedCount > 0 || updatedCount > 0)
-                LogHelper.Debug(
-                    logger,
-                    $"Merged general spawns for location '{locationId}': {addedCount} added, {updatedCount} updated"
-                );
+            {
+                LogHelper.Debug(logger, $"Merged general spawns for location '{locationId}': {addedCount} added, {updatedCount} updated");
+            }
 
             return existing;
         }
@@ -309,7 +264,9 @@ public class WTTCustomLootspawnService(
         try
         {
             if (custom.Template == null)
+            {
                 return;
+            }
 
             existing.Template ??= new SpawnpointTemplate();
             existing.Template.IsContainer = custom.Template.IsContainer;
@@ -318,19 +275,22 @@ public class WTTCustomLootspawnService(
 
             if (custom.Template.Items != null && custom.Template.Items.Any())
             {
-                var items = existing.Template.Items?.ToList() ?? new List<SptLootItem>();
+                var items = existing.Template.Items?.ToList() ?? [];
 
                 foreach (var item in custom.Template.Items)
+                {
                     if (items.All(i => i.Id != item.Id))
+                    {
                         items.Add(item);
+                    }
+                }
 
                 existing.Template.Items = items;
             }
 
             if (custom.Template.GroupPositions != null && custom.Template.GroupPositions.Any())
             {
-                var groups =
-                    existing.Template.GroupPositions?.ToList() ?? new List<GroupPosition>();
+                var groups = existing.Template.GroupPositions?.ToList() ?? [];
 
                 foreach (var group in custom.Template.GroupPositions)
                 {
@@ -349,7 +309,9 @@ public class WTTCustomLootspawnService(
                     );
 
                     if (!exists)
+                    {
                         groups.Add(group);
+                    }
                 }
 
                 existing.Template.GroupPositions = groups;
@@ -357,8 +319,7 @@ public class WTTCustomLootspawnService(
 
             if (custom.ItemDistribution != null && custom.ItemDistribution.Any())
             {
-                var dists =
-                    existing.ItemDistribution?.ToList() ?? new List<LooseLootItemDistribution>();
+                var dists = existing.ItemDistribution?.ToList() ?? [];
 
                 foreach (var dist in custom.ItemDistribution)
                 {
@@ -371,7 +332,9 @@ public class WTTCustomLootspawnService(
                     }
 
                     if (dists.All(d => d.ComposedKey?.Key != dist.ComposedKey?.Key))
+                    {
                         dists.Add(dist);
+                    }
                 }
 
                 existing.ItemDistribution = dists.AsEnumerable();
@@ -379,9 +342,7 @@ public class WTTCustomLootspawnService(
         }
         catch (Exception ex)
         {
-            logger.Error(
-                $"Error merging spawnpoint '{custom.LocationId}' in location '{locationId}': {ex.Message}"
-            );
+            logger.Error($"Error merging spawnpoint '{custom.LocationId}' in location '{locationId}': {ex.Message}");
             LogHelper.Debug(logger, $"Stack trace: {ex.StackTrace}");
         }
     }
@@ -389,7 +350,10 @@ public class WTTCustomLootspawnService(
     private static bool AreEqual(double? a, double? b)
     {
         if (a == null || b == null)
+        {
             return Equals(a, b);
+        }
+
         return Math.Abs(a.Value - b.Value) < Epsilon;
     }
 }

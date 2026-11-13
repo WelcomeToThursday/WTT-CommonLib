@@ -46,13 +46,17 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
             {
                 var list = jsonUtil.Deserialize<List<T>>(json);
                 if (list != null)
+                {
                     results.AddRange(list);
+                }
             }
             else if (trimmed[0] == '{')
             {
                 var item = jsonUtil.Deserialize<T>(json);
                 if (item != null)
+                {
                     results.Add(item);
+                }
             }
             else
             {
@@ -60,7 +64,9 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
             }
 
             if (results.Count > 0)
+            {
                 LogHelper.Debug(logger, $"Loaded {results.Count} item(s) from: {filePath}");
+            }
         }
         catch (Exception ex)
         {
@@ -84,9 +90,13 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
             var data = await jsonUtil.DeserializeFromFileAsync<T>(filePath);
 
             if (data != null)
+            {
                 LogHelper.Debug(logger, $"Loaded file: {filePath}");
+            }
             else
+            {
                 logger.Warning($"Failed to deserialize {filePath}");
+            }
 
             return data;
         }
@@ -102,7 +112,9 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
         var result = new List<T>();
 
         if (!Directory.Exists(directoryPath))
+        {
             return result;
+        }
 
         var jsonFiles = Directory
             .GetFiles(directoryPath, "*.*", SearchOption.AllDirectories)
@@ -110,6 +122,7 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
             .ToArray();
 
         foreach (var filePath in jsonFiles)
+        {
             try
             {
                 var jsonData = await jsonUtil.DeserializeFromFileAsync<T>(filePath);
@@ -123,13 +136,12 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
             {
                 logger.Error($"Error loading file {filePath}: {ex.Message}");
             }
+        }
 
         return result;
     }
 
-    public async Task<Dictionary<string, Dictionary<string, string>>> LoadLocalesFromDirectory(
-        string directoryPath
-    )
+    public async Task<Dictionary<string, Dictionary<string, string>>> LoadLocalesFromDirectory(string directoryPath)
     {
         var locales = new Dictionary<string, Dictionary<string, string>>();
 
@@ -144,9 +156,7 @@ public class ConfigHelper(ISptLogger<ConfigHelper> logger, JsonUtil jsonUtil)
 
             try
             {
-                var data = await jsonUtil.DeserializeFromFileAsync<Dictionary<string, string>>(
-                    filePath
-                );
+                var data = await jsonUtil.DeserializeFromFileAsync<Dictionary<string, string>>(filePath);
 
                 if (data != null)
                 {

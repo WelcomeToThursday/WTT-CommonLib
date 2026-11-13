@@ -17,10 +17,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
 {
     protected override MethodBase GetTargetMethod()
     {
-        return AccessTools.Method(
-            typeof(ClothingIconCreator),
-            nameof(ClothingIconCreator.RenderModel)
-        );
+        return AccessTools.Method(typeof(ClothingIconCreator), nameof(ClothingIconCreator.RenderModel));
     }
 
     [PatchPrefix]
@@ -37,46 +34,48 @@ internal class ClothingBundleRendererPatch : ModulePatch
             GameObject asset = null;
             try
             {
-                asset = __instance._easyAssets.GetAsset<GameObject>(
-                    clothing.Prefab.path,
-                    clothing.Prefab.rcid
-                );
+                asset = __instance._easyAssets.GetAsset<GameObject>(clothing.Prefab.path, clothing.Prefab.rcid);
             }
             catch (Exception ex)
             {
                 // Bundle not loaded, fall back to original method
-                LogHelper.LogDebug(
-                    $"Bundle not loaded for {clothing.Prefab.path}, using original method"
-                );
+                LogHelper.LogDebug($"Bundle not loaded for {clothing.Prefab.path}, using original method {ex.Message}");
                 return true;
             }
             var allRenderers = asset?.GetComponentsInChildren<SkinnedMeshRenderer>(true);
 
             // If no renderers or only one renderer, let the original method handle it
             if (allRenderers == null || allRenderers.Length <= 1)
+            {
                 return true;
+            }
 
             // Count total unique materials across all renderers
             var uniqueMaterials = new HashSet<Material>();
             foreach (var renderer in allRenderers)
+            {
                 if (renderer.sharedMaterials != null)
+                {
                     foreach (var mat in renderer.sharedMaterials)
+                    {
                         if (mat != null)
+                        {
                             uniqueMaterials.Add(mat);
+                        }
+                    }
+                }
+            }
 
             // Only apply patch if there are multiple materials (custom clothing)
             // Skip if 1 or fewer materials found
             if (uniqueMaterials.Count <= 1)
             {
-                Logger.LogDebug(
-                    $"Skipping patch: Only {uniqueMaterials.Count} unique materials found"
-                );
+                Logger.LogDebug($"Skipping patch: Only {uniqueMaterials.Count} unique materials found");
                 return true;
             }
 
             // Create a parent object to hold all mesh objects
-            var parentObject = new GameObject("ClothingBundleParent");
-            parentObject.layer = LayersMaskController.WeaponPreview;
+            var parentObject = new GameObject("ClothingBundleParent") { layer = LayersMaskController.WeaponPreview };
             parentObject.transform.SetPositionAndRotation(
                 __instance._clothingMeshContainer.transform.position,
                 __instance._clothingMeshContainer.transform.rotation
@@ -84,10 +83,10 @@ internal class ClothingBundleRendererPatch : ModulePatch
 
             // Create a GameObject for each SkinnedMeshRenderer
             foreach (var skinnedRenderer in allRenderers)
+            {
                 if (skinnedRenderer.sharedMesh != null && skinnedRenderer.enabled)
                 {
-                    var meshObject = new GameObject(skinnedRenderer.name + "_Preview");
-                    meshObject.layer = parentObject.layer;
+                    var meshObject = new GameObject(skinnedRenderer.name + "_Preview") { layer = parentObject.layer };
                     meshObject.transform.SetParent(parentObject.transform, false);
 
                     var mf = meshObject.AddComponent<MeshFilter>();
@@ -101,6 +100,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
                     meshObject.transform.localRotation = skinnedRenderer.transform.localRotation;
                     meshObject.transform.localScale = skinnedRenderer.transform.localScale;
                 }
+            }
 
             // Use the parent object for rendering and skip the original method
             __result = CompleteRendering(__instance, spriteFactory, parentObject, asset);
@@ -113,10 +113,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
         }
     }
 
-    private static async Task<IconCreatorBase<
-        CustomizationClothing,
-        ClothingIcon
-    >.RenderModelResult> CompleteRendering(
+    private static async Task<IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult> CompleteRendering(
         ClothingIconCreator instance,
         IconCreatorBase<CustomizationClothing, ClothingIcon>.SpriteFactory spriteFactory,
         GameObject parentObject,
@@ -131,17 +128,23 @@ internal class ClothingBundleRendererPatch : ModulePatch
         {
             // Wait if already rendering
             while (instance._containerIsBusy)
+            {
                 await JobScheduler.Yield();
+            }
 
             instance._containerIsBusy = true;
 
             // Ensure the parent object is active
             if (!parentObject.activeSelf)
+            {
                 parentObject.SetActive(true);
+            }
 
             // Rotate all child meshes
             foreach (Transform child in parentObject.transform)
+            {
                 child.Rotate(90f, 0f, 0f, Space.Self);
+            }
 
             // NOW calculate combined bounds from all child meshes (with rotation applied)
             var combinedBounds = new Bounds(Vector3.zero, Vector3.zero);
@@ -187,7 +190,9 @@ internal class ClothingBundleRendererPatch : ModulePatch
                     // Create bounds from transformed corners
                     var worldBounds = new Bounds(corners[0], Vector3.zero);
                     for (var i = 1; i < corners.Length; i++)
+                    {
                         worldBounds.Encapsulate(corners[i]);
+                    }
 
                     if (!boundsInitialized)
                     {
@@ -203,9 +208,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
                 }
             }
 
-            LogHelper.LogDebug(
-                $"Rendering with {validMeshCount} valid meshes. Bounds size: {combinedBounds.size}"
-            );
+            LogHelper.LogDebug($"Rendering with {validMeshCount} valid meshes. Bounds size: {combinedBounds.size}");
 
             if (validMeshCount == 0)
             {
@@ -218,8 +221,7 @@ internal class ClothingBundleRendererPatch : ModulePatch
             instance._clothingMeshContainer = parentObject;
 
             // Create a dummy mesh with the combined bounds
-            var boundsMesh = new Mesh();
-            boundsMesh.bounds = combinedBounds;
+            var boundsMesh = new Mesh { bounds = combinedBounds };
 
             var parentMeshFilter = parentObject.AddComponent<MeshFilter>();
             parentMeshFilter.sharedMesh = boundsMesh;
@@ -244,15 +246,16 @@ internal class ClothingBundleRendererPatch : ModulePatch
 
             // Clean up the temporary objects
             if (parentObject != null)
-                Object.Destroy(parentObject);
-            if (boundsMesh != null)
-                Object.Destroy(boundsMesh);
-
-            return new IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult
             {
-                sprite = result,
-                zeroMipWasLoaded = true,
-            };
+                Object.Destroy(parentObject);
+            }
+
+            if (boundsMesh != null)
+            {
+                Object.Destroy(boundsMesh);
+            }
+
+            return new IconCreatorBase<CustomizationClothing, ClothingIcon>.RenderModelResult { sprite = result, zeroMipWasLoaded = true };
         }
         catch (Exception e)
         {
@@ -264,7 +267,10 @@ internal class ClothingBundleRendererPatch : ModulePatch
             Logger.LogError($"Error in CompleteRendering: {e}");
 
             if (parentObject != null)
+            {
                 Object.Destroy(parentObject);
+            }
+
             return default;
         }
     }

@@ -19,8 +19,8 @@ namespace WTTClientCommonLib.Services;
 
 internal class QuestZones
 {
-    private static readonly HashSet<string> _usedGroupPositions = new();
-    private static readonly List<SalvageReward> _salvageRewards = new();
+    private static readonly HashSet<string> _usedGroupPositions = [];
+    private static readonly List<SalvageReward> _salvageRewards = [];
 
     private static string PosKey(ZoneTransform p) => $"{p.X}|{p.Y}|{p.Z}";
 
@@ -30,7 +30,7 @@ internal class QuestZones
         if (request == null || request.Count == 0)
         {
             LogHelper.LogDebug("[QuestZones.GetZones] No zones data loaded.");
-            return new List<CustomQuestZone>();
+            return [];
         }
 
         foreach (var zone in request)
@@ -58,10 +58,7 @@ internal class QuestZones
         var loadedZoneCount = 0;
         if (request != null)
             foreach (var zone in request)
-                if (
-                    zone.ZoneLocation.ToLower()
-                    == Singleton<GameWorld>.Instance.MainPlayer.Location.ToLower()
-                )
+                if (string.Equals(zone.ZoneLocation, Singleton<GameWorld>.Instance.MainPlayer.Location, StringComparison.OrdinalIgnoreCase))
                 {
                     LogHelper.LogDebug("-------------------------------------");
                     LogHelper.LogDebug("ZoneScale:");
@@ -91,9 +88,7 @@ internal class QuestZones
 
         LogHelper.LogDebug("-------------------------------------");
         LogHelper.LogDebug($"Loaded CustomQuestZone Count: {loadedZoneCount}");
-        LogHelper.LogDebug(
-            $"Player Map Location: {Singleton<GameWorld>.Instance.MainPlayer.Location}"
-        );
+        LogHelper.LogDebug($"Player Map Location: {Singleton<GameWorld>.Instance.MainPlayer.Location}");
 #endif
         return request;
     }
@@ -127,6 +122,10 @@ internal class QuestZones
         newZone.transform.rotation = rotation;
 
         var trigger = newZone.AddComponent<PlaceItemTrigger>();
+        if (customQuestZone.TimeRestriction != null)
+        {
+            ZoneTimeRestrictionTracker.Set(trigger, customQuestZone.TimeRestriction);
+        }
         trigger.SetId(customQuestZone.ZoneId);
 
         newZone.layer = LayerMask.NameToLayer("Triggers");
@@ -162,6 +161,10 @@ internal class QuestZones
         newZone.transform.rotation = rotation;
 
         var trigger = newZone.AddComponent<ExperienceTrigger>();
+        if (customQuestZone.TimeRestriction != null)
+        {
+            ZoneTimeRestrictionTracker.Set(trigger, customQuestZone.TimeRestriction);
+        }
         trigger.SetId(customQuestZone.ZoneId);
 
         newZone.layer = LayerMask.NameToLayer("Triggers");
@@ -197,6 +200,10 @@ internal class QuestZones
         newZone.transform.rotation = rotation;
 
         var trigger = newZone.AddComponent<TriggerWithId>();
+        if (customQuestZone.TimeRestriction != null)
+        {
+            ZoneTimeRestrictionTracker.Set(trigger, customQuestZone.TimeRestriction);
+        }
         trigger.SetId(customQuestZone.ZoneId);
 
         newZone.layer = LayerMask.NameToLayer("Triggers");
@@ -241,6 +248,10 @@ internal class QuestZones
         newZone.transform.rotation = rotation;
 
         var trigger = newZone.AddComponent<SalvageItemTrigger>();
+        if (customQuestZone.TimeRestriction != null)
+        {
+            ZoneTimeRestrictionTracker.Set(trigger, customQuestZone.TimeRestriction);
+        }
         trigger.SetId(customQuestZone.ZoneId);
 
         var rewards =
@@ -253,12 +264,7 @@ internal class QuestZones
 
         _salvageRewards.AddRange(rewards);
 
-        trigger.Configure(
-            salvage.RequiredItemTpl,
-            salvage.SalvageTime,
-            rewards,
-            salvage.ConsumeRequiredItem
-        );
+        trigger.Configure(salvage.RequiredItemTpl, salvage.SalvageTime, rewards, salvage.ConsumeRequiredItem);
 
         newZone.layer = LayerMask.NameToLayer("Triggers");
         newZone.name = customQuestZone.ZoneId;
@@ -294,6 +300,10 @@ internal class QuestZones
         newZone.transform.rotation = rotation;
 
         var flareTrigger = newZone.AddComponent<ZoneFlareTrigger>();
+        if (customQuestZone.TimeRestriction != null)
+        {
+            ZoneTimeRestrictionTracker.Set(flareTrigger, customQuestZone.TimeRestriction);
+        }
         flareTrigger.SetId(customQuestZone.ZoneId);
 
         newZone.AddComponent<MoveObjectsToAdditionalPhysSceneMarker>();
@@ -304,16 +314,16 @@ internal class QuestZones
         var bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
         var zoneIDField = flareDetectorType.GetField("zoneID", bindingFlags);
         if (zoneIDField != null)
+        {
             zoneIDField.SetValue(flareDetector, customQuestZone.ZoneId);
+        }
 
-        var flareType = (FlareEventType)
-            Enum.Parse(typeof(FlareEventType), customQuestZone.FlareType);
-        var flareTypeForHandleField = flareDetectorType.GetField(
-            "flareTypeForHandle",
-            bindingFlags
-        );
+        var flareType = (FlareEventType)Enum.Parse(typeof(FlareEventType), customQuestZone.FlareType);
+        var flareTypeForHandleField = flareDetectorType.GetField("flareTypeForHandle", bindingFlags);
         if (flareTypeForHandleField != null)
+        {
             flareTypeForHandleField.SetValue(flareDetector, flareType);
+        }
 
         var triggerHandler = newZone.AddComponent<PhysicsTriggerHandler>();
         triggerHandler.trigger = boxCollider;
@@ -321,8 +331,7 @@ internal class QuestZones
         var triggerHandlersField = flareDetectorType.GetField("_triggerHandlers", bindingFlags);
         if (triggerHandlersField != null)
         {
-            var triggerHandlers =
-                (List<PhysicsTriggerHandler>)triggerHandlersField.GetValue(flareDetector);
+            var triggerHandlers = (List<PhysicsTriggerHandler>)triggerHandlersField.GetValue(flareDetector);
             triggerHandlers.Add(triggerHandler);
         }
 
@@ -334,6 +343,7 @@ internal class QuestZones
     {
         _usedGroupPositions.Clear();
         _salvageRewards.Clear();
+        ZoneTimeRestrictionTracker.Clear();
 
         foreach (var zone in zones)
         {
@@ -341,15 +351,29 @@ internal class QuestZones
 
             var type = zone.ZoneType.ToLowerInvariant();
             if (type == "placeitem")
+            {
                 ZoneCreateItem(zone);
+            }
+
             if (type == "visit")
+            {
                 ZoneCreateVisit(zone);
+            }
+
             if (type == "flarezone")
+            {
                 ZoneCreateFlareZone(zone);
+            }
+
             if (type == "botkillzone")
+            {
                 ZoneCreateBotKillZone(zone);
+            }
+
             if (type == "salvage")
+            {
                 ZoneCreateSalvage(zone);
+            }
         }
 
         _ = PreloadSalvageRewards();
@@ -359,27 +383,40 @@ internal class QuestZones
     {
         var poolManager = Singleton<ObjectsFactory>.Instance;
         if (poolManager == null)
+        {
             return;
+        }
 
         var itemFactory = Singleton<ItemFactory>.Instance;
         if (itemFactory == null)
+        {
             return;
+        }
 
         var keys = new List<ResourceKey>();
 
         foreach (var reward in _salvageRewards)
         {
             if (!itemFactory.ItemTemplates.TryGetValue(reward.ItemTpl, out var template))
+            {
                 continue;
+            }
 
             if (template.Prefab != null)
+            {
                 keys.Add(template.Prefab);
+            }
+
             if (template.UsePrefab != null)
+            {
                 keys.Add(template.UsePrefab);
+            }
         }
 
         if (keys.Count == 0)
+        {
             return;
+        }
 
         await poolManager.LoadBundlesAndCreatePools(
             0,
@@ -394,15 +431,19 @@ internal class QuestZones
     private static void ApplyGroupPositionIfAny(CustomQuestZone zone)
     {
         if (zone.GroupPosition == null || zone.GroupPosition.Count == 0)
+        {
             return;
+        }
 
         var candidates = new List<int>();
-        for (int i = 0; i < zone.GroupPosition.Count; i++)
+        for (var i = 0; i < zone.GroupPosition.Count; i++)
         {
             var pos = zone.GroupPosition[i];
             var key = PosKey(pos.Position);
             if (!_usedGroupPositions.Contains(key))
+            {
                 candidates.Add(i);
+            }
         }
 
         int index;
@@ -414,9 +455,7 @@ internal class QuestZones
         }
         else
         {
-            LogHelper.LogWarn(
-                $"All GroupPosition positions for {zone.ZoneId} are already used; allowing reuse."
-            );
+            LogHelper.LogWarn($"All GroupPosition positions for {zone.ZoneId} are already used; allowing reuse.");
             index = UnityEngine.Random.Range(0, zone.GroupPosition.Count);
         }
 

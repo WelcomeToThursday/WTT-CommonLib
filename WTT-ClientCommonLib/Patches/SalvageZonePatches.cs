@@ -5,93 +5,104 @@ using HarmonyLib;
 using SPT.Reflection.Patching;
 using WTTClientCommonLib.Components;
 
-namespace WTTClientCommonLib.Patches
+namespace WTTClientCommonLib.Patches;
+
+internal class Salvage_AddTriggerZonePatch : ModulePatch
 {
-    internal class Salvage_AddTriggerZonePatch : ModulePatch
+    protected override MethodBase GetTargetMethod()
     {
-        protected override MethodBase GetTargetMethod()
-        {
-            return AccessTools.Method(typeof(Player), nameof(Player.AddTriggerZone));
-        }
-
-        [PatchPostfix]
-        public static void Postfix(Player __instance, TriggerWithId zone)
-        {
-            if (zone is not SalvageItemTrigger salvage)
-                return;
-
-            SalvageZoneTracker.Set(__instance, salvage);
-
-            __instance.SearchForInteractions();
-        }
+        return AccessTools.Method(typeof(Player), nameof(Player.AddTriggerZone));
     }
 
-    internal class Salvage_RemoveTriggerZonePatch : ModulePatch
+    [PatchPostfix]
+    public static void Postfix(Player __instance, TriggerWithId zone)
     {
-        protected override MethodBase GetTargetMethod()
+        if (zone is not SalvageItemTrigger salvage)
         {
-            return AccessTools.Method(typeof(Player), nameof(Player.RemoveTriggerZone));
+            return;
         }
 
-        [PatchPostfix]
-        public static void Postfix(Player __instance, TriggerWithId zone)
-        {
-            if (zone is not SalvageItemTrigger salvage)
-                return;
+        SalvageZoneTracker.Set(__instance, salvage);
 
-            SalvageZoneTracker.Clear(__instance, salvage);
+        __instance.SearchForInteractions();
+    }
+}
 
-            __instance.SearchForInteractions();
-        }
+internal class Salvage_RemoveTriggerZonePatch : ModulePatch
+{
+    protected override MethodBase GetTargetMethod()
+    {
+        return AccessTools.Method(typeof(Player), nameof(Player.RemoveTriggerZone));
     }
 
-    internal class Salvage_InteractionsChangedPatch : ModulePatch
+    [PatchPostfix]
+    public static void Postfix(Player __instance, TriggerWithId zone)
     {
-        protected override MethodBase GetTargetMethod()
+        if (ZoneTimeRestrictionTracker.Get(zone) != null)
         {
-            return AccessTools.Method(
-                typeof(GamePlayerOwner),
-                nameof(GamePlayerOwner.InteractionsChangedHandler)
-            );
+            ZoneTimeRestrictionTracker.Remove(zone);
         }
 
-        [PatchPrefix]
-        private static bool Prefix(GamePlayerOwner __instance)
+        if (zone is not SalvageItemTrigger salvage)
         {
-            var player = __instance.Player;
-            if (player == null)
-                return true;
-
-            if (
-                player.InteractableObject != null
-                || player.PlaceItemZone != null
-                || player.BtrInteractionSide != null
-                || player.TripwireInteractionTrigger != null
-                || player.EventObjectInteractive != null
-                || player.ExfiltrationPoint != null
-            )
-            {
-                return true;
-            }
-
-            var salvage = SalvageZoneTracker.Get(player);
-            if (salvage == null)
-                return true;
-
-            IInteractive interactive = salvage;
-
-            var actions = InteractionContextHelper.GetAvailableActions(__instance, interactive);
-            ClientTransitController transit;
-            if (actions == null && TransitController.Exist(out transit))
-            {
-                actions = transit._availableInteractionState;
-            }
-
-            if (actions != null)
-                actions.InitSelected();
-
-            __instance.AvailableInteractionState.Value = actions;
-            return false;
+            return;
         }
+
+        SalvageZoneTracker.Clear(__instance, salvage);
+
+        __instance.SearchForInteractions();
+    }
+}
+
+internal class Salvage_InteractionsChangedPatch : ModulePatch
+{
+    protected override MethodBase GetTargetMethod()
+    {
+        return AccessTools.Method(typeof(GamePlayerOwner), nameof(GamePlayerOwner.InteractionsChangedHandler));
+    }
+
+    [PatchPrefix]
+    private static bool Prefix(GamePlayerOwner __instance)
+    {
+        var player = __instance.Player;
+        if (player == null)
+        {
+            return true;
+        }
+
+        if (
+            player.InteractableObject != null
+            || player.PlaceItemZone != null
+            || player.BtrInteractionSide != null
+            || player.TripwireInteractionTrigger != null
+            || player.EventObjectInteractive != null
+            || player.ExfiltrationPoint != null
+        )
+        {
+            return true;
+        }
+
+        var salvage = SalvageZoneTracker.Get(player);
+        if (salvage == null)
+        {
+            return true;
+        }
+
+        IInteractive interactive = salvage;
+
+        var actions = InteractionContextHelper.GetAvailableActions(__instance, interactive);
+        ClientTransitController transit;
+        if (actions == null && TransitController.Exist(out transit))
+        {
+            actions = transit._availableInteractionState;
+        }
+
+        if (actions != null)
+        {
+            actions.InitSelected();
+        }
+
+        __instance.AvailableInteractionState.Value = actions;
+        return false;
     }
 }

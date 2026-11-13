@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using EFT.Quests;
 
 namespace WTTClientCommonLib.Models;
-
 
 public class CustomQuestZone
 {
@@ -18,6 +18,8 @@ public class CustomQuestZone
     public List<ZoneTransforms>? GroupPosition { get; set; }
 
     public SalvageConfig? Salvage { get; set; }
+
+    public ConditionTimeComparer? TimeRestriction { get; set; }
 }
 
 public class SalvageConfig
@@ -26,7 +28,7 @@ public class SalvageConfig
     public float SalvageTime { get; set; } = 10f;
     public bool ConsumeRequiredItem { get; set; } = true;
 
-    public List<SalvageRewardConfig> Rewards { get; set; } = new();
+    public List<SalvageRewardConfig> Rewards { get; set; } = [];
 }
 
 public class SalvageRewardConfig

@@ -26,7 +26,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
             {
                 MongoId actualTraderId;
 
-                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLower(), out var traderId))
+                if (TraderIds.TraderMap.TryGetValue(traderKey.ToLowerInvariant(), out var traderId))
                 {
                     actualTraderId = traderId;
                 }
@@ -64,16 +64,14 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                     if (scheme.ConfigBarterSettings.BuyRestrictionMax != null)
                     {
                         newItem.Upd.BuyRestrictionCurrent = 0;
-                        newItem.Upd.BuyRestrictionMax = scheme
-                            .ConfigBarterSettings
-                            .BuyRestrictionMax;
+                        newItem.Upd.BuyRestrictionMax = scheme.ConfigBarterSettings.BuyRestrictionMax;
                     }
 
                     trader.Assort.Items.Add(newItem);
 
                     if (!trader.Assort.BarterScheme.TryGetValue(schemeKey, out var barterOptions))
                     {
-                        barterOptions = new List<List<BarterScheme>>();
+                        barterOptions = [];
                         trader.Assort.BarterScheme[schemeKey] = barterOptions;
                     }
 
@@ -83,32 +81,41 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                     foreach (var b in barters)
                     {
                         if (string.IsNullOrWhiteSpace(b.Template))
-                            continue;
-
-                        var barter = new BarterScheme
                         {
-                            Count = b.Count,
-                            Template = ItemTplResolver.ResolveId(b.Template),
-                        };
+                            continue;
+                        }
+
+                        var barter = new BarterScheme { Count = b.Count, Template = ItemTplResolver.ResolveId(b.Template) };
 
                         if (b.Level != null)
+                        {
                             barter.Level = b.Level;
+                        }
+
                         if (b.OnlyFunctional != null)
+                        {
                             barter.OnlyFunctional = b.OnlyFunctional;
+                        }
+
                         if (b.Side != null)
+                        {
                             barter.Side = b.Side;
+                        }
+
                         if (b.SptQuestLocked != null)
+                        {
                             barter.SptQuestLocked = b.SptQuestLocked;
+                        }
 
                         barterSchemeItems.Add(barter);
                     }
 
                     if (barterSchemeItems.Count > 0)
+                    {
                         barterOptions.Add(barterSchemeItems);
+                    }
 
-                    trader.Assort.LoyalLevelItems[schemeKey] = scheme
-                        .ConfigBarterSettings
-                        .LoyalLevel;
+                    trader.Assort.LoyalLevelItems[schemeKey] = scheme.ConfigBarterSettings.LoyalLevel;
                 }
             }
         }
