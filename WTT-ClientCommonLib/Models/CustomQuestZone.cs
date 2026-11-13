@@ -28,7 +28,7 @@ public class SalvageConfig
     public float SalvageTime { get; set; } = 10f;
     public bool ConsumeRequiredItem { get; set; } = true;
 
-    public List<SalvageRewardConfig> Rewards { get; set; } = new();
+    public List<SalvageRewardConfig> Rewards { get; set; } = [];
 }
 
 public class SalvageRewardConfig

@@ -4,8 +4,8 @@ using WTTClientCommonLib.Helpers;
 
 public class AudioClipCache : MonoBehaviour
 {
-    private Dictionary<string, AudioClip> _clipMap = new();
-    private Dictionary<string, float[]> _audioDataMap = new();
+    private Dictionary<string, AudioClip> _clipMap = [];
+    private Dictionary<string, float[]> _audioDataMap = [];
 
     public void CacheAudioClip(string key, AudioClip clip)
     {
@@ -18,7 +18,7 @@ public class AudioClipCache : MonoBehaviour
         clip.hideFlags = HideFlags.DontUnloadUnusedAsset;
         _clipMap[key] = clip;
 
-        float[] audioData = new float[clip.samples * clip.channels];
+        var audioData = new float[clip.samples * clip.channels];
         clip.GetData(audioData, 0);
         _audioDataMap[key] = audioData;
 

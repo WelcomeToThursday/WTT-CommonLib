@@ -10,7 +10,7 @@ using UnityEngine;
 using WTTClientCommonLib.Models;
 using Logger = BepInEx.Logging.Logger;
 
-namespace SPT.Custom.Utils;
+namespace WTTClientCommonLib.Helpers;
 
 public enum ImageType
 {
@@ -24,32 +24,36 @@ public static class ImageManager
     private const string HideoutIconsCachePath = BaseCachePath + "hideouticons/";
     private const string ShootingRangeMarksCachePath = BaseCachePath + "shootingrangemarks/";
 
-    private static readonly ManualLogSource LogHelper;
+    private static readonly ManualLogSource _logHelper;
     public static readonly ConcurrentDictionary<string, ImageItem> HideoutIcons;
     public static readonly ConcurrentDictionary<string, ImageItem> ShootingRangeMarks;
 
     static ImageManager()
     {
-        LogHelper = Logger.CreateLogSource(nameof(ImageManager));
+        _logHelper = Logger.CreateLogSource(nameof(ImageManager));
         HideoutIcons = new ConcurrentDictionary<string, ImageItem>();
         ShootingRangeMarks = new ConcurrentDictionary<string, ImageItem>();
     }
 
-    private static string GetCachePath(ImageType type) =>
-        type switch
+    private static string GetCachePath(ImageType type)
+    {
+        return type switch
         {
             ImageType.HideoutIcon => HideoutIconsCachePath,
             ImageType.ShootingRangeMark => ShootingRangeMarksCachePath,
             _ => BaseCachePath,
         };
+    }
 
-    private static string GetDownloadRoute(ImageType type) =>
-        type switch
+    private static string GetDownloadRoute(ImageType type)
+    {
+        return type switch
         {
             ImageType.HideoutIcon => "/files/image",
             ImageType.ShootingRangeMark => "/files/texture",
             _ => "/files/image",
         };
+    }
 
     public static string GetImagePath(ImageItem image, ImageType type)
     {
@@ -65,23 +69,25 @@ public static class ImageManager
     {
         try
         {
-            LogHelper.LogDebug("Downloading hideout icons manifest...");
+            _logHelper.LogDebug("Downloading hideout icons manifest...");
             var json = await RequestHandler.GetJsonAsync("/wttcommonlib/hideout/icons/manifest");
             var images = JsonConvert.DeserializeObject<ImageItem[]>(json);
 
             if (images == null)
+            {
                 return;
+            }
 
             foreach (var image in images)
             {
                 HideoutIcons.TryAdd(image.FileName, image);
             }
 
-            LogHelper.LogDebug($"Downloaded manifest for {images.Length} hideout icons");
+            _logHelper.LogDebug($"Downloaded manifest for {images.Length} hideout icons");
         }
         catch (Exception ex)
         {
-            LogHelper.LogError($"Error downloading hideout icons manifest: {ex.Message}");
+            _logHelper.LogError($"Error downloading hideout icons manifest: {ex.Message}");
         }
     }
 
@@ -89,27 +95,29 @@ public static class ImageManager
     {
         try
         {
-            LogHelper.LogDebug("Downloading shooting range marks manifest...");
+            _logHelper.LogDebug("Downloading shooting range marks manifest...");
             var json = await RequestHandler.GetJsonAsync("/wttcommonlib/hideout/marktextures/manifest");
             var textures = JsonConvert.DeserializeObject<ImageItem[]>(json);
 
             if (textures == null)
+            {
                 return;
+            }
 
             foreach (var texture in textures)
             {
                 ShootingRangeMarks.TryAdd(texture.FileName, texture);
             }
 
-            LogHelper.LogDebug($"Downloaded manifest for {textures.Length} shooting range marks");
+            _logHelper.LogDebug($"Downloaded manifest for {textures.Length} shooting range marks");
         }
         catch (Exception ex)
         {
-            LogHelper.LogError($"Error downloading shooting range marks manifest: {ex.Message}");
+            _logHelper.LogError($"Error downloading shooting range marks manifest: {ex.Message}");
         }
     }
 
-    public static async Task DownloadImage(ImageItem image, ImageType type, System.Action<DownloadProgress> progressCallback = null)
+    public static async Task DownloadImage(ImageItem image, ImageType type)
     {
         try
         {
@@ -120,48 +128,48 @@ public static class ImageManager
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
-                LogHelper.LogDebug($"[DownloadImage] Created directory: {directoryPath}");
+                _logHelper.LogDebug($"[DownloadImage] Created directory: {directoryPath}");
             }
 
-            LogHelper.LogDebug($"[DownloadImage] Downloading {image.FileName} ({type}) to {filepath}");
+            _logHelper.LogDebug($"[DownloadImage] Downloading {image.FileName} ({type}) to {filepath}");
 
             var route = GetDownloadRoute(type);
             var base64Data = await RequestHandler.GetJsonAsync($"{route}/{image.FileName}");
 
             if (string.IsNullOrEmpty(base64Data))
             {
-                LogHelper.LogError($"[DownloadImage] Received empty data for {image.FileName}");
+                _logHelper.LogError($"[DownloadImage] Received empty data for {image.FileName}");
                 return;
             }
 
-            LogHelper.LogDebug($"[DownloadImage] Received {base64Data.Length} chars of base64 for {image.FileName}");
+            _logHelper.LogDebug($"[DownloadImage] Received {base64Data.Length} chars of base64 for {image.FileName}");
 
             try
             {
                 var binaryData = Convert.FromBase64String(base64Data);
-                LogHelper.LogDebug($"[DownloadImage] Decoded to {binaryData.Length} bytes, writing to disk...");
+                _logHelper.LogDebug($"[DownloadImage] Decoded to {binaryData.Length} bytes, writing to disk...");
 
                 await File.WriteAllBytesAsync(filepath, binaryData);
 
-                LogHelper.LogDebug($"[DownloadImage] Successfully wrote {binaryData.Length} bytes to {filepath}");
+                _logHelper.LogDebug($"[DownloadImage] Successfully wrote {binaryData.Length} bytes to {filepath}");
 
                 if (File.Exists(filepath))
                 {
-                    LogHelper.LogDebug($"[DownloadImage] File verified to exist at {filepath}");
+                    _logHelper.LogDebug($"[DownloadImage] File verified to exist at {filepath}");
                 }
                 else
                 {
-                    LogHelper.LogError($"[DownloadImage] File write failed - file does not exist at {filepath}");
+                    _logHelper.LogError($"[DownloadImage] File write failed - file does not exist at {filepath}");
                 }
             }
             catch (FormatException ex)
             {
-                LogHelper.LogError($"[DownloadImage] Failed to decode base64 for {image.FileName}: {ex.Message}");
+                _logHelper.LogError($"[DownloadImage] Failed to decode base64 for {image.FileName}: {ex.Message}");
             }
         }
         catch (Exception ex)
         {
-            LogHelper.LogError($"[DownloadImage] Error: {ex.Message}\n{ex.StackTrace}");
+            _logHelper.LogError($"[DownloadImage] Error: {ex.Message}\n{ex.StackTrace}");
         }
     }
 
@@ -169,7 +177,7 @@ public static class ImageManager
     {
         if (!HideoutIcons.TryGetValue(imageName, out var image))
         {
-            LogHelper.LogWarning($"Hideout icon not found in manifest: {imageName}");
+            _logHelper.LogWarning($"Hideout icon not found in manifest: {imageName}");
             return null;
         }
 
@@ -180,7 +188,7 @@ public static class ImageManager
     {
         if (!ShootingRangeMarks.TryGetValue(textureName, out var texture))
         {
-            LogHelper.LogWarning($"Shooting range mark not found in manifest: {textureName}");
+            _logHelper.LogWarning($"Shooting range mark not found in manifest: {textureName}");
             return null;
         }
 
@@ -189,7 +197,7 @@ public static class ImageManager
 
     public static async Task<bool> ShouldAcquire(ImageItem image, ImageType type)
     {
-        var filepath = WTTClientCommonLib.WTTClientCommonLib.FikaInstalled
+        var filepath = WTTClientCommonLib.FikaInstalled
             ? Path.Combine(GetCachePath(type), image.FileName)
             : GetImageFilePath(image, type);
 
@@ -197,25 +205,27 @@ public static class ImageManager
 
         if (valid)
         {
-            LogHelper.LogDebug($"[ShouldAcquire] File is current: {image.FileName}");
+            _logHelper.LogDebug($"[ShouldAcquire] File is current: {image.FileName}");
             return false;
         }
 
-        LogHelper.LogDebug($"[ShouldAcquire] Acquiring: {image.FileName}");
+        _logHelper.LogDebug($"[ShouldAcquire] Acquiring: {image.FileName}");
         return true;
     }
 
     private static async Task<bool> IsCacheValid(string filepath, ImageItem image)
     {
         if (!VFS.Exists(filepath))
+        {
             return false;
+        }
 
         var data = await VFS.ReadFileAsync(filepath);
         var crc = global::Crc32.CRC32BytesPHP(data);
 
         if (crc != image.Crc)
         {
-            LogHelper.LogDebug($"[ImageManager] CRC mismatch for {image.FileName}: " + $"expected {image.Crc}, got {crc}");
+            _logHelper.LogDebug($"[ImageManager] CRC mismatch for {image.FileName}: " + $"expected {image.Crc}, got {crc}");
             return false;
         }
 
@@ -227,7 +237,7 @@ public static class ImageManager
         try
         {
             var TEST_MODE_FORCE_DOWNLOAD = false;
-            var fikaInstalled = WTTClientCommonLib.WTTClientCommonLib.FikaInstalled;
+            var fikaInstalled = WTTClientCommonLib.FikaInstalled;
 
             var cachePath = GetCachePath(type);
 
@@ -238,7 +248,7 @@ public static class ImageManager
                     : // Force cache
                     GetImageFilePath(image, type); // Normal path
 
-            LogHelper.LogDebug(
+            _logHelper.LogDebug(
                 $"[LoadImage] TEST_MODE: {TEST_MODE_FORCE_DOWNLOAD}, Fika: {fikaInstalled}, Type: {type}, FilePath: {filepath}, IsLocal: {RequestHandler.IsLocal}"
             );
 
@@ -246,11 +256,11 @@ public static class ImageManager
             {
                 if (VFS.Exists(filepath))
                 {
-                    LogHelper.LogDebug($"[LoadImage] TEST MODE: File already in cache, using cached version: {imageName}");
+                    _logHelper.LogDebug($"[LoadImage] TEST MODE: File already in cache, using cached version: {imageName}");
                 }
                 else
                 {
-                    LogHelper.LogDebug($"[LoadImage] TEST MODE: File not in cache, downloading {imageName}");
+                    _logHelper.LogDebug($"[LoadImage] TEST MODE: File not in cache, downloading {imageName}");
                     await DownloadImage(image, type);
                 }
             }
@@ -274,7 +284,7 @@ public static class ImageManager
 
             if (!VFS.Exists(filepath))
             {
-                LogHelper.LogError($"[LoadImage] File does not exist: {filepath}");
+                _logHelper.LogError($"[LoadImage] File does not exist: {filepath}");
                 return null;
             }
 
@@ -292,7 +302,7 @@ public static class ImageManager
         }
         catch (Exception ex)
         {
-            LogHelper.LogError($"Error loading image {imageName}: {ex.Message}");
+            _logHelper.LogError($"Error loading image {imageName}: {ex.Message}");
             return null;
         }
     }

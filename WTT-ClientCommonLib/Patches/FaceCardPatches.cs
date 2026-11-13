@@ -31,7 +31,7 @@ internal class FaceCardViewInitPatch : ModulePatch
             return;
         }
 
-        if (!ResourceLoader.ClipCache.TryGetAudioClip(audioKey, out var audioClip))
+        if (!ResourceLoader.ClipCache.TryGetAudioClip(audioKey, out _))
         {
             LogHelper.LogDebug($"Audio clip not in cache: {audioKey}");
             return;

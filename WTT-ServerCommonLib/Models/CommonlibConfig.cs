@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WTTServerCommonLib.Models
+namespace WTTServerCommonLib.Models;
+
+internal class CommonlibConfig
 {
-    internal class CommonlibConfig
-    {
-        [JsonPropertyName("itemValidationLoggingEnabled")]
-        public bool ItemValidationLoggingEnabled { get; set; }
-    }
+    [JsonPropertyName("itemValidationLoggingEnabled")]
+    public bool ItemValidationLoggingEnabled { get; set; }
 }

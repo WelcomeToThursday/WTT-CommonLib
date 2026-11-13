@@ -9,7 +9,7 @@ namespace WTTServerCommonLib.Services;
 [Injectable(InjectionType.Singleton)]
 public class WTTCustomSlotImageService(ModHelper modHelper, SptLogger<WTTCustomSlotImageService> logger)
 {
-    private readonly Dictionary<string, string> _imagePaths = new();
+    private readonly Dictionary<string, string> _imagePaths = [];
 
     /// <summary>
     /// Loads custom slot item images from a directory and registers them for client access.
@@ -52,7 +52,10 @@ public class WTTCustomSlotImageService(ModHelper modHelper, SptLogger<WTTCustomS
     public async Task<byte[]?> GetImageData(string imageName)
     {
         if (_imagePaths.TryGetValue(imageName, out var path) && File.Exists(path))
+        {
             return await File.ReadAllBytesAsync(path);
+        }
+
         return null;
     }
 }

@@ -39,12 +39,12 @@ public class ProduceViewShowPatch : ModulePatch
     {
         HideoutItemViewFactory viewFactory = ____resultItemIconViewFactory;
         ExtendedRecipeLoader recipeLoader = ExtendedRecipeLoader.Instance;
-        string schemeId = scheme._id;
+        var schemeId = scheme._id;
         ExtendedProductionScheme extendedScheme = recipeLoader.GetExtendedScheme(schemeId);
 
         if (extendedScheme != null)
         {
-            int createdStacks = 0;
+            var createdStacks = 0;
 
             List<RecipeResultStack> recipeResultStacks = [];
             foreach (RecipeResultStack resultStack in extendedScheme.ResultItemStacks.Values)
@@ -78,10 +78,10 @@ public class ProduceViewShowPatch : ModulePatch
 
             // instantiate previews for additional results
             // spoiler alert: this SUUUUUCKS :waytoodank:
-            int totalResultCount = extendedScheme.EndProductItems.Count;
+            var totalResultCount = extendedScheme.EndProductItems.Count;
             if (createdStacks != totalResultCount)
             {
-                int additionalResults = totalResultCount - createdStacks;
+                var additionalResults = totalResultCount - createdStacks;
 
                 // fix height
                 HorizontalLayoutGroup produceLayout = __instance.gameObject.GetComponent<HorizontalLayoutGroup>();
@@ -102,7 +102,7 @@ public class ProduceViewShowPatch : ModulePatch
 
                 // create additional copies
                 List<GameObject> additionalViews = [];
-                for (int i = 0; i < additionalResults; i++)
+                for (var i = 0; i < additionalResults; i++)
                 {
                     GameObject factory = GameObject.Instantiate(____resultItemIconViewFactory.gameObject, resultList.transform, true);
                     additionalViews.Add(factory);
@@ -177,7 +177,7 @@ public class ProduceViewLoadedPatch : ModulePatch
     {
         HideoutItemViewFactory viewFactory = ____resultItemIconViewFactory;
         ExtendedRecipeLoader recipeLoader = ExtendedRecipeLoader.Instance;
-        string schemeId = __instance.Scheme._id;
+        var schemeId = __instance.Scheme._id;
         ExtendedProductionScheme extendedScheme = recipeLoader.GetExtendedScheme(schemeId);
 
         if (extendedScheme != null)

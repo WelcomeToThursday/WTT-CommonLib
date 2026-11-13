@@ -33,8 +33,8 @@ public class WTTCustomItemParentService(
     /// <param name="relativePath">(OPTIONAL) Custom path relative to the mod folder</param>
     public async Task CreateCustomParents(Assembly assembly, string relativePath = "db/CustomParents")
     {
-        string modDir = modHelper.GetAbsolutePathToModFolder(assembly);
-        string parentDir = Path.Combine(modDir, relativePath);
+        var modDir = modHelper.GetAbsolutePathToModFolder(assembly);
+        var parentDir = Path.Combine(modDir, relativePath);
 
         if (!Directory.Exists(parentDir))
         {
@@ -42,9 +42,9 @@ public class WTTCustomItemParentService(
             return;
         }
 
-        string[] files = Directory.GetFiles(parentDir, "*.json*", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(parentDir, "*.json*", SearchOption.AllDirectories);
 
-        foreach (string filePath in files)
+        foreach (var filePath in files)
         {
             var allParents = await configHelper.LoadJsonFileFlexible<Dictionary<MongoId, CustomItemParentConfig>>(filePath);
 
@@ -58,7 +58,7 @@ public class WTTCustomItemParentService(
             {
                 foreach ((MongoId id, CustomItemParentConfig tpl) in parents)
                 {
-                    bool added = AddParentToDatabase(id, tpl);
+                    var added = AddParentToDatabase(id, tpl);
 
                     if (added)
                     {
@@ -80,7 +80,7 @@ public class WTTCustomItemParentService(
 
             if (tpl.AddToContainers)
             {
-                foreach (string containerNameOrId in tpl.Containers)
+                foreach (var containerNameOrId in tpl.Containers)
                 {
                     AddParentToContainerFilter(id, containerNameOrId);
                 }
@@ -163,7 +163,9 @@ public class WTTCustomItemParentService(
         foreach (var slot in defaultInventory.Properties.Slots)
         {
             if (slot?.Name == null || !targetNames.Contains(slot.Name))
+            {
                 continue;
+            }
 
             var firstFilter = slot.Properties?.Filters?.FirstOrDefault();
             if (firstFilter == null)
@@ -192,7 +194,9 @@ public class WTTCustomItemParentService(
         foreach (var traderName in traderNames)
         {
             if (string.IsNullOrWhiteSpace(traderName))
+            {
                 continue;
+            }
 
             if (!TraderIds.TraderMap.TryGetValue(traderName, out var traderId))
             {

@@ -13,7 +13,7 @@ public static class ZoneTimeRestrictionTracker
     ///     A map of individual triggers (ie SalvageItemTrigger or PlaceItemTrigger) and their time restrictions.
     ///     It uses ConditionTimeComparer, a vanilla class only used in ConditionHit.
     /// </summary>
-    private static readonly Dictionary<TriggerWithId, ConditionTimeComparer> Active = new();
+    private static readonly Dictionary<TriggerWithId, ConditionTimeComparer> Active = [];
 
     /// <summary>
     ///     Register a trigger as time-restricted. Overwrites any existing restriction already tracked for the trigger.

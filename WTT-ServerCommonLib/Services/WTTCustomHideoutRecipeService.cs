@@ -77,7 +77,10 @@ public class WTTCustomHideoutRecipeService(
                 if (recipeExists)
                 {
                     if (logger.IsLogEnabled(LogLevel.Debug))
+                    {
                         LogHelper.Debug(logger, $"Recipe {recipe.Id} already exists, skipping");
+                    }
+
                     continue;
                 }
 

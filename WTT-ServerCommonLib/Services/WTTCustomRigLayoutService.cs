@@ -32,7 +32,9 @@ public class WTTCustomRigLayoutService(ModHelper modHelper, ISptLogger<WTTCustom
         }
 
         if (!_modBundles.ContainsKey(modKey))
-            _modBundles[modKey] = new Dictionary<string, string>();
+        {
+            _modBundles[modKey] = [];
+        }
 
         foreach (var bundlePath in Directory.GetFiles(finalDir, "*.bundle"))
         {
@@ -46,7 +48,10 @@ public class WTTCustomRigLayoutService(ModHelper modHelper, ISptLogger<WTTCustom
     {
         var allBundles = new List<string>();
         foreach (var modBundles in _modBundles.Values)
+        {
             allBundles.AddRange(modBundles.Keys);
+        }
+
         return allBundles;
     }
 
@@ -55,10 +60,14 @@ public class WTTCustomRigLayoutService(ModHelper modHelper, ISptLogger<WTTCustom
         foreach (var bundles in _modBundles.Values)
         {
             if (!bundles.TryGetValue(bundleName, out var path))
+            {
                 continue;
+            }
 
             if (!File.Exists(path))
+            {
                 continue;
+            }
 
             LogHelper.Debug(logger, $"Serving bundle {bundleName} from {path}");
             return await File.ReadAllBytesAsync(path);

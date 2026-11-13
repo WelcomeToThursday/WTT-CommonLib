@@ -45,11 +45,15 @@ internal class HideoutCustomizationTexturesPatch : ModulePatch
     static void Prefix(ResourceKey resourceKey, EHideoutCustomizationType customizationType, HideoutCustomizationController __instance)
     {
         if (customizationType != EHideoutCustomizationType.ShootingRangeMark)
+        {
             return;
+        }
 
-        string assetName = resourceKey.ToAssetName();
+        var assetName = resourceKey.ToAssetName();
         if (assetName == null || !ResourceLoader._customMarkTextures.TryGetValue(assetName, out var customTexture))
+        {
             return;
+        }
 
         try
         {

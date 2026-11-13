@@ -14,7 +14,9 @@ public class ExtendedRecipeLoader
     public ExtendedRecipeLoader()
     {
         if (Instance != null)
+        {
             return;
+        }
 
         Instance = this;
     }

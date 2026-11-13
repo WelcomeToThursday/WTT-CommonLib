@@ -20,28 +20,38 @@ public static class ZoneUiHelpers
         "AIFollowEvent"
     );
 
-    public static List<CustomQuestZone> ExistingQuestZones = new();
+    public static List<CustomQuestZone> ExistingQuestZones = [];
 
     public static void ViewZonesDrawer(ConfigEntryBase entry)
     {
         if (GUILayout.Button("Add Existing Zones"))
+        {
             ZoneService.AddExistingZones();
+        }
     }
 
     public static void NewZoneDrawer(ConfigEntryBase entry)
     {
         if (GUILayout.Button("New CustomQuestZone", GUILayout.Width(100)))
+        {
             ZoneService.CreateNewZone();
+        }
     }
 
     public static void SwitchZoneDrawer(ConfigEntryBase entry)
     {
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Prev", GUILayout.Width(45)))
+        {
             ZoneService.PrevZone();
+        }
+
         GUILayout.TextField(ZoneService.GetCurrentZoneName(), GUILayout.ExpandWidth(true));
         if (GUILayout.Button("Next", GUILayout.Width(45)))
+        {
             ZoneService.NextZone();
+        }
+
         GUILayout.EndHorizontal();
     }
 
@@ -219,6 +229,8 @@ public static class ZoneUiHelpers
     public static void OutputDrawer(ConfigEntryBase entry)
     {
         if (GUILayout.Button("Output Zones", GUILayout.ExpandWidth(true)))
+        {
             ZoneService.OutputZones();
+        }
     }
 }

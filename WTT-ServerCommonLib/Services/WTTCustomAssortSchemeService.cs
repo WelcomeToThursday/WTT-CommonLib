@@ -34,7 +34,9 @@ public class WTTCustomAssortSchemeService(
         var finalDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir);
 
         if (!Directory.Exists(finalDir))
+        {
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
+        }
 
         var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
 
@@ -63,7 +65,8 @@ public class WTTCustomAssortSchemeService(
     private void ApplyAssorts(List<Dictionary<string, TraderAssort>> assortsToApply)
     {
         foreach (var schemeDict in assortsToApply)
-        foreach (var kvp in schemeDict)
+        {
+            foreach (var kvp in schemeDict)
         {
             var traderKey = kvp.Key;
             var newAssort = kvp.Value;
@@ -93,12 +96,17 @@ public class WTTCustomAssortSchemeService(
             trader.Assort.Items.AddRange(newAssort.Items);
 
             foreach (var scheme in newAssort.BarterScheme)
-                trader.Assort.BarterScheme[scheme.Key] = scheme.Value;
+                {
+                    trader.Assort.BarterScheme[scheme.Key] = scheme.Value;
+                }
 
-            foreach (var levelItem in newAssort.LoyalLevelItems)
-                trader.Assort.LoyalLevelItems[levelItem.Key] = levelItem.Value;
+                foreach (var levelItem in newAssort.LoyalLevelItems)
+                {
+                    trader.Assort.LoyalLevelItems[levelItem.Key] = levelItem.Value;
+                }
 
-            LogHelper.Debug(logger, $"Merged {newAssort.Items.Count} items into trader");
+                LogHelper.Debug(logger, $"Merged {newAssort.Items.Count} items into trader");
+        }
         }
     }
 }

@@ -1,6 +1,4 @@
 using System.Reflection;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using SPTarkov.Common.Models.Logging;
 using SPTarkov.DI.Annotations;
@@ -8,14 +6,12 @@ using SPTarkov.Server.Core.Helpers.Items;
 using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Models.Spt.Launcher;
 using SPTarkov.Server.Core.Models.Spt.Tables;
 using SPTarkov.Server.Core.Utils.Cloners;
 using WTTServerCommonLib.Constants;
 using WTTServerCommonLib.Helpers;
 using WTTServerCommonLib.Models;
 using WTTServerCommonLib.Services.ItemServiceHelpers;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 using Path = System.IO.Path;
 
 namespace WTTServerCommonLib.Services;
@@ -50,9 +46,9 @@ public class WTTCustomItemServiceExtended(
     ItemBlacklistHelper rewardItemBlacklistHelper
 )
 {
-    private readonly List<(string newItemId, CustomItemConfig config)> _deferredModSlotConfigs = new();
-    private readonly List<(string newItemId, CustomItemConfig config)> _deferredSecureFilterConfigs = new();
-    private readonly List<(string newItemId, CustomItemConfig config)> _deferredCaliberConfigs = new();
+    private readonly List<(string newItemId, CustomItemConfig config)> _deferredModSlotConfigs = [];
+    private readonly List<(string newItemId, CustomItemConfig config)> _deferredSecureFilterConfigs = [];
+    private readonly List<(string newItemId, CustomItemConfig config)> _deferredCaliberConfigs = [];
     private CommonlibConfig _commonlibConfig;
 
     /// <summary>
@@ -138,12 +134,14 @@ public class WTTCustomItemServiceExtended(
                 warningSb.AppendLine("VALIDATION FAILURES:");
                 warningSb.AppendLine("--------------------------------------------------");
 
-                foreach (var failure in validationFailures)
+                foreach (var (ItemId, Errors) in validationFailures)
                 {
-                    warningSb.AppendLine($"[{failure.ItemId}]");
+                    warningSb.AppendLine($"[{ItemId}]");
 
-                    foreach (var error in failure.Errors)
+                    foreach (var error in Errors)
+                    {
                         warningSb.AppendLine($" - {error}");
+                    }
 
                     warningSb.AppendLine();
                 }
@@ -169,8 +167,10 @@ public class WTTCustomItemServiceExtended(
                 errorSb.AppendLine("CREATION FAILURES:");
                 errorSb.AppendLine("--------------------------------------------------");
 
-                foreach (var failure in creationFailures)
-                    errorSb.AppendLine($"[{failure.ItemId}] {failure.Error}");
+                foreach (var (ItemId, Error) in creationFailures)
+                {
+                    errorSb.AppendLine($"[{ItemId}] {Error}");
+                }
 
                 errorSb.AppendLine("==================================================");
 
@@ -197,18 +197,22 @@ public class WTTCustomItemServiceExtended(
     private void CreateItemFromClone(Assembly assembly, string newItemId, CustomItemConfig config)
     {
         if (templateTable.Items.TryGetValue(newItemId, out var existingItem))
+        {
             throw new InvalidOperationException($"ItemId already exists. {existingItem.Name}");
+        }
 
         var cloneTplId = ItemTplResolver.ResolveId(config.ItemTplToClone);
         if (!templateTable.Items.TryGetValue(cloneTplId, out var itemToClone) || itemToClone == null)
+        {
             throw new InvalidOperationException($"Unable to find item to clone: {config.ItemTplToClone}");
+        }
 
         var itemClone = cloner.Clone(itemToClone);
         itemClone!.Id = newItemId;
         itemClone.Parent = NameHelper.ResolveId(config.ParentId, ItemMaps.ItemBaseClassMap);
 
         var modName = assembly.GetName().Name ?? "unknown_mod";
-        string newName = GenerateInternalName(modName, newItemId, config, itemClone);
+        var newName = GenerateInternalName(modName, newItemId, config, itemClone);
 
         itemRegistrationHelper.UpdateBaseItemPropertiesWithOverrides(config.OverrideProperties, itemClone);
 
@@ -249,7 +253,9 @@ public class WTTCustomItemServiceExtended(
     private string GenerateInternalName(string modName, string newItemId, CustomItemConfig config, TemplateItem itemClone)
     {
         if (!string.IsNullOrWhiteSpace(config.NewName))
+        {
             return $"[{modName}]_({config.NewName})";
+        }
 
         if (!string.IsNullOrWhiteSpace(config.OverrideProperties?.Name) && itemClone.Properties.Name != config.OverrideProperties.Name)
         {
@@ -259,13 +265,19 @@ public class WTTCustomItemServiceExtended(
         var itemName = config.Locales?["en"]?.Name;
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = config.Locales?.FirstOrDefault().Value?.Name;
+        }
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = itemClone.Properties.Name;
+        }
 
         if (string.IsNullOrWhiteSpace(itemName))
+        {
             itemName = newItemId;
+        }
 
         return $"[{modName}]_({itemName})";
     }
@@ -273,67 +285,109 @@ public class WTTCustomItemServiceExtended(
     private void ProcessAdditionalProperties(string newItemId, CustomItemConfig config)
     {
         if (config.InheritParentData == true)
+        {
             itemRegistrationHelper.AddParentData(newItemId);
+        }
 
         if (config.InheritExtensionData == true)
+        {
             itemRegistrationHelper.AddParentExtensionData(newItemId);
+        }
 
         if (config is { AddToTraders: true, Traders: not null })
+        {
             traderItemHelper.AddItem(config, newItemId);
+        }
 
         if (config.AddWeaponPreset == true)
+        {
             weaponPresetHelper.ProcessWeaponPresets(config, newItemId);
+        }
 
         if (config is { Masteries: true, MasterySections: not null })
+        {
             masteryHelper.AddOrUpdateMasteries(config.MasterySections, newItemId);
+        }
 
         if (config.AddToModSlots == true)
+        {
             AddDeferredModSlot(newItemId, config);
+        }
 
         if (config.AddToInventorySlots != null)
+        {
             inventorySlotHelper.ProcessInventorySlots(config, newItemId);
+        }
 
         if (config.AddToHallOfFame == true)
+        {
             hallOfFameHelper.AddToHallOfFame(config, newItemId);
+        }
 
         if (config.AddToSpecialSlots == true)
+        {
             specialSlotsHelper.AddToSpecialSlots(config, newItemId);
+        }
 
         if (config is { AddToStaticLootContainers: true, StaticLootContainers: not null })
+        {
             staticLootHelper.ProcessStaticLootContainers(config, newItemId);
+        }
 
         if (config.AddToBots == true)
+        {
             botLootHelper.AddToBotLoot(config, newItemId);
+        }
 
         if (config.AddCaliberToAllCloneLocations == true)
+        {
             AddDeferredCaliberConfig(newItemId, config);
+        }
 
         if (config is { AddToGeneratorAsFuel: true, GeneratorFuelSlotStages: not null })
+        {
             generatorFuelHelper.AddGeneratorFuel(config, newItemId);
+        }
 
         if (config.AddToHideoutPosterSlots == true)
+        {
             hideoutPosterHelper.AddToPosterSlot(newItemId);
+        }
 
         if (config is { AddPosterToMaps: true, PosterSpawnProbability: not null })
+        {
             posterLootHelper.ProcessPosterLoot(config, newItemId);
+        }
 
         if (config.AddToStatuetteSlots == true)
+        {
             hideoutStatuetteHelper.AddToStatuetteSlot(newItemId);
+        }
 
         if (config.AddToStaticAmmo == true)
+        {
             staticAmmoHelper.AddAmmoToLocationStaticAmmo(config, newItemId);
+        }
 
         if (config.AddToEmptyPropSlots == true)
+        {
             emptyPropSlotHelper.AddCustomSlots(config, newItemId);
+        }
 
         if (config.AddToSecureFilters == true)
+        {
             AddDeferredSecureFilters(newItemId, config);
+        }
 
         if (config is { ParentId: "62f109593b54472778797866", IsRandomLootContainer: true } && config.RandomLootContainerRewards != null)
+        {
             randomLootContainerHelper.ConfigureRandomLootContainer(config, newItemId);
+        }
 
         if (config.AddToItemBlacklist == true)
+        {
             rewardItemBlacklistHelper.AddToItemBlacklist(newItemId);
+        }
     }
 
     private void AddDeferredCaliberConfig(string newItemId, CustomItemConfig config)
@@ -358,6 +412,7 @@ public class WTTCustomItemServiceExtended(
         LogHelper.Debug(logger, $"Processing {_deferredCaliberConfigs.Count} deferred caliber configs...");
 
         foreach (var (newItemId, config) in _deferredCaliberConfigs)
+        {
             try
             {
                 caliberHelper.ProcessCaliberConfig(config, newItemId);
@@ -368,6 +423,7 @@ public class WTTCustomItemServiceExtended(
             {
                 logger.Critical($"Failed processing caliber config for {newItemId}", ex);
             }
+        }
 
         _deferredCaliberConfigs.Clear();
 
@@ -396,6 +452,7 @@ public class WTTCustomItemServiceExtended(
         LogHelper.Debug(logger, $"Processing {_deferredModSlotConfigs.Count} deferred modslots...");
 
         foreach (var (newItemId, config) in _deferredModSlotConfigs)
+        {
             try
             {
                 modSlotHelper.ProcessModSlots(config, newItemId);
@@ -406,6 +463,7 @@ public class WTTCustomItemServiceExtended(
             {
                 logger.Critical($"Failed processing modslots for {newItemId}", ex);
             }
+        }
 
         _deferredModSlotConfigs.Clear();
 
@@ -434,6 +492,7 @@ public class WTTCustomItemServiceExtended(
         LogHelper.Debug(logger, $"Processing {_deferredSecureFilterConfigs.Count} deferred secure filters...");
 
         foreach (var (newItemId, config) in _deferredSecureFilterConfigs)
+        {
             try
             {
                 secureFiltersHelper.AddToSecureFilters(config, newItemId);
@@ -444,6 +503,7 @@ public class WTTCustomItemServiceExtended(
             {
                 logger.Critical($"Failed processing secure filters for {newItemId}", ex);
             }
+        }
 
         _deferredSecureFilterConfigs.Clear();
 

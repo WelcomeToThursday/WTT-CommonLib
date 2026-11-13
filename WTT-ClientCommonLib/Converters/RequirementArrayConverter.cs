@@ -9,26 +9,26 @@ namespace WTTClientCommonLib.Converters;
 
 public class RequirementArrayConverter : JsonConverter
 {
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-        JArray array = JArray.Load(reader);
-        List<Requirement> result = new List<Requirement>();
+        var array = JArray.Load(reader);
+        var result = new List<Requirement>();
 
-        foreach (JToken token in array)
+        foreach (var token in array)
         {
             if (token.Type != JTokenType.Object)
             {
                 continue;
             }
 
-            JObject jsonObject = (JObject)token;
-            string typeName = jsonObject.Value<string>("type");
+            var jsonObject = (JObject)token;
+            var typeName = jsonObject.Value<string>("type");
             if (typeName == null)
             {
                 continue;
             }
 
-            bool found = Enum.TryParse(typeName, out ERequirementType requirementType);
+            var found = Enum.TryParse(typeName, out ERequirementType requirementType);
             if (!found)
             {
                 LogHelper.LogWarn($"Could not convert requirement type {typeName} to ERequirementType");

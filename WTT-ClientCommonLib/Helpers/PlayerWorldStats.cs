@@ -8,9 +8,13 @@ public class PlayerWorldStats(ManualLogSource logger)
     public void GetPlayerWorldStats()
     {
         if (WTTClientCommonLib.Player != null)
+        {
             LogPlayerStats("Player", WTTClientCommonLib.Player);
+        }
         else
+        {
             logger.LogError("Player is null. You aren't in raid or hideout.");
+        }
     }
 
     private void LogPlayerStats(string playerType, Player player)

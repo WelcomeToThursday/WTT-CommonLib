@@ -2,39 +2,40 @@
 using System.Linq;
 using EFT.Quests;
 
-namespace WTTClientCommonLib.Components
+namespace WTTClientCommonLib.Components;
+
+public static class NestedQuestZonesCounterState
 {
-    public static class NestedQuestZonesCounterState
+    public class State
     {
-        public class State
-        {
-            public bool SalvageDone;
-            public bool LeaveDone;
-        }
+        public bool SalvageDone;
+        public bool LeaveDone;
+    }
 
-        private static readonly Dictionary<(string questId, string ccId), State> _states = new();
+    private static readonly Dictionary<(string questId, string ccId), State> _states = [];
 
-        public static State GetOrCreate(Quest quest, ConditionCounterCreator cc)
+    public static State GetOrCreate(Quest quest, ConditionCounterCreator cc)
+    {
+        var key = (quest.Id, cc.id);
+        if (!_states.TryGetValue(key, out var state))
         {
-            var key = (quest.Id, cc.id);
-            if (!_states.TryGetValue(key, out var state))
-            {
-                state = new State();
-                _states[key] = state;
-            }
-            return state;
+            state = new State();
+            _states[key] = state;
         }
+        return state;
+    }
 
-        public static void ResetForQuest(Quest quest)
+    public static void ResetForQuest(Quest quest)
+    {
+        var keys = _states.Keys.Where(k => k.questId == quest.Id).ToList();
+        foreach (var key in keys)
         {
-            var keys = _states.Keys.Where(k => k.questId == quest.Id).ToList();
-            foreach (var key in keys)
-                _states.Remove(key);
+            _states.Remove(key);
         }
+    }
 
-        public static void ClearAll()
-        {
-            _states.Clear();
-        }
+    public static void ClearAll()
+    {
+        _states.Clear();
     }
 }

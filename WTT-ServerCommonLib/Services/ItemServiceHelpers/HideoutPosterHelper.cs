@@ -51,7 +51,9 @@ public class HideoutPosterHelper(ISptLogger<HideoutPosterHelper> logger, Templat
         foreach (var posterSlotId in PosterSlotIds)
         {
             if (!items.TryGetValue(CustomizationItem, out var posterParent) || posterParent.Properties?.Slots == null)
+            {
                 continue;
+            }
 
             AddItemToPosterSlots(itemId, posterParent, posterSlotId);
         }
@@ -62,11 +64,15 @@ public class HideoutPosterHelper(ISptLogger<HideoutPosterHelper> logger, Templat
         foreach (var slot in posterItem.Properties?.Slots!)
         {
             if (string.IsNullOrWhiteSpace(slot.Name) || slot.Properties?.Filters == null)
+            {
                 continue;
+            }
 
             var slotType = GetMatchingSlotType(slot.Name);
             if (posterSlotId != slotType)
+            {
                 continue;
+            }
 
             AddItemToFilters(itemId, slot, posterItem.Name);
         }
@@ -76,20 +82,29 @@ public class HideoutPosterHelper(ISptLogger<HideoutPosterHelper> logger, Templat
     {
         foreach (var filter in slot.Properties?.Filters!)
         {
-            filter.Filter ??= new HashSet<MongoId>();
+            filter.Filter ??= [];
 
             if (filter.Filter.Add(itemId))
+            {
                 LogHelper.Debug(logger, $"[Poster] Added {itemId} to slot '{slot.Name}' in {slotName}");
+            }
             else if (logger.IsLogEnabled(LogLevel.Debug))
+            {
                 LogHelper.Debug(logger, $"[Poster] {itemId} already in slot '{slot.Name}'");
+            }
         }
     }
 
     private static string? GetMatchingSlotType(string slotName)
     {
         foreach (var type in PosterSlotIds)
+        {
             if (type != null && slotName.StartsWith(type, StringComparison.OrdinalIgnoreCase))
+            {
                 return type;
+            }
+        }
+
         return null;
     }
 }

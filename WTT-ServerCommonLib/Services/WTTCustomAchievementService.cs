@@ -95,7 +95,7 @@ public class WTTCustomAchievementService(
         if (!Directory.Exists(directoryPath))
         {
             LogHelper.Debug(logger, $"Images directory not found: {directoryPath}");
-            return new List<string>();
+            return [];
         }
 
         try
@@ -111,7 +111,7 @@ public class WTTCustomAchievementService(
         catch (Exception ex)
         {
             logger.Error($"Error loading images from {directoryPath}: {ex.Message}");
-            return new List<string>();
+            return [];
         }
     }
 
@@ -161,14 +161,18 @@ public class WTTCustomAchievementService(
             var fallback = locales.TryGetValue("en", out var englishLocales) ? englishLocales : locales.Values.FirstOrDefault();
 
             if (fallback == null)
+            {
                 return;
+            }
 
             foreach (var (localeCode, lazyLocale) in localeTable.Global)
             {
                 lazyLocale.AddTransformer(localeData =>
                 {
                     if (localeData is null)
+                    {
                         return localeData;
+                    }
 
                     var customLocale = locales.GetValueOrDefault(localeCode, fallback);
 

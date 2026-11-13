@@ -85,7 +85,9 @@ internal class OnGameStarted : ModulePatch
 
             LogHelper.LogDebug($"Processing {configs.Count} spawn configs for {locationID}");
             foreach (var config in configs)
+            {
                 loader.ProcessSpawnConfig(__instance.MainPlayer, config, locationID);
+            }
         }
         catch (Exception e)
         {

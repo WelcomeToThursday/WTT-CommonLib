@@ -18,16 +18,22 @@ public static class StackCountDisplayHelper
             {
                 var scaled = Math.Round(count / 1000.0, 1);
                 if (scaled >= 1000)
-                    return "1.0M";
-                result = scaled.ToString("0.0") + "K";
+                    {
+                        return "1.0M";
+                    }
+
+                    result = scaled.ToString("0.0") + "K";
                 break;
             }
             case < 1000000000:
             {
                 var scaled = Math.Round(count / 1000000.0, 1);
                 if (scaled >= 1000)
-                    return "1.0B";
-                result = scaled.ToString("0.0") + "M";
+                    {
+                        return "1.0B";
+                    }
+
+                    result = scaled.ToString("0.0") + "M";
                 break;
             }
             default:

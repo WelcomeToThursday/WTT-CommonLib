@@ -71,7 +71,7 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
 
                     if (!trader.Assort.BarterScheme.TryGetValue(schemeKey, out var barterOptions))
                     {
-                        barterOptions = new List<List<BarterScheme>>();
+                        barterOptions = [];
                         trader.Assort.BarterScheme[schemeKey] = barterOptions;
                     }
 
@@ -81,24 +81,39 @@ public class TraderItemHelper(ISptLogger<TraderItemHelper> logger, TradersTable 
                     foreach (var b in barters)
                     {
                         if (string.IsNullOrWhiteSpace(b.Template))
+                        {
                             continue;
+                        }
 
                         var barter = new BarterScheme { Count = b.Count, Template = ItemTplResolver.ResolveId(b.Template) };
 
                         if (b.Level != null)
+                        {
                             barter.Level = b.Level;
+                        }
+
                         if (b.OnlyFunctional != null)
+                        {
                             barter.OnlyFunctional = b.OnlyFunctional;
+                        }
+
                         if (b.Side != null)
+                        {
                             barter.Side = b.Side;
+                        }
+
                         if (b.SptQuestLocked != null)
+                        {
                             barter.SptQuestLocked = b.SptQuestLocked;
+                        }
 
                         barterSchemeItems.Add(barter);
                     }
 
                     if (barterSchemeItems.Count > 0)
+                    {
                         barterOptions.Add(barterSchemeItems);
+                    }
 
                     trader.Assort.LoyalLevelItems[schemeKey] = scheme.ConfigBarterSettings.LoyalLevel;
                 }

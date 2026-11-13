@@ -62,7 +62,9 @@ public class WTTCustomClothingService(
                     {
                         config.Validate();
                         if (ProcessClothingConfig(config))
+                        {
                             totalClothingCreated++;
+                        }
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -87,7 +89,9 @@ public class WTTCustomClothingService(
     private bool EnsureCustomizationDoesNotExist(string id, string label, CustomClothingConfig config)
     {
         if (!CustomizationIdExists(id))
+        {
             return true;
+        }
 
         logger.Error($"Cannot add {label} '{id}' for outfit '{config.OutfitId}' because it already exists in templateTable.Customization.");
 
@@ -117,13 +121,19 @@ public class WTTCustomClothingService(
         try
         {
             if (!EnsureCustomizationDoesNotExist(config.TopId!, "top", config))
+            {
                 return false;
+            }
 
             if (!EnsureCustomizationDoesNotExist(config.HandsId!, "hands", config))
+            {
                 return false;
+            }
 
             if (!EnsureCustomizationDoesNotExist(config.SuiteId!, "suite", config))
+            {
                 return false;
+            }
 
             // Create top customization item
             var topItem = new CustomizationItem
@@ -218,10 +228,14 @@ public class WTTCustomClothingService(
         try
         {
             if (!EnsureCustomizationDoesNotExist(config.BottomId!, "bottom", config))
+            {
                 return false;
+            }
 
             if (!EnsureCustomizationDoesNotExist(config.SuiteId!, "suite", config))
+            {
                 return false;
+            }
             // Create bottom customization item
             var bottomItem = new CustomizationItem
             {
@@ -344,15 +358,20 @@ public class WTTCustomClothingService(
     private void HandleLocale(CustomClothingConfig config, string clothingId)
     {
         if (config.Locales == null)
+        {
             return;
+        }
 
         var globalLocales = localeTable.Global;
 
         foreach (var (localeCode, lazyLocale) in globalLocales)
+        {
             lazyLocale.AddTransformer(localeData =>
             {
                 if (localeData == null)
+                {
                     return localeData;
+                }
 
                 var localeInfo = config.Locales.GetValueOrDefault(localeCode) ?? config.Locales.GetValueOrDefault("en");
 
@@ -372,5 +391,6 @@ public class WTTCustomClothingService(
 
                 return localeData;
             });
+        }
     }
 }

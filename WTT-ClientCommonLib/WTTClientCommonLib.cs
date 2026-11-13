@@ -83,8 +83,8 @@ public class WTTClientCommonLib : BaseUnityPlugin
     {
         try
         {
-            string pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string fikaAssemblyPath = Path.Combine(pluginDir, "WTT-ClientCommonLibFika.dll");
+            var pluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var fikaAssemblyPath = Path.Combine(pluginDir, "WTT-ClientCommonLibFika.dll");
 
             if (!File.Exists(fikaAssemblyPath))
             {
@@ -120,7 +120,9 @@ public class WTTClientCommonLib : BaseUnityPlugin
     public static void SendFikaPacket(CustomSpawnConfig config, Quaternion rotation)
     {
         if (!FikaInstalled || _sendFikaPacketMethod == null)
+        {
             return;
+        }
 
         try
         {

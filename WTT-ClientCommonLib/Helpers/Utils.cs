@@ -72,7 +72,10 @@ internal static class Utils
     {
         var position = GetPlayerPosition();
         if (position == null)
+        {
             return null;
+        }
+
         var vectorPosition = (Vector3)position;
 
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -135,15 +138,15 @@ internal static class Utils
                 {
                     RequiredItemTpl = "PUT YOUR REQUIRED ITEM TPL HERE",
                     SalvageTime = 10f,
-                    Rewards = new List<SalvageRewardConfig>
-                    {
+                    Rewards =
+                    [
                         new()
                         {
                             ItemTpl = "PUT YOUR REWARD ITEM HERE",
                             Count = 1,
                             ToQuestInventory = false,
                         },
-                    },
+                    ],
                 };
             }
             convertedZones.Add(newCustomQuestZone);

@@ -25,9 +25,15 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
     private GamePlayerOwner _gamePlayerOwner;
     private GameObject _lastSpawnedObject;
     private bool _shiftPressed;
-    private readonly List<SpawnedObjectInfo> _spawnedObjects = new();
+    private readonly List<SpawnedObjectInfo> _spawnedObjects = [];
 
-    public GameObject LastSpawnedObject => _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null;
+    public GameObject? LastSpawnedObject
+    {
+        get
+        {
+            return _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null;
+        }
+    }
 
     public bool IsEditing { get; private set; }
 
@@ -49,12 +55,18 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         if (args is { Length: >= 3 })
         {
             if (float.TryParse(args[0], out var x) && float.TryParse(args[1], out var y) && float.TryParse(args[2], out var z))
+            {
                 spawnPosition = new Vector3(x, y, z);
+            }
 
             // Parse rotation if provided
             if (args.Length >= 6)
+            {
                 if (float.TryParse(args[3], out var rx) && float.TryParse(args[4], out var ry) && float.TryParse(args[5], out var rz))
+                {
                     spawnRotation = Quaternion.Euler(rx, ry, rz);
+                }
+            }
         }
 
         // Load and spawn the prefab
@@ -132,13 +144,18 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         if (!IsEditing || _lastSpawnedObject == null)
         {
             if (IsEditing)
+            {
                 logger.LogError("EditMode active but no object!");
+            }
+
             return;
         }
 
         var cameraTransform = Camera.main?.transform;
         if (cameraTransform == null)
+        {
             return;
+        }
 
         // Handle object cycling and deletion
         if (StaticSpawnSystemConfigManager.CycleSpawnedObjects.Value.BetterIsDown())
@@ -154,7 +171,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
             DeleteSelectedObject();
             // Skip movement if we just deleted the object
             if (_lastSpawnedObject == null)
+            {
                 return;
+            }
         }
 
         _shiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -166,7 +185,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         {
             speedMultiplier = 2f;
             if (_altPressed)
+            {
                 speedMultiplier = 4f;
+            }
         }
 
         // Get input states
@@ -189,20 +210,39 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         right.Normalize();
 
         if (forwardPressed)
+        {
             moveDirection += forward;
+        }
+
         if (backwardPressed)
+        {
             moveDirection -= forward;
+        }
+
         if (leftPressed)
+        {
             moveDirection -= right;
+        }
+
         if (rightPressed)
+        {
             moveDirection += right;
+        }
+
         if (upPressed)
+        {
             moveDirection += up;
+        }
+
         if (downPressed)
+        {
             moveDirection -= up;
+        }
 
         if (moveDirection.sqrMagnitude > 1f)
+        {
             moveDirection.Normalize();
+        }
 
         _lastSpawnedObject.transform.position += moveDirection * (MoveSpeed * speedMultiplier * Time.deltaTime);
 
@@ -218,13 +258,24 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
             Input.GetKey(StaticSpawnSystemConfigManager.RotateYawRightKey.Value.MainKey) && !_shiftPressed && !_altPressed;
 
         if (pitchUpPressed) // 8 - Pitch up (forward)
+        {
             rotationInput.x += 1;
+        }
+
         if (pitchDownPressed) // 2 - Pitch down (backward)
+        {
             rotationInput.x = 1;
+        }
+
         if (yawLeftPressed) // 4 - Yaw left (counter-clockwise)
+        {
             rotationInput.y -= 1;
+        }
+
         if (yawRightPressed) // 6 - Yaw right (clockwise)
+        {
             rotationInput.y += 1;
+        }
 
         // Diagonal directions
         var pitchRollLeftKey =
@@ -261,6 +312,7 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         }
 
         if (rotationInput != Vector3.zero)
+        {
             // Apply rotation in world space
             _lastSpawnedObject.transform.Rotate(
                 rotationInput.x * RotateSpeed * speedMultiplier * Time.deltaTime,
@@ -268,6 +320,7 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
                 rotationInput.z * RotateSpeed * speedMultiplier * Time.deltaTime,
                 Space.World
             );
+        }
 
         if (StaticSpawnSystemConfigManager.ConfirmPositionKey.Value.BetterIsDown())
         {
@@ -311,7 +364,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
 
             // Exit edit mode if no objects left
             if (IsEditing)
+            {
                 ExitEditMode();
+            }
         }
     }
 
@@ -332,7 +387,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         );
 
         if (IsEditing && _editIndicator != null)
+        {
             _editIndicator.transform.position = _lastSpawnedObject.transform.position;
+        }
     }
 
     private void CyclePreviousSpawnedObject()
@@ -352,7 +409,9 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
         );
 
         if (IsEditing && _editIndicator != null)
+        {
             _editIndicator.transform.position = _lastSpawnedObject.transform.position;
+        }
     }
 
     public void ExportSpawnedObjectsLocations()
@@ -375,12 +434,12 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
                 PrefabName = info.PrefabName, // Directly use stored name
                 Position = info.Object.transform.position,
                 Rotation = info.Object.transform.rotation.eulerAngles,
-                RequiredQuestStatuses = new List<string>(),
-                ExcludedQuestStatuses = new List<string>(),
+                RequiredQuestStatuses = [],
+                ExcludedQuestStatuses = [],
                 QuestMustExist = null,
                 LinkedQuestId = null,
-                LinkedRequiredStatuses = new List<string>(),
-                LinkedExcludedStatuses = new List<string>(),
+                LinkedRequiredStatuses = [],
+                LinkedExcludedStatuses = [],
                 LinkedQuestMustExist = null,
                 RequiredItemInInventory = null,
                 RequiredLevel = null,

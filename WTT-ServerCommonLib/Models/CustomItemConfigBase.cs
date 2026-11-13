@@ -56,26 +56,38 @@ public abstract class CustomItemConfigBase
     public virtual IEnumerable<string> GetValidationErrors(string itemId)
     {
         if (!itemId.IsValidMongoId())
+        {
             yield return $"ItemId [{itemId}] is not a valid MongoId";
+        }
 
         if (string.IsNullOrWhiteSpace(ItemTplToClone))
+        {
             yield return $"itemTplToClone is required";
+        }
 
         if (string.IsNullOrWhiteSpace(ParentId))
+        {
             yield return $"parentId is required";
+        }
 
         if (OverrideProperties == null)
+        {
             yield return $"overrideProperties is required";
+        }
 
         if (Locales == null || Locales.Count == 0)
+        {
             yield return $"locales is required and must contain at least one locale";
+        }
 
         if (AddToInventorySlots != null)
         {
             for (var i = 0; i < AddToInventorySlots.Count; i++)
             {
                 if (string.IsNullOrWhiteSpace(AddToInventorySlots[i]))
+                {
                     yield return $"addtoInventorySlots[{i}] must be a non-empty string";
+                }
             }
         }
 
@@ -90,7 +102,9 @@ public abstract class CustomItemConfigBase
                 for (var i = 0; i < ModSlot.Count; i++)
                 {
                     if (string.IsNullOrWhiteSpace(ModSlot[i]))
+                    {
                         yield return $"modSlot[{i}] must be a non-empty string";
+                    }
                 }
             }
         }
@@ -99,17 +113,23 @@ public abstract class CustomItemConfigBase
         if (registerInHandbook)
         {
             if (string.IsNullOrWhiteSpace(HandbookParentId))
+            {
                 yield return $"handbookParentId is required when registerInHandbook is true";
+            }
 
             if (HandbookPriceRoubles == null || HandbookPriceRoubles < 0)
+            {
                 yield return $"handbookPriceRoubles must be >= 0 when registerInHandbook is true";
+            }
         }
 
         var registerInFleaPrices = RegisterInFleaPrices ?? false;
         if (registerInFleaPrices)
         {
             if (FleaPriceRoubles == null || FleaPriceRoubles < 0)
+            {
                 yield return $"fleaPriceRoubles must be >= 0 when registerInFleaPrices is true";
+            }
         }
     }
 }

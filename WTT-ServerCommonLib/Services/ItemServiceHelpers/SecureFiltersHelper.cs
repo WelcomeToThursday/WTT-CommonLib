@@ -15,21 +15,29 @@ public class SecureFiltersHelper(ISptLogger<SecureFiltersHelper> logger, Templat
     public void AddToSecureFilters(CustomItemConfigBase itemConfig, string newItemId)
     {
         if (itemConfig.AddToSecureFilters != true)
+        {
             return;
+        }
 
         var items = templateTable.Items;
 
         foreach (var (_, itemTemplate) in items)
         {
             if (itemTemplate.Parent != SecureContainerParentId && itemTemplate.Parent != WTTSecureContainerParentId)
+            {
                 continue;
+            }
 
             if (itemTemplate.Id == BossContainerId)
+            {
                 continue;
+            }
 
             var grids = itemTemplate.Properties?.Grids?.ToList();
             if (grids == null || grids.Count == 0)
+            {
                 continue;
+            }
 
             var gridFilters = grids[0].Properties?.Filters?.FirstOrDefault();
             if (gridFilters?.Filter == null)

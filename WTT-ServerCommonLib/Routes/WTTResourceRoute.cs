@@ -20,8 +20,7 @@ public class WTTResourcesRouter(
     WTTCustomAudioService audioService,
     WTTCustomCustomizationService customizationService,
     WTTCustomHideoutRecipeService customHideoutRecipeService,
-    WTTCustomItemParentService customItemParentService,
-    ISptLogger<WTTResourcesRouter> logger
+    WTTCustomItemParentService customItemParentService
 )
     : StaticRouter(
         jsonUtil,
@@ -46,9 +45,7 @@ public class WTTResourcesRouter(
                     foreach (var bundleName in allBundles)
                     {
                         var bundleData = await rigService.GetBundleData(bundleName);
-                        if (bundleData?.Length > 0)
-                            payload.Add(bundleName, Convert.ToBase64String(bundleData));
-                    }
+                        if (bundleData?.Length > 0) { payload.Add(bundleName, Convert.ToBase64String(bundleData)); } }
 
                     return jsonUtil.Serialize(payload) ?? throw new NullReferenceException("Could not serialize payload!");
                 }
@@ -71,9 +68,7 @@ public class WTTResourcesRouter(
                     foreach (var name in slotService.GetImageManifest())
                     {
                         var data = await slotService.GetImageData(name);
-                        if (data?.Length > 0)
-                            result.Add(name, Convert.ToBase64String(data));
-                    }
+                        if (data?.Length > 0) { result.Add(name, Convert.ToBase64String(data)); } }
 
                     return jsonUtil.Serialize(result) ?? throw new NullReferenceException("Could not serialize payload!");
                 }

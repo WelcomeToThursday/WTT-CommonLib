@@ -1,7 +1,6 @@
-﻿using Fika.Core.Networking.LiteNetLib.Utils;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace WTTClientCommonLib.Fika.Packets;
+namespace WTTClientCommonLibFika.Packets;
 
 public struct StaticSpawnPacket : INetSerializable
 {

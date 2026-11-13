@@ -19,7 +19,9 @@ public record HideoutProductionExtended : HideoutProduction
     public List<List<Item>> GetResultItems()
     {
         if (EndProductItems == null)
+        {
             return [];
+        }
 
         var craftResults = EndProductItems.Values.ToList();
         List<List<Item>> finalItems = [];

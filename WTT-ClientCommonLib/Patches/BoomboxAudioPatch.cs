@@ -29,19 +29,20 @@ internal class BoomboxAudioPatch : ModulePatch
         try
         {
             if (__instance.gameObject.name != "BoomboxAudio")
-                return true;
-
-            var tracker = __instance.gameObject.GetComponent<HideoutRadioStateTracker>();
-            if (tracker == null)
             {
-                tracker = __instance.gameObject.AddComponent<HideoutRadioStateTracker>();
+                return true;
             }
 
+            var tracker = __instance.gameObject.GetComponent<HideoutRadioStateTracker>() ?? __instance.gameObject.AddComponent<HideoutRadioStateTracker>();
             if (ShouldSkipPlayback(tracker))
+            {
                 return true;
+            }
 
             if (!TryGetAudioResource(tracker, out var audioResource))
+            {
                 return true;
+            }
 
             if (!ResourceLoader.ClipCache.TryGetAudioClip(audioResource, out var customClip))
             {
@@ -53,7 +54,7 @@ internal class BoomboxAudioPatch : ModulePatch
             sound = customClip;
             tracker.HasPlayedFirstEntranceAudio = true;
 
-            float volume = GetVolumeForLocation(tracker.Location);
+            var volume = GetVolumeForLocation(tracker.Location);
             __instance.GetComponent<AudioSource>().volume = volume;
 
 #if DEBUG
@@ -64,9 +65,7 @@ internal class BoomboxAudioPatch : ModulePatch
         }
         catch (Exception ex)
         {
-#if DEBUG
-            LogHelper.LogError($"Prefix error: {ex}");
-#endif
+            LogHelper.LogError($"Boombox error: {ex}");
             return true;
         }
     }
@@ -75,13 +74,17 @@ internal class BoomboxAudioPatch : ModulePatch
     private static void Postfix(AudioArray __instance, AudioClip sound, AudioClip __state)
     {
         if (__state == null || sound == __state)
+        {
             return;
+        }
 
         try
         {
             var tracker = __instance.gameObject.GetComponent<HideoutRadioStateTracker>();
             if (tracker == null)
+            {
                 return;
+            }
 
             var sources = __instance.GetComponents<AudioSource>();
             foreach (var source in sources)
@@ -95,9 +98,7 @@ internal class BoomboxAudioPatch : ModulePatch
         }
         catch (Exception ex)
         {
-#if DEBUG
-            LogHelper.LogError($"Postfix error: {ex}");
-#endif
+            LogHelper.LogError($"Boombox error: {ex}");
         }
     }
 
@@ -162,7 +163,7 @@ internal class BoomboxAudioPatch : ModulePatch
         }
 
         // 2. RADIO: Build pool from radio + optionally head audio if alsoRadio == true
-        List<string> radioPool = new(ResourceLoader.GetRadioAudio());
+        List<string> radioPool = [.. ResourceLoader.GetRadioAudio()];
 
         if (player?.Profile != null)
         {

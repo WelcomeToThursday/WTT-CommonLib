@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using WTTClientCommonLib.Configuration;
-using WTTClientCommonLib.Helpers;
 
 namespace WTTClientCommonLib.Components;
 
@@ -40,7 +39,7 @@ public class HideoutRadioStateTracker : MonoBehaviour
         ReplacementChance = GetReplacementChance();
         PlayOnFirstEntrance = GetPlayOnFirstEntrance();
 
-        float volume = GetVolumeForLocation();
+        var volume = GetVolumeForLocation();
         var sources = GetComponents<AudioSource>();
         foreach (var source in sources)
         {
@@ -115,7 +114,7 @@ public class HideoutRadioStateTracker : MonoBehaviour
     private void DetermineLocation()
     {
         Transform parent = transform.parent;
-        int depth = 0;
+        var depth = 0;
 
         while (parent != null && depth < 5)
         {

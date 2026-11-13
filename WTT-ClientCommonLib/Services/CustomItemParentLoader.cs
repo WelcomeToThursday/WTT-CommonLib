@@ -13,13 +13,15 @@ public class CustomItemParentLoader
 {
     public static CustomItemParentLoader Instance;
 
-    private Dictionary<string, ItemTemplate> _customParents = new Dictionary<string, ItemTemplate>();
+    private Dictionary<string, ItemTemplate> _customParents = [];
     private bool _parentsRegistered = false;
 
     public CustomItemParentLoader()
     {
         if (Instance != null)
+        {
             return;
+        }
 
         Instance = this;
     }
@@ -49,7 +51,9 @@ public class CustomItemParentLoader
     public async Task RegisterCustomParents()
     {
         if (_parentsRegistered)
+        {
             return;
+        }
 
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         List<CustomParent> customParents = [];
@@ -60,7 +64,7 @@ public class CustomItemParentLoader
         {
             foreach (var type in GetLoadableTypes(assembly))
             {
-                foreach (CustomParent attribute in GetCustomParents(type))
+                foreach (var attribute in GetCustomParents(type))
                 {
                     customParents.Add(attribute);
                 }
@@ -77,8 +81,8 @@ public class CustomItemParentLoader
 
             var ctor =
                 parent.Template == null
-                    ? parent.Item.GetConstructor(new[] { typeof(string) })
-                    : parent.Item.GetConstructor(new[] { typeof(string), parent.Template });
+                    ? parent.Item.GetConstructor([typeof(string)])
+                    : parent.Item.GetConstructor([typeof(string), parent.Template]);
 
             if (ctor == null)
             {
@@ -91,7 +95,7 @@ public class CustomItemParentLoader
                     parent.ParentId,
                     parent.Item,
                     parent.Template,
-                    (id, tpl) => (Item)(parent.Template == null ? ctor.Invoke(new object[] { id }) : ctor.Invoke(new object[] { id, tpl }))
+                    (id, tpl) => (Item)(parent.Template == null ? ctor.Invoke([id]) : ctor.Invoke([id, tpl]))
                 )
             );
         }

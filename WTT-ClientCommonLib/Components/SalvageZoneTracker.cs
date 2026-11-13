@@ -1,33 +1,42 @@
 ﻿using System.Collections.Generic;
 using EFT;
 
-namespace WTTClientCommonLib.Components
+namespace WTTClientCommonLib.Components;
+
+internal static class SalvageZoneTracker
 {
-    internal static class SalvageZoneTracker
+    private static readonly Dictionary<Player, SalvageItemTrigger> _active = [];
+
+    public static void Set(Player player, SalvageItemTrigger zone)
     {
-        private static readonly Dictionary<Player, SalvageItemTrigger> _active = new();
-
-        public static void Set(Player player, SalvageItemTrigger zone)
+        if (player == null)
         {
-            if (player == null)
-                return;
-            _active[player] = zone;
+            return;
         }
 
-        public static void Clear(Player player, SalvageItemTrigger zone)
-        {
-            if (player == null)
-                return;
+        _active[player] = zone;
+    }
 
-            if (_active.TryGetValue(player, out var current) && current == zone)
-                _active.Remove(player);
+    public static void Clear(Player player, SalvageItemTrigger zone)
+    {
+        if (player == null)
+        {
+            return;
         }
 
-        public static SalvageItemTrigger Get(Player player)
+        if (_active.TryGetValue(player, out var current) && current == zone)
         {
-            if (player == null)
-                return null;
-            return _active.TryGetValue(player, out var zone) ? zone : null;
+            _active.Remove(player);
         }
+    }
+
+    public static SalvageItemTrigger? Get(Player player)
+    {
+        if (player == null)
+        {
+            return null;
+        }
+
+        return _active.TryGetValue(player, out var zone) ? zone : null;
     }
 }

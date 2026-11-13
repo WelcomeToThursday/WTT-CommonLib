@@ -32,7 +32,7 @@ public class ExtendedProductionScheme : BaseHideoutScheme
         {
             Dictionary<string, string> recipeStackBaseItems = [];
 
-            foreach ((string resultId, CustomCraftResult craftResult) in EndProductItems)
+            foreach ((var resultId, var craftResult) in EndProductItems)
             {
                 foreach (var item in craftResult.Items)
                 {
@@ -45,11 +45,11 @@ public class ExtendedProductionScheme : BaseHideoutScheme
 
                 var items = Singleton<ItemFactory>.Instance.FlatItemsToTree(craftResult.Items).Items;
 
-                foreach ((string _, Item item) in items)
+                foreach ((var _, var item) in items)
                 {
-                    if (recipeStackBaseItems.TryGetValue(resultId, out string _))
+                    if (recipeStackBaseItems.TryGetValue(resultId, out var _))
                     {
-                        bool isAdded = ResultItemStacks.TryGetValue(resultId, out _);
+                        var isAdded = ResultItemStacks.TryGetValue(resultId, out _);
 
                         if (!isAdded)
                         {
@@ -72,10 +72,7 @@ public class ExtendedProductionScheme : BaseHideoutScheme
 
                             ResultItemStacks.Add(resultId, resultStack);
 
-                            if (FirstResult == null)
-                            {
-                                FirstResult = resultStack;
-                            }
+                            FirstResult ??= resultStack;
 
                             break;
                         }

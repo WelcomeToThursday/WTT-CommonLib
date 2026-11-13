@@ -36,12 +36,15 @@ public class StaticAmmoHelper(ISptLogger<StaticAmmoHelper> logger, LocationTable
             {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (location.StaticAmmo == null)
+                {
                     continue;
+                }
+
                 try
                 {
                     var ammoList = location.StaticAmmo.TryGetValue(caliber, out var details)
                         ? details.ToList()
-                        : new List<StaticAmmoDetails>();
+                        : [];
 
                     if (ammoList.Any(a => a.Tpl == newItemId))
                     {

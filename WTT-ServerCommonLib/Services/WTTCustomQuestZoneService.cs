@@ -11,7 +11,7 @@ namespace WTTServerCommonLib.Services;
 public class WTTCustomQuestZoneService(ModHelper modHelper, SptLogger<WTTCustomQuestZoneService> logger, ConfigHelper configHelper)
 {
     private readonly Lock _lock = new();
-    private readonly List<CustomQuestZone> _zones = new();
+    private readonly List<CustomQuestZone> _zones = [];
 
     /// <summary>
     /// Loads custom quest zones from JSON/JSONC files and registers them for quest interactions.
@@ -63,11 +63,13 @@ public class WTTCustomQuestZoneService(ModHelper modHelper, SptLogger<WTTCustomQ
         var zoneLists = await configHelper.LoadAllJsonFiles<List<CustomQuestZone>>(directory);
 
         foreach (var fileZones in zoneLists)
+        {
             if (fileZones.Count > 0)
             {
                 loadedZones.AddRange(fileZones);
                 LogHelper.Debug(logger, $"Loaded {fileZones.Count} zones from a file");
             }
+        }
 
         return loadedZones;
     }

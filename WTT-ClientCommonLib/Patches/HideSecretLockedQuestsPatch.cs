@@ -3,32 +3,33 @@ using EFT.Quests;
 using EFT.UI;
 using SPT.Reflection.Patching;
 
-namespace WTTClientCommonLib.Patches
+namespace WTTClientCommonLib.Patches;
+
+public class HideSecretLockedQuestsPatch : ModulePatch
 {
-    public class HideSecretLockedQuestsPatch : ModulePatch
+    protected override MethodBase GetTargetMethod()
     {
-        protected override MethodBase GetTargetMethod()
+        return typeof(QuestsListView).GetMethod(
+            "UpdateSingleQuestVisibility",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+    }
+
+    [PatchPostfix]
+    private static void Postfix(QuestsListView __instance, QuestListItem questView)
+    {
+        if (questView == null || questView.Quest == null)
         {
-            return typeof(QuestsListView).GetMethod(
-                "UpdateSingleQuestVisibility",
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-            );
+            return;
         }
 
-        [PatchPostfix]
-        private static void Postfix(QuestsListView __instance, QuestListItem questView)
+        var quest = questView.Quest;
+
+        var isSecretAndLocked = quest.Template.ServerOnly && quest.QuestStatus == EQuestStatus.Locked;
+
+        if (isSecretAndLocked)
         {
-            if (questView == null || questView.Quest == null)
-                return;
-
-            var quest = questView.Quest;
-
-            bool isSecretAndLocked = quest.Template.ServerOnly && quest.QuestStatus == EQuestStatus.Locked;
-
-            if (isSecretAndLocked)
-            {
-                questView.gameObject.SetActive(false);
-            }
+            questView.gameObject.SetActive(false);
         }
     }
 }

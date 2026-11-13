@@ -55,7 +55,6 @@ public class WTTServerCommonLib(
     WTTCustomItemParentService customItemParentService,
     WTTHideoutControllerExtended hideoutControllerExtended,
     WTTCustomQuestItemService customQuestItemService,
-    ISptLogger<WTTServerCommonLib> logger,
     IEnumerable<IRuntimePatch> patches
 ) : IOnLoad
 {

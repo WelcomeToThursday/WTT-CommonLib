@@ -1,44 +1,49 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Serialization;
 using EFT.Quests;
 using HarmonyLib;
 using SPT.Reflection.Patching;
 using WTTClientCommonLib.Components;
 
-namespace WTTClientCommonLib.Patches
+namespace WTTClientCommonLib.Patches;
+
+internal class CounterCreatorChildConditionsPatch : ModulePatch
 {
-    internal class CounterCreatorChildConditionsPatch : ModulePatch
+    protected override MethodBase GetTargetMethod()
     {
-        protected override MethodBase GetTargetMethod()
+        return AccessTools.Method(typeof(ConditionCounterCreator), "OnDeserializedMethod");
+    }
+
+    [PatchPostfix]
+    public static void Postfix(ConditionCounterCreator __instance, StreamingContext context)
+    {
+        var nested = __instance.Conditions;
+        if (nested == null || nested.Count == 0)
         {
-            return AccessTools.Method(typeof(ConditionCounterCreator), "OnDeserializedMethod");
+            return;
         }
 
-        [PatchPostfix]
-        public static void Postfix(ConditionCounterCreator __instance, StreamingContext context)
+        var childList = __instance.ChildConditions;
+        if (childList == null)
         {
-            var nested = __instance.Conditions;
-            if (nested == null || nested.Count == 0)
-                return;
+            return;
+        }
 
-            var childList = __instance.ChildConditions;
-            if (childList == null)
-                return;
-
-            foreach (var cond in nested)
+        foreach (var cond in nested)
+        {
+            if (cond == null)
             {
-                if (cond == null)
-                    continue;
+                continue;
+            }
 
-                if (cond is not ConditionSalvage && cond is not ConditionLeaveItemAtLocation)
-                    continue;
+            if (cond is not ConditionSalvage && cond is not ConditionLeaveItemAtLocation)
+            {
+                continue;
+            }
 
-                if (!childList.Contains(cond))
-                {
-                    childList.Add(cond);
-                }
+            if (!childList.Contains(cond))
+            {
+                childList.Add(cond);
             }
         }
     }

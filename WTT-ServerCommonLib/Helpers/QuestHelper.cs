@@ -125,7 +125,9 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
     public void AddArmorToEquipmentExclusive(Dictionary<MongoId, Quest> quests, string questId, string[] armorIds)
     {
         if (!quests.TryGetValue(questId, out var quest) || quest.Conditions.AvailableForFinish == null)
+        {
             return;
+        }
 
         foreach (var condition in quest.Conditions.AvailableForFinish)
         {
@@ -183,7 +185,9 @@ public class QuestHelper(ISptLogger<QuestHelper> logger)
     public void AddWeaponsToFindOrHandoverCondition(Dictionary<MongoId, Quest> quests, string questId, string[] weaponIds)
     {
         if (!quests.TryGetValue(questId, out var quest) || quest.Conditions.AvailableForFinish == null)
+        {
             return;
+        }
 
         foreach (var condition in quest.Conditions.AvailableForFinish)
         {

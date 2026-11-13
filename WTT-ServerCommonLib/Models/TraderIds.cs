@@ -21,7 +21,10 @@ public static class TraderIds
     public static void Add(string traderName, MongoId traderId)
     {
         if (TraderMap.TryGetValue(traderName, out _))
+        {
             return;
+        }
+
         TraderMap[traderName] = traderId;
     }
 
@@ -30,7 +33,10 @@ public static class TraderIds
         if (TraderMap.TryGetValue(traderName, out var trader))
         {
             if (trader == traderId)
+            {
                 return;
+            }
+
             TraderMap[traderName] = traderId;
         }
         else

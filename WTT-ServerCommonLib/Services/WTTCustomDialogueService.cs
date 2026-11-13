@@ -45,7 +45,7 @@ public class WTTCustomDialogueService(
         }
 
         var traderDialogElements = templateTable.Dialogue.Elements;
-        int added = 0;
+        var added = 0;
         foreach (var file in jsonFiles)
         {
             try

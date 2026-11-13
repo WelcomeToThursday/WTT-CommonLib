@@ -14,12 +14,17 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
     public void ProcessStaticLootContainers(CustomItemConfig config, string itemId)
     {
         if (config.StaticLootContainers != null)
+        {
             foreach (var container in config.StaticLootContainers)
             {
                 if (string.IsNullOrWhiteSpace(container.ContainerName))
+                {
                     continue;
+                }
+
                 AddToStaticLoot(container.ContainerName, itemId, container.Probability);
             }
+        }
     }
 
     private void AddToStaticLoot(string containerId, string itemId, int probability)
@@ -35,12 +40,16 @@ public class StaticLootHelper(ISptLogger<StaticLootHelper> logger, LocationTable
         foreach (var (locationId, location) in locations)
         {
             if (location.StaticLoot is null)
+            {
                 continue;
+            }
 
             location.StaticLoot.AddTransformer(lazyloadedStaticLootData =>
             {
                 if (lazyloadedStaticLootData is null)
+                {
                     return lazyloadedStaticLootData;
+                }
 
                 var actualContainerId = ItemTplResolver.ResolveId(containerId);
 

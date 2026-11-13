@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Comfort.Common;
 using EFT;
@@ -7,7 +6,6 @@ using EFT.Quests;
 using HarmonyLib;
 using SPT.Reflection.Patching;
 using WTTClientCommonLib.Components;
-using WTTClientCommonLib.Helpers;
 
 internal class ItemDroppedAtPlacePatch : ModulePatch
 {
@@ -17,7 +15,7 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
     }
 
     [PatchPrefix]
-    public static bool Prefix(Profile __instance, string itemId, string zoneId)
+    public static bool Prefix(string zoneId)
     {
         var world = Singleton<GameWorld>.Instance;
         var player = world?.MainPlayer;
@@ -25,31 +23,41 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
         var questBook = questController?.Quests;
 
         if (questBook == null)
+        {
             return true;
+        }
 
         foreach (var quest in questBook)
         {
             if (quest.ProgressCheckers == null || quest.Conditions == null)
+            {
                 continue;
+            }
 
             foreach (var kvp in quest.Conditions)
             {
                 var status = kvp.Key;
                 var bucket = kvp.Value;
                 if (bucket == null)
+                {
                     continue;
+                }
 
                 foreach (var root in bucket)
                 {
                     if (root is not ConditionCounterCreator cc || cc.Conditions == null)
+                    {
                         continue;
+                    }
 
                     if (
                         !cc.Conditions.Any(cond =>
                             cond is ConditionZone zone && (zone is ConditionSalvage || zone is ConditionLeaveItemAtLocation)
                         )
                     )
+                    {
                         continue;
+                    }
 
                     ConditionProgressChecker ccCpc = null;
                     ConditionSalvage salvageCond = null;
@@ -62,25 +70,31 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
                     foreach (var child in cc.Conditions)
                     {
                         if (child is not ConditionZone zoneChild)
+                        {
                             continue;
+                        }
 
                         if (zoneChild.zoneId != zoneId)
-                            continue;
-
-                        if (child is ConditionSalvage && quest.ProgressCheckers.TryGetValue(child, out var scpc))
                         {
-                            salvageCond = (ConditionSalvage)child;
+                            continue;
+                        }
+
+                        if (child is ConditionSalvage salvage && quest.ProgressCheckers.TryGetValue(child, out var scpc))
+                        {
+                            salvageCond = salvage;
                             salvageCpc = (SalvageConditionChecker)scpc;
                         }
-                        else if (child is ConditionLeaveItemAtLocation && quest.ProgressCheckers.TryGetValue(child, out var lcpc))
+                        else if (child is ConditionLeaveItemAtLocation location && quest.ProgressCheckers.TryGetValue(child, out var lcpc))
                         {
-                            leaveCond = (ConditionLeaveItemAtLocation)child;
+                            leaveCond = location;
                             leaveCpc = (LeaveItemAtLocationChecker)lcpc;
                         }
                     }
 
                     if (salvageCond == null && leaveCond == null)
+                    {
                         continue;
+                    }
 
                     var countersManager = quest.ConditionCountersManager;
                     TaskConditionCounter ccCounter = null;
@@ -95,7 +109,9 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
                     {
                         var target = cc.value;
                         if (target <= 0)
+                        {
                             target = 1;
+                        }
 
                         ccCpc.SetCurrentValueGetter(_ => (state.SalvageDone && state.LeaveDone) ? target : 0.0);
                     }
@@ -149,7 +165,9 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
     {
         var controller = player?.QuestController;
         if (controller == null)
+        {
             return;
+        }
 
         controller.OnConditionValueChanged(quest, status, condition, true);
     }
@@ -162,14 +180,20 @@ internal class ItemDroppedAtPlacePatch : ModulePatch
     )
     {
         if (!state.SalvageDone || !state.LeaveDone)
+        {
             return false;
+        }
 
         if (ccCpc == null)
+        {
             return false;
+        }
 
         var target = cc.value;
         if (target <= 0)
+        {
             target = 1;
+        }
 
         if (ccCounter != null && ccCounter.Value < target)
         {

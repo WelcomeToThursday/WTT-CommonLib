@@ -39,7 +39,9 @@ public class HandleRecipePatch(
     )
     {
         if (_hideoutControllerExtended == null || _customHideoutRecipeService == null)
+        {
             return true;
+        }
 
         var extendedRecipe = _customHideoutRecipeService.GetExtendedRecipe(recipe.Id);
 

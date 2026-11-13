@@ -28,12 +28,12 @@ public class AssetLoader(ManualLogSource logger)
     {
         try
         {
-            return Helpers.Utils.Get<List<CustomSpawnConfig>>("/wttcommonlib/spawnsystem/configs/get") ?? new List<CustomSpawnConfig>();
+            return Helpers.Utils.Get<List<CustomSpawnConfig>>("/wttcommonlib/spawnsystem/configs/get") ?? [];
         }
         catch (Exception ex)
         {
             logger.LogError($"Error fetching configs: {ex}");
-            return new List<CustomSpawnConfig>();
+            return [];
         }
     }
 
@@ -53,12 +53,16 @@ public class AssetLoader(ManualLogSource logger)
 
             // Location check
             if (!locationID.Equals(config.LocationID, StringComparison.OrdinalIgnoreCase))
+            {
                 return;
+            }
 
             // Get quest reference
             QuestDataClass quest = null;
             if (!string.IsNullOrEmpty(config.QuestId))
+            {
                 quest = player.Profile.QuestsData.FirstOrDefault(q => q.Id == config.QuestId);
+            }
 
             // Evaluate conditions (all must pass)
             if (!EvaluateConditions(player, quest, config))
@@ -70,7 +74,9 @@ public class AssetLoader(ManualLogSource logger)
             // Load and spawn prefab
             var prefab = LoadPrefabFromBundle(config.BundleName, config.PrefabName);
             if (prefab == null)
+            {
                 return;
+            }
 
             var rotation = Quaternion.Euler(config.Rotation);
             if (WTTClientCommonLib.FikaInstalled)
@@ -114,12 +120,16 @@ public class AssetLoader(ManualLogSource logger)
             var validStatuses = new List<string>();
 
             foreach (var statusStr in config.RequiredQuestStatuses)
+            {
                 if (Enum.TryParse<EQuestStatus>(statusStr, out var requiredStatus))
                 {
                     validStatuses.Add(statusStr);
                     if (quest.Status == requiredStatus)
+                    {
                         anyMatch = true;
+                    }
                 }
+            }
 
             if (!anyMatch)
             {
@@ -132,14 +142,22 @@ public class AssetLoader(ManualLogSource logger)
 
         // Excluded quest statuses (multiple)
         if (config.ExcludedQuestStatuses is { Count: > 0 })
+        {
             if (quest != null)
+            {
                 foreach (var statusStr in config.ExcludedQuestStatuses)
+                {
                     if (Enum.TryParse<EQuestStatus>(statusStr, out var excludedStatus))
+                    {
                         if (quest.Status == excludedStatus)
                         {
                             LogHelper.LogDebug($"[CONDITION] Excluded status matched: {excludedStatus}");
                             return false;
                         }
+                    }
+                }
+            }
+        }
 
         // Required item in inventory
         if (!string.IsNullOrEmpty(config.RequiredItemInInventory))
@@ -155,11 +173,13 @@ public class AssetLoader(ManualLogSource logger)
 
         // Required level
         if (config.RequiredLevel.HasValue)
+        {
             if (player.Profile.Info.Level < config.RequiredLevel.Value)
             {
                 LogHelper.LogDebug($"[CONDITION] Level too low. Required: {config.RequiredLevel}, Actual: {player.Profile.Info.Level}");
                 return false;
             }
+        }
 
         // Required faction
         if (!string.IsNullOrEmpty(config.RequiredFaction))
@@ -203,12 +223,16 @@ public class AssetLoader(ManualLogSource logger)
                 var validStatuses = new List<string>();
 
                 foreach (var statusStr in config.LinkedRequiredStatuses)
+                {
                     if (Enum.TryParse<EQuestStatus>(statusStr, out var requiredStatus))
                     {
                         validStatuses.Add(statusStr);
                         if (linkedQuest.Status == requiredStatus)
+                        {
                             anyMatch = true;
+                        }
                     }
+                }
 
                 if (!anyMatch)
                 {
@@ -221,23 +245,33 @@ public class AssetLoader(ManualLogSource logger)
 
             // Linked excluded statuses (multiple)
             if (config.LinkedExcludedStatuses is { Count: > 0 })
+            {
                 if (linkedQuest != null)
+                {
                     foreach (var statusStr in config.LinkedExcludedStatuses)
+                    {
                         if (Enum.TryParse<EQuestStatus>(statusStr, out var excludedStatus))
+                        {
                             if (linkedQuest.Status == excludedStatus)
                             {
                                 LogHelper.LogDebug($"[CONDITION] Linked excluded status matched: {excludedStatus}");
                                 return false;
                             }
+                        }
+                    }
+                }
+            }
         }
 
         // Boss spawn detection
         if (!string.IsNullOrEmpty(config.RequiredBossSpawned))
+        {
             if (!CheckBossSpawned(config.RequiredBossSpawned))
             {
                 LogHelper.LogDebug($"[CONDITION] Required boss not spawned: {config.RequiredBossSpawned}");
                 return false;
             }
+        }
 
         // All conditions passed
         return true;
@@ -257,10 +291,14 @@ public class AssetLoader(ManualLogSource logger)
             foreach (var player in gameWorld.AllAlivePlayersList)
             {
                 if (player.IsYourPlayer)
+                {
                     continue;
+                }
 
                 if (player.AIData?.BotOwner?.Profile?.Info?.Settings?.Role == null)
+                {
                     continue;
+                }
 
                 var roleName = player.AIData.BotOwner.Profile.Info.Settings.Role.ToString();
 
@@ -307,7 +345,7 @@ public class AssetLoader(ManualLogSource logger)
         }
     }
 
-    public GameObject LoadPrefabFromBundle(string bundleIdentifier, string assetName)
+    public GameObject? LoadPrefabFromBundle(string bundleIdentifier, string assetName)
     {
         try
         {
@@ -385,7 +423,9 @@ public class AssetLoader(ManualLogSource logger)
     public void UnloadAllBundles()
     {
         if (_loadedBundles.Count == 0)
+        {
             return;
+        }
 
         foreach (var bundle in _loadedBundles.Values)
         {

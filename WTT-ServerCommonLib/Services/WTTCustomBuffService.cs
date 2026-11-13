@@ -30,7 +30,9 @@ public class WTTCustomBuffService(
         var finalDir = Path.Combine(assemblyLocation, relativePath ?? defaultDir);
 
         if (!Directory.Exists(finalDir))
+        {
             throw new DirectoryNotFoundException($"Config directory not found at {finalDir}");
+        }
 
         var jsonFiles = Directory.GetFiles(finalDir, "*.json").Concat(Directory.GetFiles(finalDir, "*.jsonc")).ToArray();
         if (jsonFiles.Length == 0)

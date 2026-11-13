@@ -52,18 +52,24 @@ public class WTTCustomLocaleService(
         }
 
         foreach (var (localeCode, lazyLocale) in localeTable.Global)
+        {
             lazyLocale.AddTransformer(localeData =>
             {
                 if (localeData is null)
+                {
                     return localeData;
+                }
 
                 var customLocale = customLocales.GetValueOrDefault(localeCode, fallback);
 
                 foreach (var (key, value) in customLocale)
+                {
                     localeData[key] = value;
+                }
 
                 return localeData;
             });
+        }
 
         LogHelper.Debug(logger, $"WTTCustomLocaleService: Registered transformers for {customLocales.Count} locale files");
     }

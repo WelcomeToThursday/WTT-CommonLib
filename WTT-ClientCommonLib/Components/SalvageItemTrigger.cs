@@ -20,7 +20,7 @@ public class SalvageItemTrigger : TriggerWithId
     private float _salvageTime = 10f;
 
     [SerializeField]
-    private List<SalvageReward> _rewards = new();
+    private List<SalvageReward> _rewards = [];
 
     [SerializeField]
     private bool _consumeRequiredItem = true;

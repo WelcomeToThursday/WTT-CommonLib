@@ -26,10 +26,10 @@ public class CustomSpawnConfig
     public Vector3 Rotation { get; set; } = Vector3.zero;
 
     [JsonProperty("requiredQuestStatuses")]
-    public List<string> RequiredQuestStatuses { get; set; } = new();
+    public List<string> RequiredQuestStatuses { get; set; } = [];
 
     [JsonProperty("excludedQuestStatuses")]
-    public List<string> ExcludedQuestStatuses { get; set; } = new();
+    public List<string> ExcludedQuestStatuses { get; set; } = [];
 
     [JsonProperty("questMustExist")]
     public bool? QuestMustExist { get; set; }
@@ -38,10 +38,10 @@ public class CustomSpawnConfig
     public string LinkedQuestId { get; set; }
 
     [JsonProperty("linkedRequiredStatuses")]
-    public List<string> LinkedRequiredStatuses { get; set; } = new();
+    public List<string> LinkedRequiredStatuses { get; set; } = [];
 
     [JsonProperty("linkedExcludedStatuses")]
-    public List<string> LinkedExcludedStatuses { get; set; } = new();
+    public List<string> LinkedExcludedStatuses { get; set; } = [];
 
     [JsonProperty("linkedQuestMustExist")]
     public bool? LinkedQuestMustExist { get; set; }

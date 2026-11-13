@@ -11,9 +11,9 @@ namespace WTTServerCommonLib.Services;
 [Injectable(InjectionType.Singleton)]
 public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCustomStaticSpawnService> logger, JsonUtil jsonUtil)
 {
-    private readonly Dictionary<string, Dictionary<string, string>> _modBundles = new();
+    private readonly Dictionary<string, Dictionary<string, string>> _modBundles = [];
 
-    private readonly Dictionary<string, List<CustomSpawnConfig>> _modConfigs = new();
+    private readonly Dictionary<string, List<CustomSpawnConfig>> _modConfigs = [];
 
     /// <summary>
     /// Loads custom static spawn configs and asset bundles from JSON files and directories.
@@ -34,7 +34,9 @@ public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCusto
         if (Directory.Exists(bundlesDir))
         {
             if (!_modBundles.ContainsKey(modKey))
-                _modBundles[modKey] = new Dictionary<string, string>();
+            {
+                _modBundles[modKey] = [];
+            }
 
             foreach (var file in Directory.GetFiles(bundlesDir, "*.bundle"))
             {
@@ -51,13 +53,16 @@ public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCusto
         if (Directory.Exists(configsDir))
         {
             if (!_modConfigs.ContainsKey(modKey))
-                _modConfigs[modKey] = new List<CustomSpawnConfig>();
+            {
+                _modConfigs[modKey] = [];
+            }
 
             foreach (var file in Directory.GetFiles(configsDir, "*.json"))
+            {
                 try
                 {
                     var json = await File.ReadAllTextAsync(file);
-                    var info = jsonUtil.Deserialize<List<CustomSpawnConfig>>(json) ?? new List<CustomSpawnConfig>();
+                    var info = jsonUtil.Deserialize<List<CustomSpawnConfig>>(json) ?? [];
                     _modConfigs[modKey].AddRange(info);
                     LogHelper.Debug(logger, $"[SpawnService] Loaded {info.Count} configs from '{file}'");
                 }
@@ -65,6 +70,7 @@ public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCusto
                 {
                     logger.Error($"[SpawnService] Failed to parse configs in '{file}': {ex}");
                 }
+            }
         }
         else
         {
@@ -80,11 +86,13 @@ public class WTTCustomStaticSpawnService(ModHelper modHelper, SptLogger<WTTCusto
     public async Task<byte[]?> GetBundleData(string bundleName)
     {
         foreach (var modBundles in _modBundles.Values)
+        {
             if (modBundles.TryGetValue(bundleName, out var path) && File.Exists(path))
             {
                 LogHelper.Debug(logger, $"[SpawnService] Serving bundle '{bundleName}' from '{path}'");
                 return await File.ReadAllBytesAsync(path);
             }
+        }
 
         logger.Warning($"[SpawnService] Bundle '{bundleName}' not found");
         return null;

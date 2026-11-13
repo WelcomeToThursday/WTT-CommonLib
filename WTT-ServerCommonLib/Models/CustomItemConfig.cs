@@ -115,7 +115,9 @@ public class CustomItemConfig : CustomItemConfigBase
     public override IEnumerable<string> GetValidationErrors(string itemId)
     {
         foreach (var error in base.GetValidationErrors(itemId))
+        {
             yield return error;
+        }
 
         if (AddToTraders == true)
         {
@@ -166,10 +168,14 @@ public class CustomItemConfig : CustomItemConfigBase
                         else
                         {
                             if (scheme.ConfigBarterSettings.LoyalLevel < 0)
+                            {
                                 yield return $"traders['{traderKey}']['{schemeKey}'].barterSettings.loyalLevel must be >= 0";
+                            }
 
                             if (scheme.ConfigBarterSettings.StackObjectsCount < 0)
+                            {
                                 yield return $"traders['{traderKey}']['{schemeKey}'].barterSettings.stackObjectsCount must be >= 0";
+                            }
                         }
 
                         if (scheme.Barters == null || scheme.Barters.Count == 0)
@@ -189,10 +195,14 @@ public class CustomItemConfig : CustomItemConfigBase
                             }
 
                             if (string.IsNullOrWhiteSpace(barter.Template))
+                            {
                                 yield return $"traders['{traderKey}']['{schemeKey}'].barters[{i}].template is required";
+                            }
 
                             if (barter.Count == null || barter.Count <= 0)
+                            {
                                 yield return $"traders['{traderKey}']['{schemeKey}'].barters[{i}].count must be > 0";
+                            }
                         }
                     }
                 }
@@ -218,10 +228,14 @@ public class CustomItemConfig : CustomItemConfigBase
                     }
 
                     if (string.IsNullOrWhiteSpace(c.ContainerName))
+                    {
                         yield return $"staticLootContainers[{i}].containerName is required";
+                    }
 
                     if (c.Probability < 0)
+                    {
                         yield return $"staticLootContainers[{i}].probability must be >= 0";
+                    }
                 }
             }
         }
@@ -245,16 +259,24 @@ public class CustomItemConfig : CustomItemConfigBase
                     }
 
                     if (m.Templates == null)
+                    {
                         yield return $"masterySections[{i}].templates is required";
+                    }
 
                     if (m.Name == null)
+                    {
                         yield return $"masterySections[{i}].name is required";
+                    }
 
                     if (m.Level2 < 0)
+                    {
                         yield return $"masterySections[{i}].level2 must be >= 0";
+                    }
 
                     if (m.Level3 < 0)
+                    {
                         yield return $"masterySections[{i}].level3 must be >= 0";
+                    }
                 }
             }
         }
@@ -278,16 +300,24 @@ public class CustomItemConfig : CustomItemConfigBase
                     }
 
                     if (string.IsNullOrWhiteSpace(p.Id.ToString()))
+                    {
                         yield return $"weaponPresets[{i}]._id is required";
+                    }
 
                     if (string.IsNullOrWhiteSpace(p.Type))
+                    {
                         yield return $"weaponPresets[{i}]._type is required";
+                    }
 
                     if (string.IsNullOrWhiteSpace(p.Name))
+                    {
                         yield return $"weaponPresets[{i}]._name is required";
+                    }
 
                     if (string.IsNullOrWhiteSpace(p.Parent.ToString()))
+                    {
                         yield return $"weaponPresets[{i}]._parent is required";
+                    }
 
                     if (p.Items == null || p.Items.Count == 0)
                     {
@@ -306,16 +336,24 @@ public class CustomItemConfig : CustomItemConfigBase
                         }
 
                         if (item.Id == null || string.IsNullOrWhiteSpace(item.Id.ToString()))
+                        {
                             yield return $"weaponPresets[{i}].items[{j}]._id is required";
+                        }
 
                         if (item.Template == null || string.IsNullOrWhiteSpace(item.Template.ToString()))
+                        {
                             yield return $"weaponPresets[{i}].items[{j}]._tpl is required";
+                        }
 
                         if (!string.IsNullOrWhiteSpace(item.ParentId) && string.IsNullOrWhiteSpace(item.SlotId))
+                        {
                             yield return $"weaponPresets[{i}].items[{j}] has parentId but no slotId";
+                        }
 
                         if (!string.IsNullOrWhiteSpace(item.SlotId) && string.IsNullOrWhiteSpace(item.ParentId))
+                        {
                             yield return $"weaponPresets[{i}].items[{j}] has slotId but no parentId";
+                        }
                     }
                 }
             }
@@ -332,7 +370,9 @@ public class CustomItemConfig : CustomItemConfigBase
                 for (var i = 0; i < HallOfFameSlots.Count; i++)
                 {
                     if (string.IsNullOrWhiteSpace(HallOfFameSlots[i]))
+                    {
                         yield return $"hallOfFameSlots[{i}] must be a non-empty string";
+                    }
                 }
             }
         }
@@ -340,22 +380,32 @@ public class CustomItemConfig : CustomItemConfigBase
         if (AddToStaticAmmo == true)
         {
             if (StaticAmmoProbability == null)
+            {
                 yield return $"staticAmmoProbability is required when addtoStaticAmmo is true";
+            }
 
             if (StaticAmmoProbability < 0)
+            {
                 yield return $"staticAmmoProbability must be >= 0";
+            }
         }
 
         if (AddToEmptyPropSlots == true && EmptyPropSlot == null)
+        {
             yield return $"emptyPropSlot is required when addtoEmptyPropSlots is true";
+        }
 
         if (ParentId == "62f109593b54472778797866")
         {
             if (IsRandomLootContainer != true)
+            {
                 yield return $"isRandomLootContainer must be true when parentId is RandomLootContainer";
+            }
 
             if (RandomLootContainerRewards == null)
+            {
                 yield return $"randomLootContainerRewards is required when parentId is RandomLootContainer";
+            }
         }
     }
 }
@@ -366,7 +416,7 @@ public class ConfigTraderScheme
     public required ConfigBarterSettings ConfigBarterSettings { get; set; }
 
     [JsonPropertyName("barters")]
-    public required List<ConfigBarterScheme> Barters { get; set; } = new();
+    public required List<ConfigBarterScheme> Barters { get; set; } = [];
 }
 
 public class ConfigBarterSettings

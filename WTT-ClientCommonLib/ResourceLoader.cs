@@ -16,9 +16,9 @@ namespace WTTClientCommonLib;
 
 public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
 {
-    public static Dictionary<string, Sprite> _customHideoutIcons = new();
+    public static Dictionary<string, Sprite> _customHideoutIcons = [];
     public static bool _iconsLoaded = false;
-    public static Dictionary<string, Texture2D> _customMarkTextures = new();
+    public static Dictionary<string, Texture2D> _customMarkTextures = [];
     public static bool _texturesLoaded = false;
     public static AudioManifest Manifest { get; private set; } = new();
     public static AudioClipCache ClipCache { get; private set; }
@@ -42,9 +42,9 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
             LoadVoicesFromServer();
             LoadSlotImagesFromServer();
             LoadRigLayoutsFromServer();
-            LoadAudioManifestFromServer();
-            LoadCustomHideoutIconsFromServer();
-            LoadCustomMarkTexturesFromServer();
+            await LoadAudioManifestFromServer();
+            await LoadCustomHideoutIconsFromServer();
+            await LoadCustomMarkTexturesFromServer();
             assetLoader.SpawnConfigs = assetLoader.FetchSpawnConfigs();
             LogHelper.LogDebug($"Loaded {assetLoader.SpawnConfigs.Count} spawn configurations");
             LogHelper.LogDebug("All resources loaded successfully from server");
@@ -141,7 +141,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
         }
     }
 
-    public static string GetAudioForFace(string faceName)
+    public static string? GetAudioForFace(string faceName)
     {
         LogHelper.LogDebug($"[AudioManager] GetAudioForFace called with: {faceName}");
 
@@ -149,7 +149,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
         {
             if (faceEntry.Audio?.Count > 0)
             {
-                int idx = UnityEngine.Random.Range(0, faceEntry.Audio.Count);
+                var idx = UnityEngine.Random.Range(0, faceEntry.Audio.Count);
                 var audioKey = faceEntry.Audio[idx];
                 LogHelper.LogDebug($"[AudioManager] Selected audio key for {faceName}: {audioKey}");
                 return audioKey;
@@ -163,7 +163,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
     public static List<string> GetRadioAudio()
     {
         LogHelper.LogDebug($"[AudioManager] Returning {Manifest?.RadioAudio.Count ?? 0} radio tracks");
-        return Manifest?.RadioAudio ?? new List<string>();
+        return Manifest?.RadioAudio ?? [];
     }
 
     private void LoadVoicesFromServer()
@@ -178,11 +178,13 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
             }
 
             foreach (var kvp in voiceResponse)
+            {
                 if (!InGameBundles._phrasesPaths.ContainsKey(kvp.Key))
                 {
                     InGameBundles._phrasesPaths[kvp.Key] = kvp.Value;
                     LogHelper.LogDebug($"Added voice key: {kvp.Key}");
                 }
+            }
 
             LogHelper.LogDebug($"Loaded {voiceResponse.Count} voice mappings from server");
         }
@@ -241,7 +243,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
 
             LogHelper.LogDebug($"[MarkTextures] Manifest contains {ImageManager.ShootingRangeMarks.Count} textures");
 
-            int loadedCount = 0;
+            var loadedCount = 0;
             foreach (var (fileName, imageItem) in ImageManager.ShootingRangeMarks)
             {
                 LogHelper.LogDebug($"[MarkTextures] Processing texture: {fileName}, ModPath: {imageItem.ModPath}");
@@ -293,7 +295,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
 
             LogHelper.LogDebug($"[HideoutIcons] Manifest contains {ImageManager.HideoutIcons.Count} icons");
 
-            int loadedCount = 0;
+            var loadedCount = 0;
             foreach (var (fileName, imageItem) in ImageManager.HideoutIcons)
             {
                 LogHelper.LogDebug($"[HideoutIcons] Processing icon: {fileName}, ModPath: {imageItem.ModPath}");
@@ -434,9 +436,12 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
             var loadedCount = 0;
             var gameObjects = bundle.LoadAllAssets<GameObject>();
             if (gameObjects == null || gameObjects.Length == 0)
+            {
                 logger.LogWarning($"No GameObjects loaded from bundle: {bundleName}");
+            }
 
             if (gameObjects != null)
+            {
                 foreach (var prefab in gameObjects)
                 {
                     if (prefab == null)
@@ -456,6 +461,7 @@ public class ResourceLoader(ManualLogSource logger, AssetLoader assetLoader)
                     loadedCount++;
                     LogHelper.LogDebug($"Added rig layout: {prefab.name}");
                 }
+            }
 
             bundle.Unload(false);
             LogHelper.LogDebug($"Loaded {loadedCount} prefabs from bundle: {bundleName}");

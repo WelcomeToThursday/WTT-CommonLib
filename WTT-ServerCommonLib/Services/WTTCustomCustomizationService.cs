@@ -17,12 +17,11 @@ public class WTTCustomCustomizationService(
     TemplateTable templateTable,
     HideoutTable hideoutTable,
     ModHelper modHelper,
-    ConfigHelper configHelper,
-    ImageRouterService imageRouterService
+    ConfigHelper configHelper
 )
 {
-    private readonly Dictionary<string, string> _hideoutIconPaths = new();
-    private readonly Dictionary<string, string> _markTexturePaths = new();
+    private readonly Dictionary<string, string> _hideoutIconPaths = [];
+    private readonly Dictionary<string, string> _markTexturePaths = [];
 
     /// <summary>
     /// Loads custom customization configs, customization storage entries, hideout customization configs,
@@ -127,7 +126,9 @@ public class WTTCustomCustomizationService(
         foreach (var configDict in customizationConfigDicts)
         {
             if (configDict.Count == 0)
+            {
                 continue;
+            }
 
             foreach (var (customizationId, customizationItem) in configDict)
             {
@@ -155,7 +156,9 @@ public class WTTCustomCustomizationService(
         foreach (var configList in storageConfigDicts)
         {
             if (configList.Count == 0)
+            {
                 continue;
+            }
 
             foreach (var storageEntry in configList)
             {
@@ -190,9 +193,11 @@ public class WTTCustomCustomizationService(
         foreach (var configDict in hideoutConfigDicts)
         {
             if (configDict.Count == 0)
+            {
                 continue;
+            }
 
-            foreach (HideoutCustomisationGlobal hideoutConfig in configDict)
+            foreach (var hideoutConfig in configDict)
             {
                 try
                 {
@@ -269,10 +274,10 @@ public class WTTCustomCustomizationService(
 
     public List<string> GetHideoutIconManifest()
     {
-        return _hideoutIconPaths.Keys.ToList();
+        return [.. _hideoutIconPaths.Keys];
     }
 
-    public string GetHideoutIconFullPath(string iconName)
+    public string? GetHideoutIconFullPath(string iconName)
     {
         if (_hideoutIconPaths.TryGetValue(iconName, out var path))
         {
@@ -287,23 +292,29 @@ public class WTTCustomCustomizationService(
     public async Task<byte[]?> GetHideoutIconData(string iconName)
     {
         if (_hideoutIconPaths.TryGetValue(iconName, out var path) && File.Exists(path))
+        {
             return await File.ReadAllBytesAsync(path);
+        }
+
         return null;
     }
 
     public List<string> GetMarkTextureManifest()
     {
-        return _markTexturePaths.Keys.ToList();
+        return [.. _markTexturePaths.Keys];
     }
 
     public async Task<byte[]?> GetMarkTextureData(string textureName)
     {
         if (_markTexturePaths.TryGetValue(textureName, out var path) && File.Exists(path))
+        {
             return await File.ReadAllBytesAsync(path);
+        }
+
         return null;
     }
 
-    public string GetMarkTextureFullPath(string textureName)
+    public string? GetMarkTextureFullPath(string textureName)
     {
         if (_markTexturePaths.TryGetValue(textureName, out var path))
         {
