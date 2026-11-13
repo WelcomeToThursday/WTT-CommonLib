@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PluginGuid>com.wtt.commonlib</PluginGuid>
     <PluginName>WTT-ClientCommonLib</PluginName>
-    <Version>3.0.6</Version>
+    <Version>3.0.7</Version>
     <Authors>GrooveypenguinX</Authors>
     <RootNamespace>WTTClientCommonLib</RootNamespace>
     <Description>Client portion of the commonlib project</Description>
