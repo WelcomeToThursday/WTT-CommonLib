@@ -94,7 +94,7 @@ public class WTTClientCommonLib : BaseUnityPlugin
             }
 
             _fikaAssembly = Assembly.LoadFrom(fikaAssemblyPath);
-            _fikaHelperType = _fikaAssembly.GetType("WTTClientCommonLib.Fika.Helpers.StaticSpawnFikaHelpers");
+            _fikaHelperType = _fikaAssembly.GetType("WTTClientCommonLibFika.Helpers.StaticSpawnFikaHelpers");
 
             if (_fikaHelperType != null)
             {
