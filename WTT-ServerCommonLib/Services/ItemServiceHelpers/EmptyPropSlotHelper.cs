@@ -36,10 +36,7 @@ public class EmptyPropSlotHelper(TemplateTable templateTable)
                 MergeSlotWithChildren = false,
                 Name = slotName,
                 Parent = itemToAddTo,
-                Properties = new SlotProperties
-                {
-                    Filters = [new SlotFilter { Filter = [itemToAdd] }],
-                },
+                Properties = new SlotProperties { Filters = [new SlotFilter { Filter = [itemToAdd] }] },
                 Prototype = new MongoId(),
                 Required = false,
             };

@@ -33,7 +33,9 @@ internal class BoomboxAudioPatch : ModulePatch
                 return true;
             }
 
-            var tracker = __instance.gameObject.GetComponent<HideoutRadioStateTracker>() ?? __instance.gameObject.AddComponent<HideoutRadioStateTracker>();
+            var tracker =
+                __instance.gameObject.GetComponent<HideoutRadioStateTracker>()
+                ?? __instance.gameObject.AddComponent<HideoutRadioStateTracker>();
             if (ShouldSkipPlayback(tracker))
             {
                 return true;

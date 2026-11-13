@@ -29,10 +29,7 @@ public class SpawnCommands(ManualLogSource logger, AssetLoader assetLoader)
 
     public GameObject? LastSpawnedObject
     {
-        get
-        {
-            return _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null;
-        }
+        get { return _currentSpawnedIndex >= 0 ? _spawnedObjects[_currentSpawnedIndex].Object : null; }
     }
 
     public bool IsEditing { get; private set; }
