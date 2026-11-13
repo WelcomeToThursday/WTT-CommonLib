@@ -8,11 +8,7 @@ namespace WTTServerCommonLib.Helpers;
 [Injectable]
 public class SlotHelper
 {
-    public void ReplaceSlotFilters(
-        TemplateItem item,
-        int slotIndex,
-        int filterIndex,
-        HashSet<MongoId> ids)
+    public void ReplaceSlotFilters(TemplateItem item, int slotIndex, int filterIndex, HashSet<MongoId> ids)
     {
         var slot = GetSlotAtIndex(item, slotIndex);
         var filter = GetSlotFilterAtIndex(slot, filterIndex);
@@ -20,12 +16,7 @@ public class SlotHelper
         filter.Filter = ids;
     }
 
-    public void ModifySlotFilters(
-        TemplateItem item,
-        int slotIndex,
-        int filterIndex,
-        List<MongoId> ids,
-        bool isCartridge = false)
+    public void ModifySlotFilters(TemplateItem item, int slotIndex, int filterIndex, List<MongoId> ids, bool isCartridge = false)
     {
         var slot = GetSlotAtIndex(item, slotIndex, isCartridge);
         var filter = GetSlotFilterAtIndex(slot, filterIndex);
@@ -53,7 +44,8 @@ public class SlotHelper
         string prototype,
         bool required = false,
         bool mergeSlotWithChildren = false,
-        int shift = 0)
+        int shift = 0
+    )
     {
         item.Properties ??= new TemplateItemProperties();
 
@@ -73,17 +65,7 @@ public class SlotHelper
             Required = required,
             MergeSlotWithChildren = mergeSlotWithChildren,
             Prototype = prototype,
-            Properties = new SlotProperties
-            {
-                Filters =
-                [
-                    new()
-                    {
-                        Filter = [],
-                        Shift = shift
-                    }
-                ]
-            }
+            Properties = new SlotProperties { Filters = [new() { Filter = [], Shift = shift }] },
         };
 
         slots.Add(slot);
@@ -102,18 +84,13 @@ public class SlotHelper
     {
         slot.Properties ??= new SlotProperties();
 
-        var filters = slot.Properties.Filters?.ToList()
-                      ?? [];
+        var filters = slot.Properties.Filters?.ToList() ?? [];
 
         var filterContainer = filters.FirstOrDefault();
 
         if (filterContainer == null)
         {
-            filterContainer = new SlotFilter
-            {
-                Filter = [],
-                Shift = 0
-            };
+            filterContainer = new SlotFilter { Filter = [], Shift = 0 };
 
             filters.Add(filterContainer);
             slot.Properties.Filters = filters;
@@ -134,15 +111,11 @@ public class SlotHelper
     /// <exception cref="InvalidOperationException">
     /// The slot does not exist. Use EnsureSlot to create it first.
     /// </exception>
-    public void AddIdsToNamedSlot(
-        TemplateItem item,
-        string slotName,
-        params string[] ids)
+    public void AddIdsToNamedSlot(TemplateItem item, string slotName, params string[] ids)
     {
-        var slot = item.Properties?.Slots?
-            .FirstOrDefault(s => s.Name == slotName)
-            ?? throw new InvalidOperationException(
-                $"Slot '{slotName}' not found on '{item.Name}'");
+        var slot =
+            item.Properties?.Slots?.FirstOrDefault(s => s.Name == slotName)
+            ?? throw new InvalidOperationException($"Slot '{slotName}' not found on '{item.Name}'");
 
         AddIdsToSlot(slot, ids);
     }
@@ -151,40 +124,18 @@ public class SlotHelper
     /// Adds an ID to an existing named slot and filter.
     /// Slot-name matching is case-insensitive; occurrence is zero-based.
     /// </summary>
-    public void AddIdToNamedSlot(
-        TemplateItem item,
-        string slotName,
-        string itemId,
-        int filterIndex = 0,
-        int slotOccurrence = 0)
+    public void AddIdToNamedSlot(TemplateItem item, string slotName, string itemId, int filterIndex = 0, int slotOccurrence = 0)
     {
-        EditFilters(
-            [item],
-            slotName,
-            itemId,
-            filterIndex,
-            slotOccurrence,
-            add: true);
+        EditFilters([item], slotName, itemId, filterIndex, slotOccurrence, add: true);
     }
 
     /// <summary>
     /// Removes an ID from an existing named slot and filter.
     /// Slot-name matching is case-insensitive; occurrence is zero-based.
     /// </summary>
-    public void RemoveIdFromNamedSlot(
-        TemplateItem item,
-        string slotName,
-        string itemId,
-        int filterIndex = 0,
-        int slotOccurrence = 0)
+    public void RemoveIdFromNamedSlot(TemplateItem item, string slotName, string itemId, int filterIndex = 0, int slotOccurrence = 0)
     {
-        EditFilters(
-            [item],
-            slotName,
-            itemId,
-            filterIndex,
-            slotOccurrence,
-            add: false);
+        EditFilters([item], slotName, itemId, filterIndex, slotOccurrence, add: false);
     }
 
     /// <summary>
@@ -198,15 +149,10 @@ public class SlotHelper
         string itemId,
         IEnumerable<string> parentIds,
         int filterIndex = 0,
-        int slotOccurrence = 0)
+        int slotOccurrence = 0
+    )
     {
-        EditFilters(
-            ResolveParents(templates, parentIds),
-            slotName,
-            itemId,
-            filterIndex,
-            slotOccurrence,
-            add: true);
+        EditFilters(ResolveParents(templates, parentIds), slotName, itemId, filterIndex, slotOccurrence, add: true);
     }
 
     /// <summary>
@@ -220,52 +166,37 @@ public class SlotHelper
         string itemId,
         IEnumerable<string> parentIds,
         int filterIndex = 0,
-        int slotOccurrence = 0)
+        int slotOccurrence = 0
+    )
     {
-        EditFilters(
-            ResolveParents(templates, parentIds),
-            slotName,
-            itemId,
-            filterIndex,
-            slotOccurrence,
-            add: false);
+        EditFilters(ResolveParents(templates, parentIds), slotName, itemId, filterIndex, slotOccurrence, add: false);
     }
 
-    private Slot GetSlotAtIndex(
-        TemplateItem item,
-        int index,
-        bool isCartridge = false)
+    private Slot GetSlotAtIndex(TemplateItem item, int index, bool isCartridge = false)
     {
-        var slots = isCartridge
-            ? item.Properties?.Cartridges?.ToArray()
-            : item.Properties?.Slots?.ToArray();
+        var slots = isCartridge ? item.Properties?.Cartridges?.ToArray() : item.Properties?.Slots?.ToArray();
 
         if (slots != null && index >= 0 && index < slots.Length)
         {
             return slots[index];
         }
 
-        throw new IndexOutOfRangeException(
-            $"Index on item slot property `{item.Name}` is out of range");
+        throw new IndexOutOfRangeException($"Index on item slot property `{item.Name}` is out of range");
     }
 
     private SlotFilter GetSlotFilterAtIndex(Slot slot, int index)
     {
-        var filters = slot.Properties?.Filters?.ToArray()
-                      ?? [];
+        var filters = slot.Properties?.Filters?.ToArray() ?? [];
 
         if (index >= 0 && index < filters.Length)
         {
             return filters[index];
         }
 
-        throw new IndexOutOfRangeException(
-            $"Index on slot property `{slot.Name}` is out of range");
+        throw new IndexOutOfRangeException($"Index on slot property `{slot.Name}` is out of range");
     }
 
-    private static IEnumerable<TemplateItem> ResolveParents(
-        TemplateTable templates,
-        IEnumerable<string> parentIds)
+    private static IEnumerable<TemplateItem> ResolveParents(TemplateTable templates, IEnumerable<string> parentIds)
     {
         foreach (var parentId in parentIds.Distinct())
         {
@@ -273,8 +204,7 @@ public class SlotHelper
 
             if (!templates.Items.TryGetValue(id, out var item))
             {
-                throw new InvalidOperationException(
-                    $"Parent item '{parentId}' was not found.");
+                throw new InvalidOperationException($"Parent item '{parentId}' was not found.");
             }
 
             yield return item;
@@ -287,7 +217,8 @@ public class SlotHelper
         string itemId,
         int filterIndex,
         int slotOccurrence,
-        bool add)
+        bool add
+    )
     {
         MongoId id = itemId;
 
@@ -297,29 +228,26 @@ public class SlotHelper
 
         if (string.IsNullOrWhiteSpace(slotName))
         {
-            throw new ArgumentException(
-                "A slot name is required.",
-                nameof(slotName));
+            throw new ArgumentException("A slot name is required.", nameof(slotName));
         }
 
-        var filters = items.Select(item =>
-        {
-            var slot = item.Properties?.Slots?
-                .Where(s => string.Equals(
-                    s.Name,
-                    slotName,
-                    StringComparison.OrdinalIgnoreCase))
-                .Skip(slotOccurrence)
-                .FirstOrDefault()
-                ?? throw new InvalidOperationException(
-                    $"Slot '{slotName}' occurrence {slotOccurrence} " +
-                    $"was not found on '{item.Name}' ({item.Id}).");
+        var filters = items
+            .Select(item =>
+            {
+                var slot =
+                    item.Properties?.Slots?.Where(s => string.Equals(s.Name, slotName, StringComparison.OrdinalIgnoreCase))
+                        .Skip(slotOccurrence)
+                        .FirstOrDefault()
+                    ?? throw new InvalidOperationException(
+                        $"Slot '{slotName}' occurrence {slotOccurrence} " + $"was not found on '{item.Name}' ({item.Id})."
+                    );
 
-            return slot.Properties?.Filters?.ElementAtOrDefault(filterIndex)
-                ?? throw new InvalidOperationException(
-                    $"Filter {filterIndex} in slot '{slotName}' " +
-                    $"was not found on '{item.Name}' ({item.Id}).");
-        }).ToArray();
+                return slot.Properties?.Filters?.ElementAtOrDefault(filterIndex)
+                    ?? throw new InvalidOperationException(
+                        $"Filter {filterIndex} in slot '{slotName}' " + $"was not found on '{item.Name}' ({item.Id})."
+                    );
+            })
+            .ToArray();
 
         foreach (var filter in filters)
         {
